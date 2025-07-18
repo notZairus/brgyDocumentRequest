@@ -29,7 +29,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        $validated_data = $request->validate([
+            'email' => ['email', 'required'],
+            'password' => ['required', 'min:8']
+        ]);
+
+        if (!Auth::attempt($validated_data)) {
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->onlyInput('email');
+        }
 
         $request->session()->regenerate();
 

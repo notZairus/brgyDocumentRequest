@@ -169,13 +169,16 @@ export default function Register() {
                                 ?
                                     (
                                         <div className="w-full h-full text-xl flex items-center justify-center">
-                                            <p className="text-black">No Image Uploaded</p>
+                                            <p className="text-foreground/50">No Image Uploaded</p>
                                         </div>
                                     )
                                 :
                                     (
                                         <div className="w-full h-full text-xl flex items-center justify-center rounded overflow-hidden bg-red-400">
-                                            <img src={data.brgyIdFront.base64} className="w-full h-full object-cover" />
+                                            <img 
+                                                src={"base64" in data.brgyIdFront ? data.brgyIdFront.base64 : ""} 
+                                                className="w-full h-full object-cover" 
+                                            />
                                         </div>
                                     )
                             }
@@ -216,13 +219,13 @@ export default function Register() {
                                 ?   
                                     (
                                         <div className="w-full h-full text-xl flex items-center justify-center">
-                                            <p className="text-black">No Image Uploaded</p>
+                                            <p className="text-foreground/50">No Image Uploaded</p>
                                         </div>
                                     )   
                                 :   
                                     (
                                         <div className="w-full h-full text-xl flex items-center justify-center rounded overflow-hidden bg-red-400">
-                                            <img src={data.brgyIdBack.base64} className="w-full h-full object-cover" />
+                                            <img src={"base64" in data.brgyIdBack ? data.brgyIdBack.base64 : ""} className="w-full h-full object-cover" />
                                         </div>
                                     )
                             }
