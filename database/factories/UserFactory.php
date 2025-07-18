@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'is_admin' => false,
+            'status' => "inactive",
             'remember_token' => Str::random(10),
         ];
     }

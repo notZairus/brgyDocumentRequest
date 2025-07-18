@@ -17,32 +17,25 @@ class VerifyUserController extends Controller
             ->latest()
             ->paginate(5);
             
-
-        return Inertia::render('verify-user/index', [
-            "unverifiedUsers" => $unverified_users
-        ]);
+        return Inertia::render('verify-user/index', ["unverifiedUsers" => $unverified_users ]);
     }
-
 
     public function show(User $user) {
         if (!file_exists(storage_path('app/private/ids/'. $user->email . '/'))) {
             abort(404);
         }
 
-        return Inertia::render('verify-user/show', [
-            "user" => $user,
-        ]);
+        return Inertia::render('verify-user/show', ["user" => $user]);
     }
 
     public function patch(User $user) {
         $user->update([
             'verified_at' => now(),
+            'status' => 'active'
         ]);
 
         return redirect('/verify-accounts');
     }
-
-
 
     public function destroy(User $user) {
         Storage::disk('local')->deleteDirectory('ids/' . $user->email);

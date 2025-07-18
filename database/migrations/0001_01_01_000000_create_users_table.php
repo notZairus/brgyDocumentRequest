@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_admin')->default(false);
+            $table->enum("status", ["inactive", "active", "disbaled", "banned"])->default("inactive");
             $table->rememberToken();
             $table->timestamps();
         });
