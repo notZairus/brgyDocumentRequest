@@ -43,3 +43,16 @@ export interface User {
     is_admin: boolean;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface PaginationLink {
+    active: boolean,
+    label: string,
+    url: string | null,
+    [key:string]: unknown
+}
+
+export interface Pagination<T = unknown> {
+    data: T[],
+    links: PaginationLink[]
+    [key:string]: unknown
+} 

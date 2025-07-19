@@ -17,7 +17,7 @@ class VerifyUserController extends Controller
             ->latest()
             ->paginate(5);
             
-        return Inertia::render('verify-user/index', ["unverifiedUsers" => $unverified_users ]);
+        return Inertia::render('verify-user/index', ["unverifiedUsers" => $unverified_users]);
     }
 
     public function show(User $user) {

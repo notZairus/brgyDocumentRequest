@@ -1,5 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import type { Pagination, PaginationLink } from "@/types/index.d";
+
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -38,4 +40,21 @@ export function base64ToFile(base64: string, filename: string): File {
     [...byteString].map(char => char.charCodeAt(0))
   );
   return new File([byteArray], filename, { type: mime });
+}
+
+
+export function replacePaginationLink<T>(pagination: Pagination<T>, wordToBeReplace: string, wordToReplace: string): Pagination<T> {
+    const data = pagination;
+
+    const fixedLinks = data.links.map((link: PaginationLink, index: number) => {
+        const newUrl = link.url ? link.url.replace(wordToBeReplace, wordToReplace) : null;
+        return { ...link, url: newUrl }
+    });
+
+    const newPagination = {
+        ...data,
+        links: fixedLinks
+    }
+
+    return newPagination;
 }

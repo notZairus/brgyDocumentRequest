@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\VerifyUserController;
+use App\Http\Controllers\PollingController;
 
 
 
@@ -17,17 +18,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
+
+
 Route::get('/verify-accounts', [VerifyUserController::class, 'index']);
 Route::get('/verify-accounts/{user}', [VerifyUserController::class, 'show']);
 Route::patch('/verify-accounts/{user}', [VerifyUserController::class, 'patch']);
 Route::delete('/verify-accounts/{user}', [VerifyUserController::class, 'destroy']);
 
-
-
 Route::get('/getId/{user}/front', [VerifyUserController::class, 'serveFrontId']);
 Route::get('/getId/{user}/back', [VerifyUserController::class, 'serveBackId']);
 
 
+
+
+
+Route::get('/poll/unverified-accounts', [PollingController::class, 'getUnverifiedAccounts']);
 
 
 
