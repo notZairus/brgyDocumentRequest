@@ -39,6 +39,7 @@ export default function VerifyAccounts() {
         const interval = setInterval(() => {
             axios.get('/poll/unverified-accounts').then(response => {
                 const newPagination = replacePaginationLink<User>(response.data.unverifiedUsers, "/poll/unverified-accounts", "/verify-accounts");
+                console.log(newPagination);
                 setUnverifiedUsers(newPagination);
             })
         }, 10000);

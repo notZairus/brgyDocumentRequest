@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\VerifyUserController;
-use App\Http\Controllers\PollingController;
+use App\Http\Controllers\UserController;
 
 
 
@@ -30,16 +30,11 @@ Route::get('/getId/{user}/back', [VerifyUserController::class, 'serveBackId']);
 
 
 
-
-
-Route::get('/poll/unverified-accounts', [PollingController::class, 'getUnverifiedAccounts']);
-
-
-
-
+Route::get('/users', [UserController::class, 'index']);
 
 
 
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+require __DIR__.'/api.php';

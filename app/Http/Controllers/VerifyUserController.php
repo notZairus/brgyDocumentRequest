@@ -17,7 +17,7 @@ class VerifyUserController extends Controller
             ->latest()
             ->paginate(5);
             
-        return Inertia::render('verify-user/index', ["unverifiedUsers" => $unverified_users]);
+        return Inertia::render('verify-users/index', ["unverifiedUsers" => $unverified_users]);
     }
 
     public function show(User $user) {
@@ -25,7 +25,7 @@ class VerifyUserController extends Controller
             abort(404);
         }
 
-        return Inertia::render('verify-user/show', ["user" => $user]);
+        return Inertia::render('verify-users/show', ["user" => $user]);
     }
 
     public function patch(User $user) {

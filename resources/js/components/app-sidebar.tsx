@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, ShieldAlert } from 'lucide-react';
+import { Users, LayoutGrid, ShieldAlert } from 'lucide-react';
 import AppLogo from './app-logo';
 
 
@@ -20,6 +20,12 @@ const mainNavItems: NavItem[] = [
         title: 'Verify Accounts',
         href: '/verify-accounts',
         icon: ShieldAlert,
+        for: "admin"
+    },
+    {
+        title: 'Users',
+        href: '/users',
+        icon: Users,
         for: "admin"
     }
 ];

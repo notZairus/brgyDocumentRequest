@@ -26,7 +26,7 @@ type MyType = {
 }
 
 export default function Users() {
-    const { auth : { user }, registeredUsers } = usePage<PageProps & MyType>().props;
+    const { registeredUsers } = usePage<PageProps & MyType>().props;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -38,7 +38,7 @@ export default function Users() {
                         <div className="w-full flex flex-col gap-2 md:h-[360px]">
                             {
                                 registeredUsers.data.map((user) => (
-                                    <Link href={`/users/${user.id}`}>
+                                    <Link href={`#`}>
                                         <div className="cursor-pointer w-full bg-primary/5 border-primary/15 rounded border flex p-4 items-center justify-between">
                                             <p className="md:text-lg w-[180px]">{user.name}</p>
                                             <p className="text-foreground/50 text-sm hidden md:block">{formatDistance(new Date(user.created_at), new Date())}</p>
