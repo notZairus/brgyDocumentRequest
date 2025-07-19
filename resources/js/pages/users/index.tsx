@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Users',
+        title: 'Manage Users',
         href: '/users',
     },
 ];
@@ -30,7 +30,7 @@ export default function Users() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Verify Account" />
+            <Head title="Manage Users" />
 
             <main className="w-full p-4">
                 { registeredUsers.data.length > 0 ? (
@@ -38,7 +38,7 @@ export default function Users() {
                         <div className="w-full flex flex-col gap-2 md:h-[360px]">
                             {
                                 registeredUsers.data.map((user) => (
-                                    <Link href={`#`}>
+                                    <Link href={`/users/${user.id}`}>
                                         <div className="cursor-pointer w-full bg-primary/5 border-primary/15 rounded border flex p-4 items-center justify-between">
                                             <p className="md:text-lg w-[180px]">{user.name}</p>
                                             <p className="text-foreground/50 text-sm hidden md:block">{formatDistance(new Date(user.created_at), new Date())}</p>

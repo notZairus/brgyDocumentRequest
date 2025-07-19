@@ -34,6 +34,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                         }
 
                         if (!user.is_admin && item.for === "user") {
+                            console.log('req for user');
                             return SidebarMenu;
                         }
                     })

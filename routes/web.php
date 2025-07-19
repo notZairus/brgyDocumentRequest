@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\VerifyUserController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DocumentRequestController;
 
 
 
@@ -28,10 +29,13 @@ Route::delete('/verify-accounts/{user}', [VerifyUserController::class, 'destroy'
 Route::get('/getId/{user}/front', [VerifyUserController::class, 'serveFrontId']);
 Route::get('/getId/{user}/back', [VerifyUserController::class, 'serveBackId']);
 
-
-
 Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{user}', [UserController::class, 'show']);
 
+
+
+Route::get('/request-document', [DocumentRequestController::class, 'create']);
+Route::post('/document-request', [DocumentRequestController::class, 'store']);
 
 
 

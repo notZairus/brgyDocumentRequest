@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Users, LayoutGrid, ShieldAlert } from 'lucide-react';
+import { Users, LayoutGrid, ShieldAlert, ScrollText } from 'lucide-react';
 import AppLogo from './app-logo';
 
 
@@ -16,6 +16,7 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
         for: "all"
     },
+
     {
         title: 'Verify Accounts',
         href: '/verify-accounts',
@@ -23,11 +24,22 @@ const mainNavItems: NavItem[] = [
         for: "admin"
     },
     {
-        title: 'Users',
+        title: 'Manage Users',
         href: '/users',
         icon: Users,
         for: "admin"
-    }
+    },
+
+    {
+        title: 'Request Document',
+        href: '/request-document',
+        icon: ScrollText,
+        for: "user"
+    },
+
+
+    
+
 ];
 
 const footerNavItems: NavItem[] = [

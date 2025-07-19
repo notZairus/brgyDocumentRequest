@@ -29,7 +29,7 @@ export default function VerifyAccounts() {
             href: '/verify-accounts',
         },
         {
-            title: 'Show',
+            title: user.name,
             href: `/verify-accounts/${user.id}`
         }
     ];
