@@ -35,7 +35,9 @@ Route::get('/users/{user}', [UserController::class, 'show']);
 
 
 Route::get('/request-document', [DocumentRequestController::class, 'create']);
-Route::post('/document-request', [DocumentRequestController::class, 'store']);
+Route::get('/document-requests', [DocumentRequestController::class, 'index']);
+Route::post('/document-requests', [DocumentRequestController::class, 'store']);
+Route::get('/document-requests/{document_request}', [DocumentRequestController::class, 'show']);
 
 
 

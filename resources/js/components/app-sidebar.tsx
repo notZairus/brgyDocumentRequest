@@ -17,6 +17,7 @@ const mainNavItems: NavItem[] = [
         for: "all"
     },
 
+
     {
         title: 'Verify Accounts',
         href: '/verify-accounts',
@@ -29,6 +30,13 @@ const mainNavItems: NavItem[] = [
         icon: Users,
         for: "admin"
     },
+    {
+        title: 'Document Requests',
+        href: '/document-requests',
+        icon: ScrollText,
+        for: "admin"
+    },
+
 
     {
         title: 'Request Document',

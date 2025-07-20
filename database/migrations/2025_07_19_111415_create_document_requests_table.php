@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('document_type');
             $table->string('purpose');
             $table->text('notes')->nullable();
-            $table->string('valid_id_path');
             $table->date('preferred_pickup')->nullable();
 
             $table->enum('status', ['Pending', 'Under Review', 'Approved', 'Ready for Pickup', 'Declined', 'Completed'])

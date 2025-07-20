@@ -1,4 +1,3 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -16,7 +15,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useForm } from "@inertiajs/react";
-import { FormEvent } from "react";
+import { FormEvent, useState, useEffect } from "react";
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner";
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { ChevronDownIcon } from "lucide-react";
 
 
 const documentType = [
@@ -29,6 +37,10 @@ const documentType = [
 interface MyProps {
     auth: {
         user: User
+    }, 
+    flash: {
+        success: string,
+        error: string
     }
 } 
 
@@ -36,18 +48,30 @@ interface MyProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Request Document',
-        href: '/dashboard',
+        href: '/request-document',
     },
 ];
 
 export default function Dashboard() {
-    const { auth : { user } } = usePage<PageProps & MyProps>().props;
-    const { data, setData, post, processing, errors, setError, reset } = useForm({
+    const [open, setOpen] = useState(false)
+    const [date, setDate] = useState<Date | undefined>(undefined)
+    const { flash } = usePage<PageProps & MyProps>().props;
+    const { data, setData, post, processing, errors, setError, reset, clearErrors } = useForm({
         document_type: '',
         purpose: '',
         notes: '',
         preferred_pickup: '',
     });
+
+    useEffect(() => {
+        flash.success && toast(flash.success);
+    }, [flash]);
+
+    useEffect(() => {
+        if (!date) return;
+        setData('preferred_pickup', date.toISOString());
+    }, [date]);
+
 
     function submit(e: FormEvent) {
         e.preventDefault();
@@ -62,20 +86,26 @@ export default function Dashboard() {
             return;
         }
 
+        if (!date) {
+            setError('preferred_pickup', 'Set a pickup date');
+            return;
+        }
+
         const now = new Date();
         const twoDaysFromNowMs= now.setDate(now.getDate() + 2);
-
-        const dateSelected = new Date(data.preferred_pickup);
+        const dateSelected = new Date(date);
         const dateSelectedMs = dateSelected.setDate(dateSelected.getDate());
 
-        if (dateSelectedMs < twoDaysFromNowMs || !data.preferred_pickup) {
+        if (dateSelectedMs < twoDaysFromNowMs) {
             setError('preferred_pickup', 'Preferred pickup date must be at least 3 days from today.'); 
             return;  
         }
 
-        post("/document-request", {
+        post("/document-requests", {
             onFinish: () => {
-                reset();
+                reset("purpose", "notes", "preferred_pickup");
+                setDate(undefined);
+                clearErrors();
             }
         });
     }
@@ -122,11 +152,31 @@ export default function Dashboard() {
 
                         <div className="flex flex-col gap-2">
                             <Label>Preferred Pickup Date (optional)</Label>
-                            <Input
-                                type="date"
-                                value={data.preferred_pickup}
-                                onChange={(e) => setData("preferred_pickup", e.target.value)}
-                            />
+
+                            <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        id="date"
+                                        className="w-fukk justify-between border font-normal bg-background text-primary hover:bg-secondary"
+                                    >
+                                        {date ? date.toLocaleDateString() : "Select date"}
+                                        <ChevronDownIcon />
+                                    </Button>
+                                    
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                                    <Calendar
+                                        required
+                                        mode="single"
+                                        selected={date}
+                                        captionLayout="dropdown"
+                                        onSelect={(date: Date) => {
+                                            setDate(date);
+                                            setOpen(false);
+                                        }}
+                                    />
+                                </PopoverContent>
+                            </Popover>
                             {errors.preferred_pickup && <p className="text-red-500 text-sm">{errors.preferred_pickup}</p>}
                         </div>
 

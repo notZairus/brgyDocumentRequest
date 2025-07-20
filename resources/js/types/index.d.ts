@@ -44,6 +44,24 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+
+export type DocumentRequest = {
+  id: number,
+  user_id: number,
+  document_type: string,
+  purpose: string,
+  notes: string,
+  preferred_pickup: string,
+  user_name?: string,
+  status: 'Pending' | 'Under Review' | 'Approved' | 'Ready for Pickup' | 'Declined' | 'Completed'
+  created_at: string,
+  update_at: string,
+}
+
+
+
+
+
 export interface PaginationLink {
     active: boolean,
     label: string,
@@ -56,3 +74,5 @@ export interface Pagination<T = unknown> {
     links: PaginationLink[]
     [key:string]: unknown
 } 
+
+
