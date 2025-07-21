@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 use App\Models\DocumentRequest;
+use App\Models\ActivityLog;
 
 
 class User extends Authenticatable
@@ -54,5 +55,9 @@ class User extends Authenticatable
 
     public function document_requests() {
         return $this->hasMany(DocumentRequest::class);
+    }
+
+    public function activity_logs() {
+        return $this->hasMany(ActivityLogs::class);
     }
 }

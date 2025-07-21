@@ -1,22 +1,19 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage, useForm } from '@inertiajs/react';
-import { PageProps } from "@inertiajs/core";
-import type { User } from "@/types/index.d.ts";
+import type { User, MyPageProps } from "@/types/index.d.ts";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 
 
-type MyType = {
-    auth: {
-        user: User
-    },
+interface CustomPageProps {
     user: User,
 }
 
 
+
 export default function VerifyAccounts() {
-    const { auth, user } = usePage<PageProps & MyType>().props;
+    const { auth, user } = usePage<MyPageProps & CustomPageProps>().props;
     const { patch, delete: destroy } = useForm({
         email: '',
         password: '',

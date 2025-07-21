@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -65,19 +66,35 @@ class VerifyUserController extends Controller
 
 
     public function serveFrontId(User $user) {
-        if (!file_exists(storage_path('app/private/ids/'. $user->email . '/'))) {
+        $dir = storage_path('app/private/ids/'. $user->email . '/');
+
+        if (!file_exists($dir)) {
             abort(404);
         }
 
-        return response()->file(storage_path('app/private/ids/'. $user->email . '/front.jpg'));
+        $matching_file = collect(File::files($dir))->first(function ($file) {
+            return pathinfo($file, PATHINFO_FILENAME) == "front";
+        });
+
+        return response()->file(
+            $matching_file->getRealPath()
+        );
     }
 
     public function serveBackId(User $user) {
-        if (!file_exists(storage_path('app/private/ids/'. $user->email . '/'))) {
+        $dir = storage_path('app/private/ids/'. $user->email . '/');
+
+        if (!file_exists($dir)) {
             abort(404);
         }
-        
-        return response()->file(storage_path('app/private/ids/'. $user->email . '/back.jpg'));
+
+        $matching_file = collect(File::files($dir))->first(function ($file) {
+            return pathinfo($file, PATHINFO_FILENAME) == "back";
+        });
+
+        return response()->file(
+            $matching_file->getRealPath()
+        );
     }
 }
 

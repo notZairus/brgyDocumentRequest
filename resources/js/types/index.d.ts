@@ -1,5 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
+import { PageProps } from "@inertiajs/core";
 
 export interface Auth {
     user: User;
@@ -56,6 +57,7 @@ export type DocumentRequest = {
   status: 'Pending' | 'Under Review' | 'Approved' | 'Ready for Pickup' | 'Declined' | 'Completed'
   created_at: string,
   update_at: string,
+  user?: User
 }
 
 
@@ -76,3 +78,9 @@ export interface Pagination<T = unknown> {
 } 
 
 
+export interface MyPageProps extends PageProps {
+    auth: {
+        user: User
+    }
+    [key: string]: unknown
+}

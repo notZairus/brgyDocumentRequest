@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\DocumentRequest;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
 
@@ -49,7 +51,47 @@ class DocumentRequestController extends Controller
         return back()->with('success', 'Document request submitted successfully.');
     }
 
-    public function show(DocumentRequest $document_request) {
-        dd($document_request->getAttributes());
+    public function show(DocumentRequest $document_request) 
+    {
+        if ($document_request->status != "Pending") {
+            $document_request->load('user');
+            return Inertia::render('document-requests/show', [
+                'documentRequest' => $document_request
+            ]);
+        }
+
+        ActivityLog::create([
+            'action' => 'Reviewed',
+            'user_id' => Auth::user()->id,
+            'document_request_id' => $document_request->id,
+        ]);
+
+        $document_request->update([
+            'status' => 'Under Review',
+            'updated_at' => now()
+        ]);
+
+        $document_request->load('user');
+
+        return Inertia::render('document-requests/show', [
+            'documentRequest' => $document_request
+        ]);
+    }
+
+    public function update(DocumentRequest $document_request, Request $request) 
+    {
+        ActivityLog::create([
+            'action' => $request->get('action') ? $request->get('action') : "Approved",
+            'user_id' => Auth::user()->id,
+            'reason' => $request->get('reason') ? $request->get('reason') : null,
+            'document_request_id' => $document_request->id,
+        ]);
+
+        $document_request->update([
+            'status' => $request->get('action') ? $request->get('action') : "Approved",
+            'updated_at' => now()
+        ]);
+
+        return redirect('/document-requests');
     }
 }

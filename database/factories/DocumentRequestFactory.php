@@ -29,4 +29,10 @@ class DocumentRequestFactory extends Factory
             'status' => $this->faker->randomElement($statuses),
         ];
     }
+
+    public function pending() {
+        return $this->state(fn ($attributes) => [
+            'status' => 'Pending',        
+        ]);
+    }
 }
