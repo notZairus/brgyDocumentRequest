@@ -86,7 +86,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                {user.is_admin && <NavFooter items={footerNavItems} className="mt-auto" /> }
+                {user.is_admin ? <NavFooter items={footerNavItems} className="mt-auto" /> : null }
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DocumentRequestReviewed;
 
 
 
@@ -15,6 +17,10 @@ class DocumentRequestController extends Controller
 {
     public function index() 
     {
+        if (!Auth::user()->is_admin) {
+            return redirect('/my-requests');
+        }
+
         $allDR = DocumentRequest::with('user')->get();
 
         $mapped = collect($allDR)->map(function ($rd) {
@@ -91,6 +97,10 @@ class DocumentRequestController extends Controller
             'status' => $request->get('action') ? $request->get('action') : "Approved",
             'updated_at' => now()
         ]);
+
+        $document_request->load('user');
+
+        Mail::to($document_request->user->email)->queue(new DocumentRequestReviewed($document_request));
 
         return redirect('/document-requests');
     }
