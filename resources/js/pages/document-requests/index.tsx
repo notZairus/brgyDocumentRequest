@@ -5,7 +5,8 @@ import { columns } from "./table/columns";
 import { DataTable } from "./table/data-table";
 import type { DocumentRequest } from "@/types/index.d.ts";
 import { usePage } from "@inertiajs/react";
-
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -22,9 +23,20 @@ type UsePageProps = {
 
 
 
-
 export default function index() {
-    const { documentRequests: data } = usePage<UsePageProps>().props;
+    const { documentRequests } = usePage<UsePageProps>().props;
+    const [data, setData] = useState<DocumentRequest[]>([...documentRequests]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            axios.get('/poll/document-requests').then(response => {
+                setData(response.data.documentRequests);
+            })
+        }, (10000));
+
+        return () => clearInterval(interval);
+    }, [])
+
 
     return (
         <>

@@ -3,9 +3,10 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { Users, LayoutGrid, ShieldAlert, ScrollText } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { Users, LayoutGrid, ShieldAlert, ScrollText, List, Logs, ListChecks } from 'lucide-react';
 import AppLogo from './app-logo';
+import { MyPageProps } from "@/types/index.d";
 
 
 
@@ -17,32 +18,30 @@ const mainNavItems: NavItem[] = [
         for: "all"
     },
 
-
-    {
-        title: 'Verify Accounts',
-        href: '/verify-accounts',
-        icon: ShieldAlert,
-        for: "admin"
-    },
-    {
-        title: 'Manage Users',
-        href: '/users',
-        icon: Users,
-        for: "admin"
-    },
     {
         title: 'Document Requests',
         href: '/document-requests',
         icon: ScrollText,
         for: "admin"
     },
-
+    {
+        title: 'Verify Accounts',
+        href: '/verify-accounts',
+        icon: ShieldAlert,
+        for: "admin"
+    },
 
     {
         title: 'Request Document',
         href: '/request-document',
+        icon: List,
+        for: "user/verified"
+    },
+    {
+        title: 'My Requests',
+        href: '/my-requests',
         icon: ScrollText,
-        for: "user"
+        for: "user/verified"
     },
 
 
@@ -51,19 +50,23 @@ const mainNavItems: NavItem[] = [
 ];
 
 const footerNavItems: NavItem[] = [
-    // {
-    //     title: 'Repository',
-    //     href: 'https://github.com/laravel/react-starter-kit',
-    //     icon: Folder,
-    // },
-    // {
-    //     title: 'Documentation',
-    //     href: 'https://laravel.com/docs/starter-kits#react',
-    //     icon: BookOpen,
-    // },
+    {
+        title: 'Manage Users',
+        href: '/users',
+        icon: Users,
+        for: "admin"
+    },
+    {
+        title: 'Activity Logs',
+        href: '/logs',
+        icon: Logs,
+        for: "admin"
+    },
 ];
 
 export function AppSidebar() {
+    const { auth: { user }} = usePage<MyPageProps>().props;
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -83,7 +86,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                {user.is_admin && <NavFooter items={footerNavItems} className="mt-auto" /> }
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

@@ -2,17 +2,18 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { PageProps } from "@inertiajs/core";
-import type { User } from "@/types/index.d.ts";
+import type { User, MyPageProps } from "@/types/index.d.ts";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 
-
-interface MyProps {
-    auth: {
-        user: User
-    }
+interface CustomProps {
+    totalRequests: number;
+    totalVerifications: number;
+    pendingRequests: number;
+    approvedToday: number;
+    declinedToday: number;
 } 
-
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -22,26 +23,109 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard() {
-    const { auth : { user } } = usePage<PageProps & MyProps>().props;
+    const { 
+        auth : { user }, 
+        totalRequests, 
+        totalVerifications, 
+        pendingRequests, 
+        approvedToday, 
+        declinedToday 
+    } = usePage<MyPageProps & CustomProps>().props;
+
+    const [data, setData] = useState<CustomProps>({
+        totalRequests, 
+        totalVerifications, 
+        pendingRequests, 
+        approvedToday, 
+        declinedToday 
+    });
+
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        axios.get('/poll/dashboard-data').then(response => {
+            setData(response.data);
+        });
+      }, (5000));
+    
+      return () => {
+        clearInterval(interval);
+      }
+    }, [])
+    
+
+
 
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Dashboard" />
     
-                <main className="w-full min-h-dvh p-4">
+                <main className="w-full p-4 pb-8">
                     <div>
                         <p className="text-4xl">Hello, { user.name }</p>
                         {user.is_admin ? (
                             <p className="text-foreground/40 mt-1 text-lg">Administrator</p>
                         ) : null}
+                         { !user.is_admin ?
+                        (
+                            user.verified_at ? (
+                                <p className="text-foreground/40 mt-1 text-lg">Verified User</p>
+                            ) : (
+                                <p className="text-foreground/40 mt-1 text-lg">Unverified User</p>
+                            )
+                        ) : null}
                     </div>
     
-                    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 auto-rows-[100px] mt-8">
-                        <div className="col-span-full">
-                            
+                    { user.is_admin && 
+                        <div className="w-full mt-8 space-y-4">
+                            <div className="w-full space-x-4 space-y-4">
+                                <div className="w-full flex flex-wrap gap-4">
+                                    
+                                    <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
+                                        <div>
+                                            <p className="text-muted-foreground">Total Requests</p>
+                                            <p className="text-4xl font-semibold text-primary">{data.totalRequests}</p> {/* replace with {totalRequests} */}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">All-time submitted requests</p>
+                                    </div>
+
+                                    <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
+                                        <div>
+                                            <p className="text-muted-foreground">Pending Verifications</p>
+                                            <p className="text-4xl font-semibold text-green-600">{data.totalVerifications}</p> {/* replace with {pendingVerifications} */}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Accounts waiting for verification</p>
+                                    </div>
+
+                                    <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
+                                        <div>
+                                            <p className="text-muted-foreground">Waiting  Requests</p>
+                                            <p className="text-4xl font-semibold text-red-700">{data.pendingRequests}</p> {/* replace with {pendingRequests} */}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Document requests not yet approved</p>
+                                    </div>
+                                </div>
+                                <div className="w-full flex flex-wrap gap-4">
+                                    <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
+                                        <div>
+                                            <p className="text-muted-foreground">Approved Today</p>
+                                            <p className="text-4xl font-semibold text-blue-400">{data.approvedToday}</p> {/* replace with {pendingRequests} */}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Document requests not yet approved</p>
+                                    </div>
+
+                                    <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
+                                        <div>
+                                            <p className="text-muted-foreground">Declined Today</p>
+                                            <p className="text-4xl font-semibold text-red-700">{data.declinedToday}</p> {/* replace with {pendingRequests} */}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Document requests not yet approved</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </main>
     
             </AppLayout>

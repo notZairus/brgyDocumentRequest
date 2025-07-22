@@ -27,16 +27,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
@@ -58,8 +48,6 @@ export function DataTable<TData, TValue>({
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-    const [rowSelection, setRowSelection] = useState({});
-    const [columnToFilter, setColumnToFilter] = useState('user_name');
 
     const table = useReactTable({
         data,
@@ -71,54 +59,25 @@ export function DataTable<TData, TValue>({
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
         state: {
             sorting,
             columnFilters,
             columnVisibility,
-            rowSelection,
         },
     })
 
 
     return (
         <>
-            <div className="text-muted-foreground flex-1 text-sm">
-                {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                {table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
             <div className="flex items-center py-4">
-                <div className="flex space-x-4">
-                    <Input
-                        placeholder="Search..."
-                        value={(table.getColumn(columnToFilter)?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn(columnToFilter)?.setFilterValue(event.target.value)
-                        }
-                        className="w-[300px]"
-                    />
-
-                    <Select
-                        value={columnToFilter}
-                        onValueChange={(val) => {
-                            table.getColumn(columnToFilter)?.setFilterValue("");
-                            setColumnToFilter(val)
-                        }}
-                    >
-                        <SelectTrigger className="w-[160px]">
-                            <SelectValue placeholder="Column to Filter" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Columns</SelectLabel>
-                                <SelectItem value="user_name">Name</SelectItem>
-                                <SelectItem value="document_type">Document Type</SelectItem>
-                                <SelectItem value="status">Status</SelectItem>
-                                <SelectItem value="created_at">Date</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
+                <Input
+                    placeholder="Search User Name..."
+                    value={(table.getColumn("user_name")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) =>
+                        table.getColumn("user_name")?.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm"
+                />
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -183,9 +142,9 @@ export function DataTable<TData, TValue>({
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
-                                        <Link href={`/document-requests/${row.getValue('id')}`}>
+                                        {/* <Link href={`/document-requests/${row.getValue('id')}`}> */}
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </Link>
+                                        {/* </Link> */}
                                     </TableCell>
                                 ))}
                             </TableRow>

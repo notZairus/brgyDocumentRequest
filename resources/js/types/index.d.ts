@@ -21,7 +21,7 @@ export interface NavItem {
     href: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
-    for?: "all" | "admin" | "user"
+    for?: "all" | "admin" | "user/verified" | "user/unverified"
 }
 
 export interface SharedData {
@@ -46,21 +46,29 @@ export interface User {
 }
 
 
-export type DocumentRequest = {
-  id: number,
-  user_id: number,
-  document_type: string,
-  purpose: string,
-  notes: string,
-  preferred_pickup: string,
-  user_name?: string,
+export interface DocumentRequest {
+  id: number;
+  user_id: number;
+  document_type: string;
+  purpose: string;
+  notes: string;
+  preferred_pickup: string;
+  user_name?: string;
   status: 'Pending' | 'Under Review' | 'Approved' | 'Ready for Pickup' | 'Declined' | 'Completed'
-  created_at: string,
-  update_at: string,
-  user?: User
+  created_at: string;
+  update_at: string;
+  user?: User;
 }
 
-
+export interface ActivityLog {
+    id: number;
+    user_id: number;
+    document_request_id: number;
+    reason: string | null;
+    created_at: string;
+    user?: User[];
+    user_name?: string;
+}
 
 
 

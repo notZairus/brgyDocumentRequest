@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+
+use App\Models\User;
+use App\Models\DocumentRequest;
+
 
 class PollingController extends Controller
 {
@@ -18,4 +21,18 @@ class PollingController extends Controller
             'unverifiedUsers' => $unverified_users
         ]);
     }
+
+    public function getDocumentRequests() {
+        $allDR = DocumentRequest::with('user')->get();
+
+        $mapped = collect($allDR)->map(function ($rd) {
+            $rd->user_name = $rd->user->name;
+            return $rd;
+        });
+
+        return response()->json([
+            'documentRequests' => $mapped
+        ]);
+    }
 }
+

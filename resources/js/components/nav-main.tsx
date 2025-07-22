@@ -33,9 +33,19 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             return SidebarMenu
                         }
 
-                        if (!user.is_admin && item.for === "user") {
-                            return SidebarMenu;
+                        if (!user.is_admin) {
+                            if (!user.verified_at && item.for === "user/unverified") {
+                                return SidebarMenu;
+                            }
                         }
+
+                        if (!user.is_admin) {
+                            if (user.verified_at && item.for === "user/verified") {
+                                return SidebarMenu;
+                            }
+                        }
+
+                        
                     })
                 }
             </SidebarMenu>
