@@ -29,7 +29,7 @@ interface CustomPageProps {
 
 
 export default function show() {
-    const { documentRequest } = usePage<MyPageProps & CustomPageProps>().props;
+    const { documentRequest, auth: { user } } = usePage<MyPageProps & CustomPageProps>().props;
     const [showDeclineReason, setShowDeclineReason] = useState(false);
     const { data, setData, patch } = useForm({
         action: '',
@@ -82,10 +82,10 @@ export default function show() {
                         <div className="mt-8">
                             <p>Valid ID:</p>
                             <div className=" mt-2 flex gap-4 rounded flex-wrap lg:max-w-3xl">
-                                <div className="flex-1 bg-white/20 min-w-[200px] overflow-hidden rounded">
+                                <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15">
                                     <img src={`/getId/${documentRequest.user?.id}/front`} alt="front id" />
                                 </div>
-                                <div className="flex-1 bg-white/20 min-w-[200px] overflow-hidden rounded">
+                                <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15">
                                     <img src={`/getId/${documentRequest.user?.id}/back`} alt="front id" />
                                 </div>
                             </div>
@@ -93,7 +93,7 @@ export default function show() {
         
                         
     
-                        { documentRequest.status === "Pending" || documentRequest.status === "Under Review" ?
+                        {user.is_admin && (documentRequest.status === "Pending" || documentRequest.status === "Under Review") ?
                             <>
                                 <Separator className="my-6" />
                                 <div className="sm:p-4 border rounded-xl shadow-sm space-y-4">
@@ -176,7 +176,7 @@ export default function show() {
                             </> : null
                         }
     
-                        {documentRequest.status === "Approved" ? (
+                        {user.is_admin && documentRequest.status === "Approved" ? (
                             <>
                                 <Separator className="my-6" />
                                 <div className="sm:p-4 border rounded-xl shadow-sm space-y-4">
