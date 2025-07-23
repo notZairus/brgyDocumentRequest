@@ -14,13 +14,27 @@ use App\Models\User;
 use App\Mail\TestMail;
 
 
-
-
+// no gate
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+// admin only
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/verify-accounts', [VerifyUserController::class, 'index']);
+    Route::get('/document-requests', [DocumentRequestController::class, 'index']);
+    Route::get('/logs', [ActivityLogController::class, 'index']);
+    Route::get('/users', [UserController::class, 'index']);
+
+    Route::patch('/document-requests/{document_request}', [DocumentRequestController::class, 'update']);
+
+    Route::get('/verify-accounts/{user}', [VerifyUserController::class, 'show']);
+    Route::patch('/verify-accounts/{user}', [VerifyUserController::class, 'patch']);
+    Route::delete('/verify-accounts/{user}', [VerifyUserController::class, 'destroy']);
+});
+
+// authenticated
+Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {
 
         $is_admin = Auth::user()->is_admin;
@@ -40,38 +54,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
             "completedRequests" => DocumentRequest::where('user_id', Auth::user()->id)->where('status', 'Completed')->count(),
             "pendingRequests" => DocumentRequest::where('user_id', Auth::user()->id)->whereIn('status', ['Pending', 'Under Review'])->count(),
         ]);
-
-
         
     })->name('dashboard');
+
+    Route::get('/request-document', [DocumentRequestController::class, 'create']);
+    Route::post('/document-requests', [DocumentRequestController::class, 'store']);
+    Route::get('/document-requests/{document_request}', [DocumentRequestController::class, 'show'])
+        ->can('view', 'document_request');
+
+    Route::get('/users/{user}', [UserController::class, 'show'])
+        ->can('show', 'user');
+    Route::get('/my-requests', [UserController::class, 'requests']);
 });
-
-
-
-Route::get('/verify-accounts', [VerifyUserController::class, 'index']);
-Route::get('/verify-accounts/{user}', [VerifyUserController::class, 'show']);
-Route::patch('/verify-accounts/{user}', [VerifyUserController::class, 'patch']);
-Route::delete('/verify-accounts/{user}', [VerifyUserController::class, 'destroy']);
-
-
-Route::get('/request-document', [DocumentRequestController::class, 'create']);
-Route::get('/document-requests', [DocumentRequestController::class, 'index']);
-Route::post('/document-requests', [DocumentRequestController::class, 'store']);
-Route::patch('/document-requests/{document_request}', [DocumentRequestController::class, 'update']);
-Route::get('/document-requests/{document_request}', [DocumentRequestController::class, 'show']);
-
-
-Route::get('/logs', [ActivityLogController::class, 'index']);
-
-
-Route::get('/users', [UserController::class, 'index']);
-Route::get('/users/{user}', [UserController::class, 'show']);
-Route::get('/my-requests', [UserController::class, 'requests']);
-
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/api.php';
-
-
-

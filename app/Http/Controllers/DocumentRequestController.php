@@ -33,7 +33,6 @@ class DocumentRequestController extends Controller
         ]);
     }
 
-
     public function create()
     {
         return Inertia::render('document-requests/create');
@@ -86,19 +85,19 @@ class DocumentRequestController extends Controller
 
     public function update(DocumentRequest $document_request, Request $request) 
     {
-        ActivityLog::create([
-            'action' => $request->get('action') ? $request->get('action') : "Approved",
-            'user_id' => Auth::user()->id,
-            'reason' => $request->get('reason') ? $request->get('reason') : null,
-            'document_request_id' => $document_request->id,
-        ]);
-
         $document_request->update([
             'status' => $request->get('action') ? $request->get('action') : "Approved",
             'updated_at' => now()
         ]);
 
         $document_request->load('user');
+
+        ActivityLog::create([
+            'action' => $request->get('action'),
+            'user_id' => Auth::user()->id,
+            'reason' => $request->get('reason') ? $request->get('reason') : null,
+            'document_request_id' => $document_request->id,
+        ]);
 
         Mail::to($document_request->user->email)->queue(new DocumentRequestReviewed($document_request));
 

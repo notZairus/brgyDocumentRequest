@@ -11,7 +11,7 @@ import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Menu, Search, ScrollText, ShieldAlert, List, Users, Logs } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
@@ -20,6 +20,43 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Document Requests',
+        href: '/document-requests',
+        icon: ScrollText,
+        for: "admin"
+    },
+    {
+        title: 'Verify Accounts',
+        href: '/verify-accounts',
+        icon: ShieldAlert,
+        for: "admin"
+    },
+
+    {
+        title: 'Request Document',
+        href: '/request-document',
+        icon: List,
+        for: "user/verified"
+    },
+    {
+        title: 'My Requests',
+        href: '/my-requests',
+        icon: ScrollText,
+        for: "user/verified"
+    },
+    {
+        title: 'Manage Users',
+        href: '/users',
+        icon: Users,
+        for: "admin"
+    },
+    {
+        title: 'Activity Logs',
+        href: '/logs',
+        icon: Logs,
+        for: "admin"
     },
 ];
 

@@ -22,10 +22,6 @@ class VerifyUserController extends Controller
     }
 
     public function show(User $user) {
-        if (!file_exists(storage_path('app/private/ids/'. $user->email . '/'))) {
-            abort(404);
-        }
-
         return Inertia::render('verify-users/show', ["user" => $user]);
     }
 
