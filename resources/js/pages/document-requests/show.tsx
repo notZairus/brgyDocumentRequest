@@ -90,8 +90,6 @@ export default function show() {
                                 </div>
                             </div>
                         </div>
-        
-                        
     
                         {user.is_admin && (documentRequest.status === "Pending" || documentRequest.status === "Under Review") ?
                             <>
@@ -192,6 +190,44 @@ export default function show() {
                                                 size="lg"
                                                 >
                                                     Ready For Pickup
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This will permanently delete your account
+                                                    and remove your data from our servers.
+                                                </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={handlePatch}>Continue</AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                        
+                                    </div>
+                                </div>
+                            </>
+                        ) : null}
+
+                        {user.is_admin && documentRequest.status === "Ready for Pickup" ? (
+                            <>
+                                <Separator className="my-6" />
+                                <div className="sm:p-4 border rounded-xl shadow-sm space-y-4">
+                                    <div className="flex flex-col sm:flex-row gap-4">
+
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button 
+                                                onClick={() => {
+                                                    setData('action', 'Completed');
+                                                }} 
+                                                variant="default"
+                                                size="lg"
+                                                >
+                                                    Completed
                                                 </Button>
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
