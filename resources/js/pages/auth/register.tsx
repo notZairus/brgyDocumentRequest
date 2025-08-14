@@ -158,7 +158,7 @@ export default function Register() {
                             }}
                         />
 
-                        <div className="aspect-5/3  border rounded"
+                        <div className="aspect-5/3 border rounded"
                             onClick={() => {
                                 const img_input: any = brgyIdFrontRef.current;
                                 img_input.click();

@@ -1,14 +1,12 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, usePage, useForm } from '@inertiajs/react';
+import { Head, usePage, useForm, Link } from '@inertiajs/react';
 import type { MyPageProps, DocumentRequest } from "@/types/index.d.ts";
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import Modal from "@/components/modal";
 import { useState } from "react"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +33,8 @@ export default function show() {
         action: '',
         reason: '',
     });
-    const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+
+    console.log(documentRequest);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -73,8 +72,10 @@ export default function show() {
         
                         <div className="space-y-2">
                             <p>Requested By: <span className="text-lg font-medium">{documentRequest.user?.name} ( {documentRequest.user?.email} )</span></p>
-                            <p>Document Type: <span className="text-lg font-medium">{documentRequest.document_type}</span></p>
                             <p>Requested On: <span className="text-lg font-medium">{format(documentRequest.created_at, "MMMM d, yyyy")}</span></p>
+
+                            <p className="mt-8">Name: <span className="text-lg font-medium">{documentRequest.name as string}</span></p>
+                            <p>Document Type: <span className="text-lg font-medium">{documentRequest.document_type}</span></p>
                             <p>Purpose: <span className="text-lg font-medium">{documentRequest.purpose}</span></p>
                             {documentRequest.notes && <p>Additional Notes: <span className="text-lg font-medium">{documentRequest.notes}</span></p>}
                         </div>
@@ -83,10 +84,24 @@ export default function show() {
                             <p>Valid ID:</p>
                             <div className=" mt-2 flex gap-4 rounded flex-wrap lg:max-w-3xl">
                                 <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15">
-                                    <img src={`/getId/${documentRequest.user?.id}/front`} alt="front id" />
+                                    <img 
+                                        src={documentRequest.user?.name === documentRequest.name 
+                                            ? `/getId/${documentRequest.user?.id}/front`
+                                            : `/getOtherId/${documentRequest.id}/front`
+                                        } 
+                                        alt="front id" 
+                                        className="object-fit w-full h-full"
+                                    />
                                 </div>
                                 <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15">
-                                    <img src={`/getId/${documentRequest.user?.id}/back`} alt="front id" />
+                                    <img 
+                                        src={documentRequest.user?.name === documentRequest.name 
+                                            ? `/getId/${documentRequest.user?.id}/back`
+                                            : `/getOtherId/${documentRequest.id}/back`
+                                        } 
+                                        alt="front id" 
+                                        className="object-fit w-full h-full"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -109,6 +124,24 @@ export default function show() {
                                                 >
                                                     Approve Request
                                                 </Button>
+
+                                                {/* <Link
+                                                    href={`/document-requests/${documentRequest.id}`}
+                                                    method="patch"
+                                                    data={{
+                                                        action: 'Approved',
+                                                        reason: ''
+                                                    }}
+                                                    preserveScroll
+                                                >
+                                                    <Button
+                                                        variant="default"
+                                                        size="lg"
+                                                    >
+                                                        Approve Request
+                                                    </Button>
+                                                </Link> */}
+
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
                                                 <AlertDialogHeader>

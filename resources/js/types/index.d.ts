@@ -58,6 +58,7 @@ export interface DocumentRequest {
   created_at: string;
   update_at: string;
   user?: User;
+  [key: string]: unknown;
 }
 
 export interface ActivityLog {

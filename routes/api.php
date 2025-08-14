@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\VerifyUserController;
 use App\Http\Controllers\PollingController;
+use App\Http\Controllers\IdController;
 
 use App\Models\User;
 use App\Models\DocumentRequest;
@@ -11,8 +12,11 @@ use App\Models\DocumentRequest;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // serve the ids
-    Route::get('/getId/{user}/front', [VerifyUserController::class, 'serveFrontId']);
-    Route::get('/getId/{user}/back', [VerifyUserController::class, 'serveBackId']);
+    Route::get('/getId/{user}/front', [IdController::class, 'serveFrontId']);
+    Route::get('/getId/{user}/back', [IdController::class, 'serveBackId']);
+    Route::get('/getOtherId/{document_request}/front', [IdController::class, 'serveOtherFrontId']);
+    Route::get('/getOtherId/{document_request}/back', [IdController::class, 'serveOtherBackId']);
+    
 
 
     // data polling

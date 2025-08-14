@@ -1,0 +1,24 @@
+
+
+
+1. use Link for approve, decline, ready to pickup, complete of document request (done)
+2. use of Inertia with debounce for filtering???? (done)
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+////////
+
+
+1. allow user to request document of other person. 
+    i think i will give user to choose if the document request is for their own or for others.
+    if the doc req is for others, they will need to input the id, name, etc.
+    
+
+2. another page for captain to approve the document request 
+    the captain is the one who will approve the document request 
+        di naman ganto sa matictic, yung staff is gawa lang ng gawa 
+
+3. gcash integration
