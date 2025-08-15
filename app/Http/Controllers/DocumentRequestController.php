@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DocumentRequestReviewed;
+use Illuminate\Support\Facades\Validator;
 
 
 
@@ -38,14 +39,42 @@ class DocumentRequestController extends Controller
         return Inertia::render('document-requests/create');
     }
 
+
+//     document_type: string;
+//     purpose: string;
+//     notes: string;
+//     preferred_pickup: string;
+
+//     name?: string;
+//     brgyIdFront?: IdType | File | null;
+//     brgyIdBack?: IdType | File | null;
+
+//     // delivery feature (experimental)
+//     delivery_method: DeliveryMethod;
+//     delivery_address: string | null;
+//     total?: number;
+
     public function store(Request $request) 
     {
+        if ($request->get('delivery_method') == "Deliver") {
+            $validator = Validator::make($request->all(), [
+                'delivery_address' => ['required', 'min:8']
+            ]);
+
+            if ($validator->fails()) {
+                return back()->with('error', 'Invalid Delivery Address.');
+            }
+        }
+
         if (! $request->get('name')) {
             $validated_data = $request->validate([
                 "preferred_pickup" => ['required', 'date'],
                 "document_type" => ['required'],
                 "purpose" => ['required'],
                 "name" => [],
+                "delivery_method" => [],
+                "delivery_address" => [],
+                "total" => []
             ]);
 
             $new_doc_req = DocumentRequest::create([
@@ -55,6 +84,9 @@ class DocumentRequestController extends Controller
                 'purpose' => $validated_data['purpose'],
                 'notes' => $request->notes,
                 'preferred_pickup' => new \DateTime($request->preferred_pickup),
+                'delivery_method' => $validated_data['delivery_method'],
+                'delivery_address' => $validated_data['delivery_address'],
+                'total_amount' => $validated_data['total'],
             ]);
 
             return back()->with('success', 'Document request submitted successfully.');
@@ -69,6 +101,10 @@ class DocumentRequestController extends Controller
             "name" => ['required'],
             "brgyIdFront" => ['required'],
             "brgyIdBack" => ['required'],
+
+            "delivery_method" => [],
+            "delivery_address" => [],
+            "total" => []
         ]);
 
         $extension = $request->file('brgyIdFront')['file']->getClientOriginalExtension();
@@ -90,6 +126,9 @@ class DocumentRequestController extends Controller
             'purpose' => $validated_data['purpose'],
             'notes' => $request->notes,
             'preferred_pickup' => new \DateTime($request->preferred_pickup),
+            'delivery_method' => $validated_data['delivery_method'],
+            'delivery_address' => $validated_data['delivery_address'],
+            'total_amount' => $validated_data['total'],
         ]);
  
         return back()->with('success', 'Document request submitted successfully.');

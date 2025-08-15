@@ -1,0 +1,45 @@
+
+
+
+## Resident Side
+
+    Log in / Sign up
+
+    Request document (choose Pickup or Delivery)
+
+    System calculates total:
+
+    Document fee
+
+    Delivery fee (if selected) (what should the ui look like)
+
+    Pay via GCash through PayMongo
+
+    Wait for approval & processing
+
+    Delivery: Admin updates status manually (with optional tracking number)
+    or Pickup: Resident goes to barangay hall
+
+
+## Barangay Staff Side
+
+    View incoming requests
+
+    Verify payment via PayMongo dashboard or webhook
+
+    Process the document
+
+    If delivery:
+
+    Manually hand over to barangay staff or a courier
+
+    Mark status as Out for Delivery → Delivered
+
+    If pickup:
+
+    Mark status as Ready for Pickup → Completed
+
+
+
+
+// delivery feature

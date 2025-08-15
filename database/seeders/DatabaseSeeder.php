@@ -28,7 +28,6 @@ class DatabaseSeeder extends Seeder
             'password' => 'QZr8408o'
         ]);
 
-        DocumentRequest::factory(20)->pending()->create();
         
     }
 }

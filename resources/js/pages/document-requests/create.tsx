@@ -24,9 +24,21 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { ChevronDownIcon } from "lucide-react";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { imgToBase64 } from '@/lib/utils';
+import { availableDocuments } from "@/datas";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 
 
@@ -45,6 +57,8 @@ type IdType = {
     'file': File
 }
 
+type DeliveryMethod = "Pick-up" | "Deliver";
+
 type FormType = {
     document_type: string;
     purpose: string;
@@ -54,14 +68,12 @@ type FormType = {
     name?: string;
     brgyIdFront?: IdType | File | null;
     brgyIdBack?: IdType | File | null;
+
+    delivery_method: DeliveryMethod;
+    delivery_address: string | null;
+    total?: number;
 }
 
-
-const documentType = [
-    "Barangay Clearance", 
-    "Certificate of Indigency", 
-    "Certificate of Residency"
-];
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -69,6 +81,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/request-document',
     },
 ];
+
 
 export default function Dashboard() {
     const [open, setOpen] = useState(false)
@@ -83,17 +96,23 @@ export default function Dashboard() {
         name: '',
         brgyIdFront: null,
         brgyIdBack: null,
+
+        delivery_method: 'Pick-up',
+        delivery_address: null,
+        total: 0
     });
-    const [currentTab, setCurrentTab] = useState<string>('u');
 
     const brgyIdFrontRef = useRef(null);
     const brgyIdBackRef = useRef(null);
 
 
-
     useEffect(() => {
-        flash.success && toast(flash.success);
+        flash.success && toast.success(flash.success);
+        flash.error && toast.error(flash.error, {
+            description: 'Input a valid address'
+        });
     }, [flash]);
+
 
     useEffect(() => {
         if (!date) return;
@@ -101,26 +120,13 @@ export default function Dashboard() {
     }, [date]);
 
 
-    function handleTabChange(value: string) {
-        setCurrentTab('value');
-
-        if (value === 'u') {
-            setData('name', '');
-            setData('brgyIdFront', null);
-            setData('brgyIdBack', null);
-        }
-    }
-
-
     function submit(e: FormEvent) {
-        e.preventDefault();
-
         if(data.purpose.length < 4) {
             setError('purpose', 'This field is important. Please answer it properly.')
             return;
         };
 
-        if (!documentType.includes(data.document_type)) {
+        if (!availableDocuments.map((doc) => doc.type).includes(data.document_type)) {
             setError('document_type', "Request an available document.");
             return;
         }
@@ -142,22 +148,21 @@ export default function Dashboard() {
 
         post("/document-requests", {
             onFinish: () => {
-                reset("purpose", "notes", "preferred_pickup");
+                reset();
                 setDate(undefined);
                 clearErrors();
-            }
+            },
+            preserveScroll: true
         });
     }
 
     function submitOther(e: FormEvent) {
-        e.preventDefault();
-
         if(data.purpose.length < 4) {
             setError('purpose', 'This field is important. Please answer it properly.')
             return;
         };
 
-        if (!documentType.includes(data.document_type)) {
+        if (!availableDocuments.map((doc) => doc.type).includes(data.document_type)) {
             setError('document_type', "Request an available document.");
             return;
         }
@@ -197,10 +202,11 @@ export default function Dashboard() {
 
         post("/document-requests", {
             onFinish: () => {
-                reset("purpose", "notes", "preferred_pickup");
+                reset();
                 setDate(undefined);
                 clearErrors();
-            }
+            },
+            preserveScroll: true
         });
     }
 
@@ -211,26 +217,34 @@ export default function Dashboard() {
     
                 <main className="w-full p-4">
 
-                    <Tabs defaultValue="u" onValueChange={handleTabChange}>
+                    <Tabs defaultValue="u" onValueChange={() => reset()}>
                         <TabsList className="w:md bg-transparent lg:w-md mx-auto">
                             <TabsTrigger value="u" >For You</TabsTrigger>
                             <TabsTrigger value="other">For Others</TabsTrigger>
                         </TabsList>
                         <TabsContent value="u">
-                            <form onSubmit={submit} className="max-w-xl mx-auto space-y-4 my-8">
+                            <div className="max-w-xl mx-auto space-y-4 my-8">
                                 <div className="flex flex-col gap-2">
                                     <Label>Document Type</Label>
-                                    <Select onValueChange={(value) => setData("document_type", value)} required>
+                                    <Select 
+                                        onValueChange={(value) => {
+                                            setData("document_type", value);
+                                        }} 
+                                        required
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select document type"/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Barangay Clearance">Barangay Clearance</SelectItem>
-                                            <SelectItem value="Certificate of Indigency">Certificate of Indigency</SelectItem>
-                                            <SelectItem value="Certificate of Residency">Certificate of Residency</SelectItem>
+                                        {
+                                            availableDocuments.map(doc => (
+                                                <SelectItem value={doc.type}>{`${doc.type} (₱${doc.price}.00)`}</SelectItem>
+                                            ))
+                                        }
                                         </SelectContent>
                                     </Select>
                                     {errors.document_type && <p className="text-red-500 text-sm">{errors.document_type}</p>}
+                                    {/* { data.document_type && <p className="text-sm text-yellow-400">{ "Price: " + availableDocuments.find(doc => doc.type === data.document_type)?.price + ".00"}</p>} */}
                                 </div>
 
                                 <div className="flex flex-col gap-2">
@@ -260,7 +274,7 @@ export default function Dashboard() {
                                                 id="date"
                                                 className="w-fukk justify-between border font-normal bg-background text-primary hover:bg-secondary"
                                             >
-                                                {date ? date.toLocaleDateString() : "Select date"}
+                                                {data.preferred_pickup ? new Date(data.preferred_pickup).toLocaleDateString() : "Select date"}
                                                 <ChevronDownIcon />
                                             </Button>
                                             
@@ -281,13 +295,81 @@ export default function Dashboard() {
                                     {errors.preferred_pickup && <p className="text-red-500 text-sm">{errors.preferred_pickup}</p>}
                                 </div>
 
-                                <Button size="lg" className="mt-4" type="submit" disabled={processing}>
-                                    Submit Request
-                                </Button>
-                            </form>
+
+
+                                <div className="mt-4">
+                                    <Label>Delivery Method: </Label>
+                                    <RadioGroup 
+                                        defaultValue={data.delivery_method} 
+                                        className="flex gap-8 mt-2" 
+                                        onValueChange={(value) => {
+                                            setData('delivery_method', value as DeliveryMethod)
+                                        }}
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Pick-up" id="Pick-up" />
+                                            <Label htmlFor="Pick-up">Pick-up</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Deliver" id="Deliver" />
+                                            <Label htmlFor="Deliver">Deliver</Label>
+                                        </div>
+                                    </RadioGroup>
+
+                                    {   data.delivery_method === "Deliver" && (
+                                            <div className="flex flex-col gap-2 mt-8">
+                                                <Label>Delivery Address</Label>
+                                                <Input
+                                                    value={data.delivery_address ?? ""}
+                                                    onChange={(e) => setData("delivery_address", e.target.value)}
+                                                />
+                                                {errors.delivery_address && <p className="text-red-500 text-sm">{errors.delivery_address}</p>}
+                                            </div>
+                                        )   
+                                    }
+                                </div>
+                                
+
+                                
+
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button 
+                                            onClick={() => {
+                                                let docPrice = availableDocuments.find((doc) => doc.type == data.document_type)?.price ?? 0;
+                                                let shipping = data.delivery_method == 'Deliver' ? 50 : 0;
+                                                setData('total', docPrice + shipping);
+                                            }} 
+                                            variant="default"
+                                            size="lg"
+                                            className="mt-4"
+                                        >
+                                            Approve Request
+                                        </Button>
+
+
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action cannot be undone. This will permanently delete your account
+                                                and remove your data from our servers.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction onClick={submit}>Continue</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+
+                                
+                            </div>
                         </TabsContent>
                         <TabsContent value="other">
-                            <form onSubmit={submitOther} className="max-w-xl mx-auto space-y-4 my-8">
+                            <div className="max-w-xl mx-auto space-y-4 my-8">
                             
                                 <div className="flex flex-col gap-2">
                                     <Label>Name</Label>
@@ -324,7 +406,7 @@ export default function Dashboard() {
                                             }}
                                         />
                             
-                                        <div className="w-full h-full bg-white/30 rounded mt-1"
+                                        <div className="w-full h-full bg-white/15 rounded mt-1"
                                             onClick={() => {
                                                 const img_input: any = brgyIdFrontRef.current;
                                                 img_input.click();
@@ -375,7 +457,7 @@ export default function Dashboard() {
                                             }}
                                         />
                             
-                                        <div className="w-full h-full bg-white/30 rounded mt-1"
+                                        <div className="w-full h-full bg-white/15 rounded mt-1"
                                             onClick={() => {
                                                 const img_input: any = brgyIdBackRef.current;
                                                 img_input.click();
@@ -404,20 +486,24 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                             
-                                {/* /////////////////////////////////////////////////////////////////// */}
-                            
-                            
-                            
                                 <div className="flex flex-col gap-2">
                                     <Label>Document Type</Label>
-                                    <Select onValueChange={(value) => setData("document_type", value)} required>
+                                    <Select 
+                                        onValueChange={(value) => {
+                                            setData("document_type", value)
+                                        }} 
+                                    
+                                        required
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select document type"/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Barangay Clearance">Barangay Clearance</SelectItem>
-                                            <SelectItem value="Certificate of Indigency">Certificate of Indigency</SelectItem>
-                                            <SelectItem value="Certificate of Residency">Certificate of Residency</SelectItem>
+                                        {
+                                            availableDocuments.map(doc => (
+                                                <SelectItem value={doc.type}>{doc.type}</SelectItem>
+                                            ))
+                                        }
                                         </SelectContent>
                                     </Select>
                                     {errors.document_type && <p className="text-red-500 text-sm">{errors.document_type}</p>}
@@ -450,7 +536,7 @@ export default function Dashboard() {
                                                 id="date"
                                                 className="w-fukk justify-between border font-normal bg-background text-primary hover:bg-secondary"
                                             >
-                                                {date ? date.toLocaleDateString() : "Select date"}
+                                                {data.preferred_pickup ? new Date(data.preferred_pickup).toLocaleDateString() : "Select date"}
                                                 <ChevronDownIcon />
                                             </Button>
                                             
@@ -470,11 +556,75 @@ export default function Dashboard() {
                                     </Popover>
                                     {errors.preferred_pickup && <p className="text-red-500 text-sm">{errors.preferred_pickup}</p>}
                                 </div>
-                            
-                                <Button size="lg" className="mt-4" type="submit" disabled={processing}>
-                                    Submit Request
-                                </Button>
-                            </form>
+
+
+                                <div className="mt-4">
+                                    <Label>Delivery Method: </Label>
+                                    <RadioGroup 
+                                        defaultValue={data.delivery_method} 
+                                        className="flex gap-8 mt-2" 
+                                        onValueChange={(value) => {
+                                            setData('delivery_method', value as DeliveryMethod)
+                                        }}
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Pick-up" id="Pick-up" />
+                                            <Label htmlFor="Pick-up">Pick-up</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Deliver" id="Deliver" />
+                                            <Label htmlFor="Deliver">Deliver</Label>
+                                        </div>
+                                    </RadioGroup>
+
+                                    {   data.delivery_method === "Deliver" && (
+                                            <div className="flex flex-col gap-2 mt-8">
+                                                <Label>Delivery Address</Label>
+                                                <Input
+                                                    value={data.delivery_address ?? ""}
+                                                    onChange={(e) => setData("delivery_address", e.target.value)}
+                                                />
+                                                {errors.delivery_address && <p className="text-red-500 text-sm">{errors.delivery_address}</p>}
+                                            </div>
+                                        )   
+                                    }
+                                </div>
+                                
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button 
+                                            onClick={() => {
+                                                let docPrice = availableDocuments.find((doc) => doc.type == data.document_type)?.price ?? 0;
+                                                let shipping = data.delivery_method == 'Deliver' ? 50 : 0;
+                                                setData('total', docPrice + shipping);
+                                            }} 
+                                            variant="default"
+                                            size="lg"
+                                            className="mt-4"
+                                        >
+                                            Approve Request
+                                        </Button>
+
+
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action cannot be undone. This will permanently delete your account
+                                                and remove your data from our servers.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction onClick={submitOther}>Continue</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+
+
+                            </div>
                                 
 
                         </TabsContent>

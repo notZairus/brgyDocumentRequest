@@ -125,23 +125,6 @@ export default function show() {
                                                     Approve Request
                                                 </Button>
 
-                                                {/* <Link
-                                                    href={`/document-requests/${documentRequest.id}`}
-                                                    method="patch"
-                                                    data={{
-                                                        action: 'Approved',
-                                                        reason: ''
-                                                    }}
-                                                    preserveScroll
-                                                >
-                                                    <Button
-                                                        variant="default"
-                                                        size="lg"
-                                                    >
-                                                        Approve Request
-                                                    </Button>
-                                                </Link> */}
-
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
                                                 <AlertDialogHeader>
