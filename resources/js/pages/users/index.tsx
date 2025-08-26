@@ -5,6 +5,10 @@ import { PageProps } from "@inertiajs/core";
 import { format, formatDistance } from "date-fns";
 import type { User } from "@/types/index.d.ts";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -25,14 +29,44 @@ type MyType = {
     }
 }
 
+
 export default function Users() {
-    const { registeredUsers } = usePage<PageProps & MyType>().props;
+    const { registeredUsers: regUser } = usePage<PageProps & MyType>().props;
+    const [registeredUsers, setRegisteredUsers] = useState(regUser);
+    const [search, setSearch] = useState("");
+    
+
+    function handleSearch() {
+        if (search === "") {
+            setRegisteredUsers(regUser);
+            return;
+        }
+
+        axios.get('/users', {
+            params: {
+                search: search
+            },
+        }).then(data => {
+            setRegisteredUsers({
+                data: data.data.data,
+                links: data.data.links
+            });
+        });
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manage Users" />
 
             <main className="w-full p-4">
+
+                <div className="flex items-center w-full mb-4 gap-4">
+                    <Input className="max-w-lg" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)}/>
+                    <Button
+                        onClick={() => handleSearch()}
+                    >Search</Button>
+                </div>
+
                 { registeredUsers.data.length > 0 ? (
                     <>
                         <div className="w-full flex flex-col gap-2 md:h-[360px]">

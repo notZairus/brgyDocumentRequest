@@ -28,7 +28,7 @@ export default function Users() {
     ];
 
     console.log(user);
-
+    
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Verify Account" />
@@ -56,25 +56,27 @@ export default function Users() {
                         </div>
                     </div>
 
-                    <div className="flex-1 w-full bg-red-400/15 rounded border-primary/15 border min-h-20 p-4" >
-                        <h1 className="font-bold text-xl mb-4">Penalties</h1>
-                        <ul>
-                            {user.penalties.map((penalty) => (
-                                <li key={penalty.id} className="cursor-pointer p-4 hover:bg-primary/10 rounded border-b-1 border-primary/15" >
-                                    <Link href={`/document-requests/${penalty.document_request_id}`}>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-bold">Document ID:</span>
-                                            <span>{penalty.document_request_id}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-bold">Reason:</span>
-                                            <span>{penalty.reason}</span>
-                                        </div>
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {   user.penalties.length > 0 &&
+                        <div className="flex-1 w-full bg-red-400/15 rounded border-primary/15 border min-h-20 p-4" >
+                            <h1 className="font-bold text-xl mb-4">Penalties</h1>
+                            <ul>
+                                {user.penalties.map((penalty) => (
+                                    <li key={penalty.id} className="cursor-pointer p-4 hover:bg-primary/10 rounded border-b-1 border-primary/15" >
+                                        <Link href={`/document-requests/${penalty.document_request_id}`}>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-bold">Document ID:</span>
+                                                <span>{penalty.document_request_id}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-bold">Reason:</span>
+                                                <span>{penalty.reason}</span>
+                                            </div>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    }
                 </div>
             </main>
         </AppLayout>

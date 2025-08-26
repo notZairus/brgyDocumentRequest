@@ -11,15 +11,29 @@ use App\Models\DocumentRequest;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $registered_users = User::whereNotNull('verified_at')
-            ->where('is_admin', 0)
-            ->paginate(5);
+        $regustered_users;
 
-        return Inertia::render('users/index', [
-            'registeredUsers' => $registered_users
-        ]);
+        if ($request->get('search')) {
+            $registered_users = User::whereNotNull('verified_at')
+                ->where('is_admin', 0)
+                ->where('name', 'like', '%' . $request->get('search') . '%')
+                ->paginate(5);
+
+            return response()->json($registered_users);
+
+        } else {
+            $registered_users = User::whereNotNull('verified_at')
+                ->where('is_admin', 0)
+                ->paginate(5);
+
+            return Inertia::render('users/index', [
+                'registeredUsers' => $registered_users
+            ]);
+        }
+
+        
     }
 
     public function show(User $user) {
