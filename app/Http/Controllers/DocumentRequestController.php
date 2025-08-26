@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DocumentRequestReviewed;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Enum;
+use App\StatusEnum;
 
 
 
@@ -56,24 +58,12 @@ class DocumentRequestController extends Controller
 
     public function store(Request $request) 
     {
-        if ($request->get('delivery_method') == "Deliver") {
-            $validator = Validator::make($request->all(), [
-                'delivery_address' => ['required', 'min:8']
-            ]);
-
-            if ($validator->fails()) {
-                return back()->with('error', 'Invalid Delivery Address.');
-            }
-        }
-
         if (! $request->get('name')) {
             $validated_data = $request->validate([
                 "preferred_pickup" => ['required', 'date'],
                 "document_type" => ['required'],
                 "purpose" => ['required'],
                 "name" => [],
-                "delivery_method" => [],
-                "delivery_address" => [],
                 "total" => []
             ]);
 
@@ -84,8 +74,6 @@ class DocumentRequestController extends Controller
                 'purpose' => $validated_data['purpose'],
                 'notes' => $request->notes,
                 'preferred_pickup' => new \DateTime($request->preferred_pickup),
-                'delivery_method' => $validated_data['delivery_method'],
-                'delivery_address' => $validated_data['delivery_address'],
                 'total_amount' => $validated_data['total'],
             ]);
 
@@ -102,8 +90,6 @@ class DocumentRequestController extends Controller
             "brgyIdFront" => ['required'],
             "brgyIdBack" => ['required'],
 
-            "delivery_method" => [],
-            "delivery_address" => [],
             "total" => []
         ]);
 
@@ -126,8 +112,6 @@ class DocumentRequestController extends Controller
             'purpose' => $validated_data['purpose'],
             'notes' => $request->notes,
             'preferred_pickup' => new \DateTime($request->preferred_pickup),
-            'delivery_method' => $validated_data['delivery_method'],
-            'delivery_address' => $validated_data['delivery_address'],
             'total_amount' => $validated_data['total'],
         ]);
  
@@ -136,38 +120,32 @@ class DocumentRequestController extends Controller
 
     public function show(DocumentRequest $document_request, Request $request) 
     {
-        if ($document_request->status != "Pending") {
-            $document_request->load('user');
-            return Inertia::render('document-requests/show', [
-                'documentRequest' => $document_request
-            ]);
-        }
-
-        ActivityLog::create([
-            'action' => 'Reviewed',
-            'user_id' => Auth::user()->id,
-            'document_request_id' => $document_request->id,
-        ]);
-
+        $document_request->load('user');
+        $document_request->load('penalty');
 
         if ($request->user()->getAttribute('is_admin')) {
+            ActivityLog::create([
+                'action' => 'Reviewed',
+                'user_id' => Auth::user()->id,
+                'document_request_id' => $document_request->id,
+            ]);
+
             $document_request->update([
-                'status' => 'Under Review',
+                'status' => StatusEnum::UNDER_REVIEW,
                 'updated_at' => now()
             ]);
         }
 
-        $document_request->load('user');
-
         return Inertia::render('document-requests/show', [
-            'documentRequest' => $document_request
+            'documentRequest' => $document_request,
+            'hasPenalty' => $document_request->penalty ? true : false,
         ]);
     }
 
     public function update(DocumentRequest $document_request, Request $request) 
     {
         $document_request->update([
-            'status' => $request->get('action') ? $request->get('action') : "Approved",
+            'status' => $request->get('action') ? $request->get('action') : StatusEnum::APPROVED,
             'updated_at' => now()
         ]);
 

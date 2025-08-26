@@ -33,6 +33,15 @@ export interface SharedData {
     [key: string]: unknown;
 }
 
+export interface Penalty {
+    id: number;
+    user_id: number;
+    document_request_id: number;
+    reason: number;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -42,6 +51,7 @@ export interface User {
     created_at: string;
     updated_at: string;
     is_admin: boolean;
+    penalties: Penalty[];
     [key: string]: unknown; // This allows for additional properties...
 }
 

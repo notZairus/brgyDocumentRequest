@@ -22,13 +22,9 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->date('preferred_pickup')->nullable();
 
-            $table->string('delivery_method')->nullable();
-            $table->string('delivery_address')->nullable();
             $table->decimal('total_amount', 8, 2)->default(0);
-            $table->decimal('payment', 8, 2)->default(0);
 
-            $table->enum('status', ['Pending', 'Under Review', 'Approved', 'Ready for Pickup', 'Declined', 'Completed'])
-                  ->default('Pending');
+            $table->string('status')->default('Pending');
 
             $table->timestamps();
         });

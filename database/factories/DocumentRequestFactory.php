@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
+use App\StatusEnum;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DocumentRequest>
@@ -18,15 +19,16 @@ class DocumentRequestFactory extends Factory
     public function definition(): array
     {
         $documentTypes = ['Barangay Clearance', 'Certificate of Indigency', 'Certificate of Residency'];
-        $statuses = ['Pending', 'Under Review', 'Approved', 'Ready for Pickup', 'Declined', 'Completed'];
 
         return [
             'user_id' => User::factory(),
+            'name' => $this->faker->name(),
             'document_type' => $this->faker->randomElement($documentTypes),
             'purpose' => $this->faker->sentence(4),
             'notes' => $this->faker->optional()->paragraph(),
             'preferred_pickup' => $this->faker->optional()->dateTimeBetween('+1 days', '+2 weeks'),
-            'status' => $this->faker->randomElement($statuses),
+            'total_amount' => 0,
+            'status' => $this->faker->randomElement(StatusEnum::cases()),
         ];
     }
 

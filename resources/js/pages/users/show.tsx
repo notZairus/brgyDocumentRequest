@@ -1,8 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, usePage, useForm } from '@inertiajs/react';
+import { Head, usePage, useForm, Link } from '@inertiajs/react';
 import type { User, MyPageProps } from "@/types/index.d.ts";
-import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 
 interface CustomPageProps {
@@ -28,12 +27,23 @@ export default function Users() {
         }
     ];
 
+    console.log(user);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Verify Account" />
 
-            <main className="w-full p-4">
-                <div className="w-full pb-20 md:pb-0 flex flex-col-reverse  items-start gap-8 md:max-w-3xl mx-auto">
+            <main className="w-full p-4 pb-12">
+                <div className="w-full pb-20 md:pb-0 flex flex-col items-start gap-8 md:max-w-3xl mx-auto">
+
+                    <div className="flex-1 flex gap-4 w-full flex-wrap">
+                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 sm:min-w-auto">
+                            <img src={`/getId/${user.id}/front`} alt="front id" className="rounded border" />
+                        </div>
+                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 sm:min-w-auto">
+                            <img src={`/getId/${user.id}/back`} alt="front id" className="rounded border" />
+                        </div>
+                    </div>
 
                     <div className="flex-1 w-full">
                         <div className="p-4 bg-primary/5 rounded border-primary/15 border">
@@ -46,15 +56,25 @@ export default function Users() {
                         </div>
                     </div>
 
-                    <div className="flex-1 flex gap-4 w-full">
-                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15">
-                            <img src={`/getId/${user.id}/front`} alt="front id" className="rounded border" />
-                        </div>
-                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15">
-                            <img src={`/getId/${user.id}/back`} alt="front id" className="rounded border" />
-                        </div>
+                    <div className="flex-1 w-full bg-red-400/15 rounded border-primary/15 border min-h-20 p-4" >
+                        <h1 className="font-bold text-xl mb-4">Penalties</h1>
+                        <ul>
+                            {user.penalties.map((penalty) => (
+                                <li key={penalty.id} className="cursor-pointer p-4 hover:bg-primary/10 rounded border-b-1 border-primary/15" >
+                                    <Link href={`/document-requests/${penalty.document_request_id}`}>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold">Document ID:</span>
+                                            <span>{penalty.document_request_id}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold">Reason:</span>
+                                            <span>{penalty.reason}</span>
+                                        </div>
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-
                 </div>
             </main>
         </AppLayout>

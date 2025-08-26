@@ -43,3 +43,166 @@
 
 
 // delivery feature
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<TabsContent value="u">
+                            <div className="max-w-xl mx-auto space-y-4 my-8">
+                                <div className="flex flex-col gap-2">
+                                    <Label>Document Type</Label>
+                                    <Select 
+                                        onValueChange={(value) => {
+                                            setData("document_type", value);
+                                        }} 
+                                        required
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select document type"/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                        {
+                                            availableDocuments.map(doc => (
+                                                <SelectItem value={doc.type}>{`${doc.type} (₱${doc.price}.00)`}</SelectItem>
+                                            ))
+                                        }
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.document_type && <p className="text-red-500 text-sm">{errors.document_type}</p>}
+                                    {/* { data.document_type && <p className="text-sm text-yellow-400">{ "Price: " + availableDocuments.find(doc => doc.type === data.document_type)?.price + ".00"}</p>} */}
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <Label>Purpose</Label>
+                                    <Input
+                                        value={data.purpose}
+                                        onChange={(e) => setData("purpose", e.target.value)}
+                                    />
+                                    {errors.purpose && <p className="text-red-500 text-sm">{errors.purpose}</p>}
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <Label>Additional Notes (optional)</Label>
+                                    <Textarea
+                                        className="resize-none"
+                                        value={data.notes}
+                                        onChange={(e) => setData("notes", e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <Label>Preferred Pickup Date (optional)</Label>
+
+                                    <Popover open={open} onOpenChange={setOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                id="date"
+                                                className="w-fukk justify-between border font-normal bg-background text-primary hover:bg-secondary"
+                                            >
+                                                {data.preferred_pickup ? new Date(data.preferred_pickup).toLocaleDateString() : "Select date"}
+                                                <ChevronDownIcon />
+                                            </Button>
+                                            
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                                            <Calendar
+                                                required
+                                                mode="single"
+                                                selected={date}
+                                                captionLayout="dropdown"
+                                                onSelect={(date: Date) => {
+                                                    setDate(date);
+                                                    setOpen(false);
+                                                }}
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    {errors.preferred_pickup && <p className="text-red-500 text-sm">{errors.preferred_pickup}</p>}
+                                </div>
+
+
+
+                                <div className="mt-4">
+                                    <Label>Delivery Method: </Label>
+                                    <RadioGroup 
+                                        defaultValue={data.delivery_method} 
+                                        className="flex gap-8 mt-2" 
+                                        onValueChange={(value) => {
+                                            setData('delivery_method', value as DeliveryMethod)
+                                        }}
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Pick-up" id="Pick-up" />
+                                            <Label htmlFor="Pick-up">Pick-up</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="Deliver" id="Deliver" />
+                                            <Label htmlFor="Deliver">Deliver</Label>
+                                        </div>
+                                    </RadioGroup>
+
+                                    {   data.delivery_method === "Deliver" && (
+                                            <div className="flex flex-col gap-2 mt-8">
+                                                <Label>Delivery Address</Label>
+                                                <Input
+                                                    value={data.delivery_address ?? ""}
+                                                    onChange={(e) => setData("delivery_address", e.target.value)}
+                                                />
+                                                {errors.delivery_address && <p className="text-red-500 text-sm">{errors.delivery_address}</p>}
+                                            </div>
+                                        )   
+                                    }
+                                </div>
+                                
+
+                                
+
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button 
+                                            onClick={() => {
+                                                let docPrice = availableDocuments.find((doc) => doc.type == data.document_type)?.price ?? 0;
+                                                let shipping = data.delivery_method == 'Deliver' ? 50 : 0;
+                                                setData('total', docPrice + shipping);
+                                            }} 
+                                            variant="default"
+                                            size="lg"
+                                            className="mt-4"
+                                        >
+                                            Submit Request
+                                        </Button>
+
+
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action cannot be undone. This will permanently delete your account
+                                                and remove your data from our servers.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction onClick={submit}>Continue</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+
+
+                                
+                            </div>
+                        </TabsContent>

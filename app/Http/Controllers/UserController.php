@@ -23,6 +23,7 @@ class UserController extends Controller
     }
 
     public function show(User $user) {
+        $user->load('penalties');
         return Inertia::render('users/show', [
             'user' => $user,
         ]);

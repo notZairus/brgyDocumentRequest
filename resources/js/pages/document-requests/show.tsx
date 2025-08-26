@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
+import { Flag } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +20,19 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 
 
 interface CustomPageProps {
@@ -26,16 +40,24 @@ interface CustomPageProps {
 }
 
 
+
+/**
+ * Page for showing a document request.
+ * 
+ * This page shows the details of a document request.
+ * 
+ * If the user is an admin, the page also has a form for the admin to approve or decline the request.
+ * 
+ * @returns The page element.
+ */
 export default function show() {
-    const { documentRequest, auth: { user } } = usePage<MyPageProps & CustomPageProps>().props;
+    const { documentRequest, hasPenalty, auth: { user } } = usePage<MyPageProps & CustomPageProps>().props;
     const [showDeclineReason, setShowDeclineReason] = useState(false);
     const { data, setData, patch } = useForm({
         action: '',
         reason: '',
     });
-
-    console.log(documentRequest);
-
+    const [penaltyReason, setPenaltyReason] = useState("User doesn't show up to get the document.");
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Document Requests',
@@ -53,6 +75,7 @@ export default function show() {
         });
     } 
 
+    console.log(documentRequest);
 
     return (
         <>  
@@ -62,11 +85,48 @@ export default function show() {
                 <main className="w-full p-4">
     
                     <div className="pb-8">
-                        <h1 className="text-xl font-bold">
-                            Document Request 
-                            <span className="text-blue-400">{` #${documentRequest.id}`}</span>
-                            <span className="ml-8">{`( ${format(documentRequest.created_at, "MMMM d, yyyy")} )`}</span>
-                        </h1>
+                        <div className="flex justify-between gap-8 pr-4">
+                            <h1 className="text-xl font-bold">
+                                Document Request 
+                                <span className="text-blue-400">{` #${documentRequest.id}`}</span>
+                                <span className="ml-8">{`( ${format(documentRequest.created_at, "MMMM d, yyyy")} )`}</span>
+                            </h1>
+
+                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="destructive">
+                                            <Flag />
+                                            Report
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[425px]">
+                                        <DialogHeader>
+                                            <DialogTitle>Penalize User</DialogTitle>
+                                            <DialogDescription>
+                                                Please provide a reason for penalizing this user.  
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="grid gap-4">
+                                            <div className="grid gap-3">
+                                                <Label htmlFor="name-1">Reason</Label>
+                                                <Textarea defaultValue={penaltyReason} onChange={(e) => setPenaltyReason(e.target.value)} required minLength={10} />
+                                            </div>
+                                        </div>
+                                        <DialogFooter>
+                                            <DialogClose asChild>
+                                                <Button variant="outline">Cancel</Button>
+                                            </DialogClose>
+                                            <DialogClose asChild>
+                                                <Link preserveScroll href={`/penalties`} method="post" data={{ document_request_id: documentRequest.id, user_id: documentRequest.user_id, reason: penaltyReason }}>
+                                                    <Button className="w-full">Report</Button>
+                                                </Link>
+                                            </DialogClose>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            )}
+                        </div>
         
                         <Separator className="my-4" />
         
@@ -82,8 +142,8 @@ export default function show() {
         
                         <div className="mt-8">
                             <p>Valid ID:</p>
-                            <div className=" mt-2 flex gap-4 rounded flex-wrap lg:max-w-3xl">
-                                <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15">
+                            <div className="mt-2 flex gap-4 rounded flex-wrap lg:max-w-3xl">
+                                <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
                                     <img 
                                         src={documentRequest.user?.name === documentRequest.name 
                                             ? `/getId/${documentRequest.user?.id}/front`
@@ -93,7 +153,7 @@ export default function show() {
                                         className="object-fit w-full h-full"
                                     />
                                 </div>
-                                <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15">
+                                <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
                                     <img 
                                         src={documentRequest.user?.name === documentRequest.name 
                                             ? `/getId/${documentRequest.user?.id}/back`

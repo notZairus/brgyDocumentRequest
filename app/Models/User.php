@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 use App\Models\DocumentRequest;
 use App\Models\ActivityLog;
+use App\Models\Penalty;
 
 
 class User extends Authenticatable
@@ -59,5 +60,9 @@ class User extends Authenticatable
 
     public function activity_logs() {
         return $this->hasMany(ActivityLogs::class);
+    }
+
+    public function penalties() {
+        return $this->hasMany(Penalty::class);
     }
 }

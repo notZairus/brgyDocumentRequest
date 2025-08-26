@@ -23,6 +23,15 @@ type UsePageProps = {
 
 
 
+/**
+ * Renders the document requests table.
+ * 
+ * This component fetches the document requests from the server
+ * via a GET request to `/poll/document-requests` every 10 seconds,
+ * and updates the state with the new data.
+ *
+ * @returns The JSX element representing the component.
+ */
 export default function index() {
     const { documentRequests } = usePage<UsePageProps>().props;
     const [data, setData] = useState<DocumentRequest[]>([...documentRequests]);

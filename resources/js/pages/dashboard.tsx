@@ -1,8 +1,7 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import type { User, MyPageProps } from "@/types/index.d.ts";
+import type { MyPageProps } from "@/types/index.d.ts";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -97,7 +96,7 @@ export default function Dashboard() {
 
                                     <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
                                         <div>
-                                            <p className="text-muted-foreground">Pending Verifications</p>
+                                            <p className="text-muted-foreground">Pending Account Verifications</p>
                                             <p className="text-4xl font-semibold text-green-600">{data.totalVerifications}</p> {/* replace with {pendingVerifications} */}
                                         </div>
                                         <p className="text-xs text-muted-foreground">Accounts waiting for verification</p>
@@ -106,9 +105,9 @@ export default function Dashboard() {
                                     <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
                                         <div>
                                             <p className="text-muted-foreground">Waiting  Requests</p>
-                                            <p className="text-4xl font-semibold text-red-700">{data.pendingRequests}</p> {/* replace with {pendingRequests} */}
+                                            <p className="text-4xl font-semibold text-green-600">{data.pendingRequests}</p> {/* replace with {pendingRequests} */}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">Document requests not yet approved</p>
+                                        <p className="text-xs text-muted-foreground">Document requests waiting for approval</p>
                                     </div>
                                 </div>
                                 <div className="w-full flex flex-wrap gap-4">
@@ -117,7 +116,7 @@ export default function Dashboard() {
                                             <p className="text-muted-foreground">Approved Today</p>
                                             <p className="text-4xl font-semibold text-blue-400">{data.approvedToday}</p> {/* replace with {pendingRequests} */}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">Document requests not yet approved</p>
+                                        <p className="text-xs text-muted-foreground">Document requests approved today</p>
                                     </div>
 
                                     <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
@@ -125,7 +124,7 @@ export default function Dashboard() {
                                             <p className="text-muted-foreground">Declined Today</p>
                                             <p className="text-4xl font-semibold text-red-700">{data.declinedToday}</p> {/* replace with {pendingRequests} */}
                                         </div>
-                                        <p className="text-xs text-muted-foreground">Document requests not yet approved</p>
+                                        <p className="text-xs text-muted-foreground">Document requests declined today</p>
                                     </div>
                                 </div>
                             </div>

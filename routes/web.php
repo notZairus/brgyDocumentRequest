@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Http\Controllers\VerifyUserController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DocumentRequestController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\PenaltyController;
 
 use App\Models\DocumentRequest;
 use App\Models\User;
@@ -31,6 +33,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/verify-accounts/{user}', [VerifyUserController::class, 'show']);
     Route::patch('/verify-accounts/{user}', [VerifyUserController::class, 'patch']);
     Route::delete('/verify-accounts/{user}', [VerifyUserController::class, 'destroy']);
+
+    Route::post('/penalties', [PenaltyController::class, 'store']);
 });
 
 // authenticated
@@ -66,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
         ->can('show', 'user');
     Route::get('/my-requests', [UserController::class, 'requests']);
 });
+
 
 
 

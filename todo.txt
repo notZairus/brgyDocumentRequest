@@ -14,11 +14,20 @@
 
 1. allow user to request document of other person. 
     i think i will give user to choose if the document request is for their own or for others.
-    if the doc req is for others, they will need to input the id, name, etc.
+    if the doc req is for others, they will need to input the id, name, etc. (DONE)
     
 
-2. another page for captain to approve the document request 
-    the captain is the one who will approve the document request 
-        di naman ganto sa matictic, yung staff is gawa lang ng gawa 
 
-3. gcash integration
+
+2. remove delivery methods. (DONE)
+
+
+
+
+3. penalty feature for users who request document but doesn't pick the document up. 
+    - make a penalty table (user_id, doc_req_id, reason, timestamp)
+
+
+
+
+4. proof to prove the employment for certificate of employment
