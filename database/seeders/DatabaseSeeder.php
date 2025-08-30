@@ -4,8 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\DocumentRequest;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -28,8 +29,19 @@ class DatabaseSeeder extends Seeder
             'password' => 'QZr8408o'
         ]);
 
-        DocumentRequest::factory(10)->pending()->create();
+        $user = User::create([
+            'name' => 'Zairus Bermillo',
+            'email' => 'zairusb12@gmail.com',
+            'password' => Hash::make('QZr8408o'),
+            'is_admin' => false
+        ]);
 
-        
+        DocumentRequest::factory(5)->pending()->create([
+            'user_id' => $user->id
+        ]);
+
+
+
+        DocumentRequest::factory(10)->pending()->create();
     }
 }

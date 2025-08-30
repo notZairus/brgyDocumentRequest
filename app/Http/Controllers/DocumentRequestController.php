@@ -38,8 +38,22 @@ class DocumentRequestController extends Controller
 
     public function create()
     {
-        return Inertia::render('document-requests/create');
+        return Inertia::render('document-requests/create1');
     }
+
+    public function store(Request $request) {
+        switch ($request->get('document_type')) {
+            case 'Certificate of Indigency':
+                handleCertificateOfIndigency($request);
+                break;
+            case 'Certificate of Residency':
+                handleCertificateOfResidency($request);
+                break;
+        }
+
+        return back()->with('success', 'Document request submitted successfully.');
+    }
+
 
 
 //     document_type: string;
@@ -56,67 +70,67 @@ class DocumentRequestController extends Controller
 //     delivery_address: string | null;
 //     total?: number;
 
-    public function store(Request $request) 
-    {
-        if (! $request->get('name')) {
-            $validated_data = $request->validate([
-                "preferred_pickup" => ['required', 'date'],
-                "document_type" => ['required'],
-                "purpose" => ['required'],
-                "name" => [],
-                "total" => []
-            ]);
+    // public function store(Request $request) 
+    // {
+    //     if (! $request->get('name')) {
+    //         $validated_data = $request->validate([
+    //             "preferred_pickup" => ['required', 'date'],
+    //             "document_type" => ['required'],
+    //             "purpose" => ['required'],
+    //             "name" => [],
+    //             "total" => []
+    //         ]);
 
-            $new_doc_req = DocumentRequest::create([
-                'user_id' => $request->user()->id,
-                'name' => $validated_data['name'] ? $validated_data['name'] : $request->user()->getAttribute('name'),
-                'document_type' => $validated_data['document_type'],
-                'purpose' => $validated_data['purpose'],
-                'notes' => $request->notes,
-                'preferred_pickup' => new \DateTime($request->preferred_pickup),
-                'total_amount' => $validated_data['total'],
-            ]);
+    //         $new_doc_req = DocumentRequest::create([
+    //             'user_id' => $request->user()->id,
+    //             'name' => $validated_data['name'] ? $validated_data['name'] : $request->user()->getAttribute('name'),
+    //             'document_type' => $validated_data['document_type'],
+    //             'purpose' => $validated_data['purpose'],
+    //             'notes' => $request->notes,
+    //             'preferred_pickup' => new \DateTime($request->preferred_pickup),
+    //             'total_amount' => $validated_data['total'],
+    //         ]);
 
-            return back()->with('success', 'Document request submitted successfully.');
-        }
+    //         return back()->with('success', 'Document request submitted successfully.');
+    //     }
 
 
-        $validated_data = $request->validate([
-            "document_type" => ['required'],
-            "preferred_pickup" => ['required', 'date'],
-            "purpose" => ['required'],
+    //     $validated_data = $request->validate([
+    //         "document_type" => ['required'],
+    //         "preferred_pickup" => ['required', 'date'],
+    //         "purpose" => ['required'],
 
-            "name" => ['required'],
-            "brgyIdFront" => ['required'],
-            "brgyIdBack" => ['required'],
+    //         "name" => ['required'],
+    //         "brgyIdFront" => ['required'],
+    //         "brgyIdBack" => ['required'],
 
-            "total" => []
-        ]);
+    //         "total" => []
+    //     ]);
 
-        $extension = $request->file('brgyIdFront')['file']->getClientOriginalExtension();
+    //     $extension = $request->file('brgyIdFront')['file']->getClientOriginalExtension();
 
-        $request->file('brgyIdFront')['file']->storeAs(
-            'ids/'. $request->user()->getAttribute('email') . '/' . $validated_data['name'], 
-            'front.' . $extension,
-        );
+    //     $request->file('brgyIdFront')['file']->storeAs(
+    //         'ids/'. $request->user()->getAttribute('email') . '/' . $validated_data['name'], 
+    //         'front.' . $extension,
+    //     );
 
-        $request->file('brgyIdBack')['file']->storeAs(
-            'ids/' . $request->user()->getAttribute('email')  . '/' . $validated_data['name'],
-            'back.' . $extension,
-        );
+    //     $request->file('brgyIdBack')['file']->storeAs(
+    //         'ids/' . $request->user()->getAttribute('email')  . '/' . $validated_data['name'],
+    //         'back.' . $extension,
+    //     );
 
-        $new_doc_req = DocumentRequest::create([
-            'user_id' => $request->user()->id,
-            'name' => $validated_data['name'] ? $validated_data['name'] : $request->user()->getAttribute('name'),
-            'document_type' => $validated_data['document_type'],
-            'purpose' => $validated_data['purpose'],
-            'notes' => $request->notes,
-            'preferred_pickup' => new \DateTime($request->preferred_pickup),
-            'total_amount' => $validated_data['total'],
-        ]);
+    //     $new_doc_req = DocumentRequest::create([
+    //         'user_id' => $request->user()->id,
+    //         'name' => $validated_data['name'] ? $validated_data['name'] : $request->user()->getAttribute('name'),
+    //         'document_type' => $validated_data['document_type'],
+    //         'purpose' => $validated_data['purpose'],
+    //         'notes' => $request->notes,
+    //         'preferred_pickup' => new \DateTime($request->preferred_pickup),
+    //         'total_amount' => $validated_data['total'],
+    //     ]);
  
-        return back()->with('success', 'Document request submitted successfully.');
-    }
+    //     return back()->with('success', 'Document request submitted successfully.');
+    // }
 
     public function show(DocumentRequest $document_request, Request $request) 
     {
@@ -124,16 +138,19 @@ class DocumentRequestController extends Controller
         $document_request->load('penalty');
 
         if ($request->user()->getAttribute('is_admin')) {
-            ActivityLog::create([
-                'action' => 'Reviewed',
-                'user_id' => Auth::user()->id,
-                'document_request_id' => $document_request->id,
-            ]);
+            if ($document_request->status == StatusEnum::PENDING) 
+            {
+                ActivityLog::create([
+                    'action' => 'Reviewed',
+                    'user_id' => Auth::user()->id,
+                    'document_request_id' => $document_request->id,
+                ]);
 
-            $document_request->update([
-                'status' => StatusEnum::UNDER_REVIEW,
-                'updated_at' => now()
-            ]);
+                $document_request->update([
+                    'status' => StatusEnum::UNDER_REVIEW,
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return Inertia::render('document-requests/show', [
@@ -144,8 +161,14 @@ class DocumentRequestController extends Controller
 
     public function update(DocumentRequest $document_request, Request $request) 
     {
+        $status = StatusEnum::From($request->get('action'));
+
+        if (!$status) {
+            return back()->with('error', 'Invalid action.');
+        }
+
         $document_request->update([
-            'status' => $request->get('action') ? $request->get('action') : StatusEnum::APPROVED,
+            'status' => $status->value,
             'updated_at' => now()
         ]);
 
@@ -160,6 +183,71 @@ class DocumentRequestController extends Controller
 
         Mail::to($document_request->user->email)->queue(new DocumentRequestReviewed($document_request));
 
-        return redirect('/document-requests/' . $document_request->id);
+        return redirect('/document-requests/' . $document_request->id)->with('success', 'Document request ' . $status->value . ' successfully.');
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS //
+
+
+
+
+
+function handleCertificateOfIndigency(Request $request) 
+{
+    if ($request->get('document_request_type') === 'user') {
+        $validated_data = $request->validate([
+            "document_type" => ['required'],
+            "purpose" => ['required'],
+            "sitio" => ['required'],
+        ]);
+
+        $new_doc_req = DocumentRequest::create([
+            'user_id' => $request->user()->id,
+            'document_type' => $validated_data['document_type'],
+            'notes' => $request->notes,
+            'document_details' => [
+                'sitio' => $validated_data['sitio'],
+                'name' => $request->user()->name,
+                'purpose' => $validated_data['purpose'],
+            ],
+        ]);
+    } else {
+        
+    }
+}
+
+function handleCertificateOfResidency(Request $request) 
+{
+    if ($request->get('document_request_type') === 'user') {
+        $validated_data = $request->validate([
+            "document_type" => ['required'],
+            "sitio" => ['required'],
+            "civil_status" => ['required'],
+        ]);
+
+        $new_doc_req = DocumentRequest::create([
+            'user_id' => $request->user()->id,
+            'document_type' => $validated_data['document_type'],
+            'notes' => $request->notes,
+            'document_details' => [
+                'sitio' => $validated_data['sitio'],
+                'name' => $request->user()->name,
+                'civil_status' => $validated_data['civil_status'],
+            ],
+        ]);
+    } else {
+        
     }
 }

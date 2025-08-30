@@ -42,3 +42,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     }); 
 });
+
+
+
+use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Settings;
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/download-docx/{document_request}', function(DocumentRequest $document_request) {
+        // $templatePath = storage_path('app/templates/template.docx');
+
+        // $templateProcessor = new TemplateProcessor($templatePath);
+        // $templateProcessor->setValue('zname', $document_request->name);
+
+        // $fileName = $document_request->name . '.docx';
+        // $savePath = storage_path('app/' . $fileName);
+        // $templateProcessor->saveAs($savePath);
+
+        // return response()->download($savePath)->deleteFileAfterSend(true);
+    });
+}); 

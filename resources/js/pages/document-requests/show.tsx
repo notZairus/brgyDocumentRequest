@@ -6,8 +6,8 @@ import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
-import { Flag } from "lucide-react";
+import { useState, useEffect } from "react"
+import { Flag, Printer } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +19,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-
 import {
   Dialog,
   DialogClose,
@@ -30,13 +29,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner";
 
 
 
 interface CustomPageProps {
-    documentRequest: DocumentRequest
+    documentRequest: DocumentRequest,
+    flash: {
+        success: string,
+        error: string
+    }
 }
 
 
@@ -51,7 +54,7 @@ interface CustomPageProps {
  * @returns The page element.
  */
 export default function show() {
-    const { documentRequest, hasPenalty, auth: { user } } = usePage<MyPageProps & CustomPageProps>().props;
+    const { documentRequest, hasPenalty, auth: { user }, flash } = usePage<MyPageProps & CustomPageProps>().props;
     const [showDeclineReason, setShowDeclineReason] = useState(false);
     const { data, setData, patch } = useForm({
         action: '',
@@ -75,7 +78,10 @@ export default function show() {
         });
     } 
 
-    console.log(documentRequest);
+    useEffect(() => {
+        flash.success && toast.success(flash.success);
+        flash.error && toast.error(flash.error);
+    }, [flash]);
 
     return (
         <>  
@@ -85,14 +91,14 @@ export default function show() {
                 <main className="w-full p-4">
     
                     <div className="pb-8">
-                        <div className="flex justify-between gap-8 pr-4">
+                        <div className="flex justify-between items-center gap-8 pr-4">
                             <h1 className="text-xl font-bold">
                                 Document Request 
                                 <span className="text-blue-400">{` #${documentRequest.id}`}</span>
                                 <span className="ml-8">{`( ${format(documentRequest.created_at, "MMMM d, yyyy")} )`}</span>
                             </h1>
 
-                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (
+                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && documentRequest.status === "Declined" && (
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="destructive">
@@ -126,6 +132,16 @@ export default function show() {
                                     </DialogContent>
                                 </Dialog>
                             )}
+
+                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") && (
+                                <a href={`/download-docx/${documentRequest.id}`} rel="noopener">
+                                    <Button size="lg">
+                                        <Printer />
+                                        Print
+                                    </Button>
+                                </a>
+                            )}
+
                         </div>
         
                         <Separator className="my-4" />
@@ -227,7 +243,7 @@ export default function show() {
                                                         variant="default"
                                                         size="lg"
                                                     >
-                                                        Ready For Pickup
+                                                        Confirm
                                                     </Button>
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent>

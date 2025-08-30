@@ -22,12 +22,9 @@ class DocumentRequestFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->name(),
             'document_type' => $this->faker->randomElement($documentTypes),
-            'purpose' => $this->faker->sentence(4),
             'notes' => $this->faker->optional()->paragraph(),
-            'preferred_pickup' => $this->faker->optional()->dateTimeBetween('+1 days', '+2 weeks'),
-            'total_amount' => 0,
+            'document_details' => null,
             'status' => $this->faker->randomElement(StatusEnum::cases()),
         ];
     }

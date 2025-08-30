@@ -98,11 +98,11 @@ export default function Users() {
                         </div>
                     </>
                     ) : (
-                    <>
-                        <div className="w-full">
-                            <h1 className="text-3xl text-foreground/50 text-center mt-40">No Registered User</h1>
-                        </div>
-                    </>
+                        <>
+                            <div className="w-full">
+                                <h1 className="text-3xl text-foreground/50 text-center mt-40">No Registered User</h1>
+                            </div>
+                        </>
                     )
                 }
             </main>

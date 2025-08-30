@@ -24,10 +24,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { ChevronDownIcon } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { imgToBase64 } from '@/lib/utils';
 import { availableDocuments } from "@/datas";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   AlertDialog,
   AlertDialogAction,

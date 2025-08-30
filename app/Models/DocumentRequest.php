@@ -18,7 +18,8 @@ class DocumentRequest extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'status' => StatusEnum::class
+        'status' => StatusEnum::class,
+        'document_details' => 'array',
     ];
 
 
