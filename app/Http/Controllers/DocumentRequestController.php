@@ -38,7 +38,7 @@ class DocumentRequestController extends Controller
 
     public function create()
     {
-        return Inertia::render('document-requests/create1');
+        return Inertia::render('document-requests/create');
     }
 
     public function store(Request $request) {
@@ -75,6 +75,12 @@ class DocumentRequestController extends Controller
                 break;
             case 'Certificate of Residency':
                 handleCertificateOfResidency($request);
+                break;
+            case 'Certificate of Employment':
+                handleCertificateOfEmployment($request);
+                break;
+            case 'Barangay Clearance':
+                handleBarangayClearance($request);
                 break;
         }
 
@@ -164,7 +170,7 @@ function handleCertificateOfIndigency(Request $request)
     $new_doc_req = DocumentRequest::create([
         'user_id' => $request->user()->id,
         'document_type' => $validated_data['document_type'],
-        'notes' => $request->notes,
+        'notes' => $request->note,
         'document_details' => [
             'sitio' => $validated_data['sitio'],
             'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
@@ -185,10 +191,56 @@ function handleCertificateOfResidency(Request $request)
     $new_doc_req = DocumentRequest::create([
         'user_id' => $request->user()->id,
         'document_type' => $validated_data['document_type'],
-        'notes' => $request->notes,
+        'notes' => $request->note,
         'document_details' => [
             'sitio' => $validated_data['sitio'],
             'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
+            'civil_status' => $validated_data['civil_status'],
+        ],
+    ]);
+    
+}
+
+function handleCertificateOfEmployment(Request $request) 
+{
+    $validated_data = $request->validate([
+        "document_type" => ['required'],
+        "sitio" => ['required'],
+        "income" => ['required'],
+        "occupation" => ['required'],
+    ]);
+
+    $new_doc_req = DocumentRequest::create([
+        'user_id' => $request->user()->id,
+        'document_type' => $validated_data['document_type'],
+        'notes' => $request->note,
+        'document_details' => [
+            'sitio' => $validated_data['sitio'],
+            'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
+            'income' => $validated_data['income'],
+            'occupation' => $validated_data['occupation'],
+        ],
+    ]);
+    
+}
+
+function handleBarangayClearance(Request $request) 
+{
+    $validated_data = $request->validate([
+        "document_type" => ['required'],
+        "sitio" => ['required'],
+        "civil_status" => ['required'],
+        "purpose" => ['required'],
+    ]);
+
+    $new_doc_req = DocumentRequest::create([
+        'user_id' => $request->user()->id,
+        'document_type' => $validated_data['document_type'],
+        'notes' => $request->note,
+        'document_details' => [
+            'sitio' => $validated_data['sitio'],
+            'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
+            'purpose' => $validated_data['purpose'],
             'civil_status' => $validated_data['civil_status'],
         ],
     ]);

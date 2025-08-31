@@ -83,6 +83,9 @@ export default function show() {
         flash.error && toast.error(flash.error);
     }, [flash]);
 
+    
+
+
     return (
         <>  
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -134,7 +137,7 @@ export default function show() {
                             ) : null}
 
                             { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") ? (
-                                <a href={`/download-docx/${documentRequest.id}`} target="_blank" rel="noopener">
+                                <a href={`/download-docx/${documentRequest.id}`} rel="noopener noreferer">
                                     <Button size="lg">
                                         <Printer />
                                         Print
@@ -150,10 +153,18 @@ export default function show() {
                             <p>Requested By: <span className="text-lg font-medium">{documentRequest.user?.name} ( {documentRequest.user?.email} )</span></p>
                             <p>Requested On: <span className="text-lg font-medium">{format(documentRequest.created_at, "MMMM d, yyyy")}</span></p>
 
-                            <p className="mt-8">Name: <span className="text-lg font-medium">{documentRequest.name as string}</span></p>
-                            <p>Document Type: <span className="text-lg font-medium">{documentRequest.document_type}</span></p>
-                            <p>Purpose: <span className="text-lg font-medium">{documentRequest.purpose}</span></p>
-                            {documentRequest.notes && <p>Additional Notes: <span className="text-lg font-medium">{documentRequest.notes}</span></p>}
+                            <div className="w-full flex-1 p-2 mt-8 bg-primary/5 border border-primary/15 max-w-2/3">
+                                <p className="text-lg font-bold mb-2">Document Details</p>
+                                <div className="space-y-1">
+                                    <p>Document Type: <span className="text-lg font-medium">{documentRequest.document_type}</span></p>
+                                    {   documentRequest.document_details && Object.entries(documentRequest.document_details).map(([key, value]) => (
+                                        <p>{key.replace("_", " ")[0].toUpperCase() + key.replace("_", " ").slice(1)}: <span className="text-lg font-medium">{value as string}</span></p>
+                                    ))}
+
+                                    {documentRequest.notes && <p className="mt-4">Additional Notes: <span className="text-lg font-medium">{documentRequest.notes}</span></p>}
+                                </div>
+                            </div>
+
                         </div>
         
                         <div className="mt-8">

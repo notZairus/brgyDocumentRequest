@@ -60,15 +60,13 @@ export interface DocumentRequest {
   id: number;
   user_id: number;
   document_type: string;
-  purpose: string;
   notes: string;
-  preferred_pickup: string;
   user_name?: string;
   status: 'Pending' | 'Under Review' | 'Approved' | 'Ready for Pickup' | 'Declined' | 'Completed'
   created_at: string;
   update_at: string;
   user?: User;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 export interface ActivityLog {

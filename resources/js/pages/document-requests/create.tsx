@@ -56,28 +56,19 @@ type IdType = {
     'file': File
 }
 
-type DeliveryMethod = "Pick-up" | "Deliver";
-
-type FormType = {
-    document_type: string;
-    purpose: string;
-    notes: string;
-    preferred_pickup: string;
-
-    name?: string;
-    brgyIdFront?: IdType | File | null;
-    brgyIdBack?: IdType | File | null;
-
-    total?: number;
-}
-
-
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Request Document',
         href: '/request-document',
     },
 ];
+
+type useFormProps = {
+    document_request_type: 'user' | 'other',
+    document_type: string,
+    note: string
+    [key: string]: any
+}
 
 
 
@@ -96,24 +87,16 @@ export default function create() {
     const [open, setOpen] = useState(false)
     const [date, setDate] = useState<Date | undefined>(undefined)
     const { flash } = usePage<PageProps & MyProps>().props;
-    const { data, setData, post, processing, errors, setError, reset, clearErrors } = useForm<FormType>({
+    const { data, setData, post, processing, errors, setError, reset, clearErrors } = useForm<useFormProps>({
+        document_request_type: 'user',
         document_type: '',
-        purpose: '',
-        notes: '',
-        preferred_pickup: '',
-
-        name: '',
-        brgyIdFront: null,
-        brgyIdBack: null,
-
-        total: 0
+        note: '',
     });
-    const [currentTab, setCurrentTab] = useState<string>('u');
+    const [currentTab, setCurrentTab] = useState<string>('user');
     const brgyIdFrontRef = useRef(null);
     const brgyIdBackRef = useRef(null);
-    
-    let total = availableDocuments.find((doc) => doc.type == data.document_type)?.price ?? 0;
 
+    let selectedDocumentType = availableDocuments.find((doc) => doc.type == data.document_type);
 
     useEffect(() => {
         flash.success && toast.success(flash.success);
@@ -123,60 +106,53 @@ export default function create() {
     }, [flash]);
 
 
-    useEffect(() => {
-        if (!date) return;
-        setData('preferred_pickup', date.toISOString());
-    }, [date]);
+    function setTab(tab: string) {
+        setData('document_request_type', tab as 'other' | 'user');
+        setCurrentTab(tab);
+    }
 
 
-    function submit(e: FormEvent) {
-        // check if the purpose is valid.
-        if(data.purpose.length < 4) {
-            setError('purpose', 'This field is important. Please answer it properly.')
-            return;
-        };
+    function submit() {
+        clearErrors();
 
-        // check if the document type that the request user is available.
-        if (!availableDocuments.map((doc) => doc.type).includes(data.document_type)) {
-            setError('document_type', "Request an available document.");
-            return;
-        }
-
-        // check if the pickup date is not empty.
-        if (!date) {
-            setError('preferred_pickup', 'Set a pickup date');
-            return;
-        }
-
-        // check if the date is 3 days from now.
-        const now = new Date();
-        const twoDaysFromNowMs= now.setDate(now.getDate() + 2);
-        const dateSelected = new Date(date);
-        const dateSelectedMs = dateSelected.setDate(dateSelected.getDate());
-
-        if (dateSelectedMs < twoDaysFromNowMs) {
-            setError('preferred_pickup', 'Preferred pickup date must be at least 3 days from today.'); 
-            return;  
-        }
-
-        // if the user request other person's document. check if there is an inputted id.
         if (currentTab === 'other') {
-            if (!data.brgyIdFront) {
-                setError('brgyIdFront', 'The Brgy ID Front image is required.');
-                return;
-            }
-        
-            if (!data.brgyIdBack) {
-                setError('brgyIdBack', 'The Brgy ID Back image is required.');
+            if (!data['name'] || data['name'].trim().length <= 5) {
+                setError('name', "Please enter your full name.")
                 return;
             }
 
-            const idFrontFile = "file" in data.brgyIdFront ? data.brgyIdFront.file : data.brgyIdFront;
-            const idBackFile = "file" in data.brgyIdBack ? data.brgyIdBack.file : data.brgyIdBack; 
-
-            setData('brgyIdFront', idFrontFile);
-            setData('brgyIdBack', idBackFile);
+            if (! data['brgyIdFront'] || ! data['brgyIdBack']) {
+                setError('brgyId', 'Upload your Barangay ID.')
+                return;
+            }
         }
+
+
+        if (data['document_type'] === 'Certificate of Indigency') {            
+            if (! data['purpose']) {
+                setError('purpose', 'Purpose is required. Please select a purpose.');
+                return;
+            }
+
+            if (! data['sitio']) {
+                setError('sitio', 'Sitio is required. Please select a sitio.');
+                return;
+            }
+        }
+
+        if (data['document_type'] === 'Certificate of Residency') {            
+            if (! data['civil_status']) {
+                setError('civil_status', 'Civil Status is required. Please select a civil status.');
+                return;
+            }
+
+            if (! data['sitio']) {
+                setError('sitio', 'Sitio is required. Please select a sitio.');
+                return;
+            }
+        }
+
+        
 
         post("/document-requests", {
             onFinish: () => {
@@ -188,6 +164,9 @@ export default function create() {
         });
     }
 
+
+
+
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -196,136 +175,19 @@ export default function create() {
                 <main className="w-full p-4">
 
                     <Tabs 
-                        defaultValue="u" 
+                        defaultValue="user" 
                         onValueChange={(value) => {
                             reset();
-                            setCurrentTab(value);
+                            setTab(value);
                         }}
                     >
                         <TabsList className="w:md bg-transparent lg:w-md mx-auto">
-                            <TabsTrigger value="u" >For You</TabsTrigger>
+                            <TabsTrigger value="user" >For You</TabsTrigger>
                             <TabsTrigger value="other">For Others</TabsTrigger>
                         </TabsList>
                         
                         <div className="max-w-xl w-full mx-auto space-y-4 my-8">
-                        
-                            { currentTab === 'other' && 
-                                <>
-                                    <div className="flex flex-col gap-2">
-                                        <Label>Name</Label>
-                                        <Input
-                                            value={data.name}
-                                            onChange={(e) => setData("name", e.target.value)}
-                                        />
-                                        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-                                    </div>
-                            
-                                    <div className="w-full flex gap-4">
-                                        <div className="aspect-video w-[240px] rounded">
-                                            <Label>ID Front:</Label>
-                                            <Input
-                                                id="brgy_id_front"
-                                                type="file"
-                                                accept="images/*"
-                                                hidden
-                                                ref={brgyIdFrontRef}
-                                                onChange={async (e) => {
-                                                    const selectedImage = e.target.files?.[0];
-                                                    if (!selectedImage) return;
-                                
-                                                    const base64Image = await imgToBase64(selectedImage);
-                                
-                                                    if (!selectedImage) return;
-                                                    setData('brgyIdFront', {
-                                                        base64: base64Image,
-                                                        file: selectedImage
-                                                    } as IdType);
-                                
-                                                }}
-                                            />
-                                
-                                            <div className="w-full h-full bg-white/15 rounded mt-1"
-                                                onClick={() => {
-                                                    const img_input: any = brgyIdFrontRef.current;
-                                                    img_input.click();
-                                                }}
-                                            >
-                                                {
-                                                    !data.brgyIdFront
-                                                    ?
-                                                        (
-                                                            <div className="w-full h-full text-xl flex items-center justify-center">
-                                                                <p className="text-foreground/50">No Image Uploaded</p>
-                                                            </div>
-                                                        )
-                                                    :
-                                                        (
-                                                            <div className="w-full h-full overflow-hidden border rounded">
-                                                                <img 
-                                                                    src={"base64" in data.brgyIdFront ? data.brgyIdFront.base64 : ""} 
-                                                                    className="w-full h-full object-cover"
-                                                                />
-                                                            </div>
-                                                        )
-                                                }
-                                
-                                            </div>
-                                        </div>
-                                
-                                        <div className="aspect-video w-[240px] rounded">
-                                            <Label>ID Back:</Label>
-                                            <Input
-                                                id="brgy_id_back"
-                                                type="file"
-                                                accept="images/*"
-                                                hidden
-                                                ref={brgyIdBackRef}
-                                                onChange={async (e) => {
-                                                    const selectedImage = e.target.files?.[0];
-                                                    if (!selectedImage) return;
-                                
-                                                    const base64Image = await imgToBase64(selectedImage);
-                                
-                                                    if (!selectedImage) return;
-                                                    setData('brgyIdBack', {
-                                                        base64: base64Image,
-                                                        file: selectedImage
-                                                    } as IdType);
-                                
-                                                }}
-                                            />
-                                
-                                            <div className="w-full h-full bg-white/15 rounded mt-1"
-                                                onClick={() => {
-                                                    const img_input: any = brgyIdBackRef.current;
-                                                    img_input.click();
-                                                }}
-                                            >
-                                                {
-                                                    !data.brgyIdBack
-                                                    ?
-                                                        (
-                                                            <div className="w-full h-full text-xl flex items-center justify-center">
-                                                                <p className="text-foreground/50">No Image Uploaded</p>
-                                                            </div>
-                                                        )
-                                                    :
-                                                        (
-                                                            <div className="w-full h-full overflow-hidden border rounded">
-                                                                <img 
-                                                                    src={"base64" in data.brgyIdBack ? data.brgyIdBack.base64 : ""} 
-                                                                    className="w-full h-full object-cover"
-                                                                />
-                                                            </div>
-                                                        )
-                                                }
-                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                </>
-                            }
-                        
+
                             <div className="flex flex-col gap-2">
                                 <Label>Document Type</Label>
                                 <Select 
@@ -341,89 +203,239 @@ export default function create() {
                                     <SelectContent>
                                     {
                                         availableDocuments.map(doc => (
-                                            <SelectItem value={doc.type}>{doc.type} (₱{doc.price}.00)</SelectItem>
+                                            <SelectItem value={doc.type}>{doc.type}</SelectItem>
                                         ))
                                     }
                                     </SelectContent>
                                 </Select>
                                 {errors.document_type && <p className="text-red-500 text-sm">{errors.document_type}</p>}
                             </div>
-                        
-                            <div className="flex flex-col gap-2">
-                                <Label>Purpose</Label>
-                                <Input
-                                    value={data.purpose}
-                                    onChange={(e) => setData("purpose", e.target.value)}
-                                />
-                                {errors.purpose && <p className="text-red-500 text-sm">{errors.purpose}</p>}
-                            </div>
-                        
-                            <div className="flex flex-col gap-2">
-                                <Label>Additional Notes (optional)</Label>
-                                <Textarea
-                                    className="resize-none"
-                                    value={data.notes}
-                                    onChange={(e) => setData("notes", e.target.value)}
-                                />
-                            </div>
-                        
-                            <div className="flex flex-col gap-2">
-                                <Label>Preferred Pickup Date (optional)</Label>
-                        
-                                <Popover open={open} onOpenChange={setOpen}>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            id="date"
-                                            className="w-fukk justify-between border font-normal bg-background text-primary hover:bg-secondary"
-                                        >
-                                            {data.preferred_pickup ? new Date(data.preferred_pickup).toLocaleDateString() : "Select date"}
-                                            <ChevronDownIcon />
-                                        </Button>
+
+                            <div className="mt-8 space-y-4">
+                                <>
+                                    { selectedDocumentType && (
+                                        selectedDocumentType.information
+                                        .map((info) => (
+                                            <>
+                                                <div className="flex flex-col gap-2">
+            
+                                                    {   info.type === 'text' && info.label !== 'Name' &&
+                                                        <div>
+                                                            <div>
+                                                                <Label>{info.label.replace('_', ' ')}</Label>
+                                                                <Input
+                                                                    value={data[info.label.toLowerCase()]}
+                                                                    placeholder={info.placeholder}
+                                                                    required={info.required}
+                                                                    onChange={(e) => setData(info.label.toLowerCase(), e.target.value)}
+                                                                />
+                                                                {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                            </div>
+                                                        </div>
+                                                    }
+    
+                                                    {   info.label === 'Name' && currentTab === 'other' && (
+                                                        <>
+                                                            <div>
+                                                                <Label>{info.label.replace('_', ' ')}</Label>
+                                                                <Input
+                                                                    value={data[info.label.toLowerCase()]}
+                                                                    placeholder={info.placeholder}
+                                                                    required={info.required}
+                                                                    onChange={(e) => setData(info.label.toLowerCase(), e.target.value)}
+                                                                />
+                                                                {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                            </div>
+    
+                                                            <div className="w-full flex gap-4 my-4">
+                                                                <div className="aspect-video w-[240px] rounded">
+                                                                    <Label>ID Front:</Label>
+                                                                    <Input
+                                                                        id="brgy_id_front"
+                                                                        type="file"
+                                                                        accept="images/*"
+                                                                        hidden
+                                                                        ref={brgyIdFrontRef}
+                                                                        onChange={async (e) => {
+                                                                            const selectedImage = e.target.files?.[0];
+                                                                            if (!selectedImage) return;
+                                                        
+                                                                            const base64Image = await imgToBase64(selectedImage);
+                                                        
+                                                                            if (!selectedImage) return;
+                                                                            setData('brgyIdFront', {
+                                                                                base64: base64Image,
+                                                                                file: selectedImage
+                                                                            } as IdType);
+                                                                        }}
+                                                                    />
+                                                        
+                                                                    <div className="w-full h-full bg-white/15 rounded mt-1"
+                                                                        onClick={() => {
+                                                                            const img_input: any = brgyIdFrontRef.current;
+                                                                            img_input.click();
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            !data.brgyIdFront
+                                                                            ?
+                                                                                (
+                                                                                    <div className="w-full h-full text-xl flex items-center justify-center">
+                                                                                        <p className="text-foreground/50">No Image Uploaded</p>
+                                                                                    </div>
+                                                                                )
+                                                                            :
+                                                                                (
+                                                                                    <div className="w-full h-full overflow-hidden border rounded">
+                                                                                        <img 
+                                                                                            src={"base64" in data.brgyIdFront ? data.brgyIdFront.base64 : ""} 
+                                                                                            className="w-full h-full object-cover"
+                                                                                        />
+                                                                                    </div>
+                                                                                )
+                                                                        }
+                                                        
+                                                                    </div>
+                                                                </div>
+                                                        
+                                                                <div className="aspect-video w-[240px] rounded">
+                                                                    <Label>ID Back:</Label>
+                                                                    <Input
+                                                                        id="brgy_id_back"
+                                                                        type="file"
+                                                                        accept="images/*"
+                                                                        hidden
+                                                                        ref={brgyIdBackRef}
+                                                                        onChange={async (e) => {
+                                                                            const selectedImage = e.target.files?.[0];
+                                                                            if (!selectedImage) return;
+                                                        
+                                                                            const base64Image = await imgToBase64(selectedImage);
+                                                        
+                                                                            if (!selectedImage) return;
+                                                                            setData('brgyIdBack', {
+                                                                                base64: base64Image,
+                                                                                file: selectedImage
+                                                                            } as IdType);
+                                                        
+                                                                        }}
+                                                                    />
+                                                        
+                                                                    <div className="w-full h-full bg-white/15 rounded mt-1"
+                                                                        onClick={() => {
+                                                                            const img_input: any = brgyIdBackRef.current;
+                                                                            img_input.click();
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            !data.brgyIdBack
+                                                                            ?
+                                                                                (
+                                                                                    <div className="w-full h-full text-xl flex items-center justify-center">
+                                                                                        <p className="text-foreground/50">No Image Uploaded</p>
+                                                                                    </div>
+                                                                                )
+                                                                            :
+                                                                                (
+                                                                                    <div className="w-full h-full overflow-hidden border rounded">
+                                                                                        <img 
+                                                                                            src={"base64" in data.brgyIdBack ? data.brgyIdBack.base64 : ""} 
+                                                                                            className="w-full h-full object-cover"
+                                                                                        />
+                                                                                    </div>
+                                                                                )
+                                                                        }
+                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            {errors['brgyId'] && <p className="text-red-500 text-sm">{errors['brgyId']}</p>}
+    
+                                                        </>
+                                                    )}
+            
+            
+                                                    {   info.type === 'select' && 
+                                                        <div>
+                                                            <Label>{info.label.replace('_', ' ')}</Label>
+                                                            <Select 
+                                                                onValueChange={(value) => {
+                                                                    setData(info.label.toLowerCase(), value)
+                                                                }} 
+                                                                required={info.required}
+                                                                value={data[info.label.toLowerCase()]}
+                                                            >
+                                                                <SelectTrigger>
+                                                                    <SelectValue placeholder={info.placeholder} />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                {
+                                                                    info?.options?.map(doc => (
+                                                                        <SelectItem value={doc}>{doc}</SelectItem>
+                                                                    ))
+                                                                }
+                                                                </SelectContent>
+                                                            </Select>
+                                                            {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                        </div>
+                                                    }
+            
+            
+                                                    
+                                                </div>
+                                                
+                                            </>
+                                        ))
+
                                         
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto overflow-hidden p-0" align="start">
-                                        <Calendar
-                                            required
-                                            mode="single"
-                                            selected={date}
-                                            captionLayout="dropdown"
-                                            onSelect={(date: Date) => {
-                                                setDate(date);
-                                                setOpen(false);
-                                            }}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                                {errors.preferred_pickup && <p className="text-red-500 text-sm">{errors.preferred_pickup}</p>}
+                                    )}
+
+                                    {   data.document_type && 
+                                        <div>
+                                            <Label>Note</Label>
+                                            <Textarea
+                                                value={data['note']}
+                                                placeholder={"Add note"}
+                                                required={false}
+                                                onChange={(e) => setData('note', e.target.value)}
+                                            />
+                                            {errors['note'] && <p className="text-red-500 text-sm">{errors['note']}</p>}
+                                        </div>
+                                    }
+                                </>
                             </div>
 
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button 
-                                        onClick={() => {
-                                            setData('total', total);
-                                        }} 
-                                        variant="default"
-                                        size="lg"
-                                        className="mt-4"
-                                    >
-                                        Submit Request
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete your account
-                                            and remove your data from our servers.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={submit}>Continue</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                            {   selectedDocumentType && (
+                                <div className="mt-8">
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button 
+                                                variant="default"
+                                                size="lg"
+                                            >
+                                                Submit Request
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This will permanently delete your account
+                                                    and remove your data from our servers.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={submit}
+                                                >
+                                                    Continue
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </div>
+                            )}
 
                         </div>
                     </Tabs>

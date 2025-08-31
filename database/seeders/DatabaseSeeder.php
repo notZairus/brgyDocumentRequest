@@ -17,11 +17,11 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'User Bermillo',
-            'email' => 'user@gmail.com',
-            'password' => 'QZr8408o'
-        ]);
+        // User::factory()->create([
+        //     'name' => 'User Bermillo',
+        //     'email' => 'user@gmail.com',
+        //     'password' => 'QZr8408o'
+        // ]);
 
         User::factory()->admin()->create([
             'name' => 'Admin Bermillo',
@@ -33,15 +33,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Zairus Bermillo',
             'email' => 'zairusb12@gmail.com',
             'password' => Hash::make('QZr8408o'),
-            'is_admin' => false
-        ]);
-
-        DocumentRequest::factory(5)->pending()->create([
-            'user_id' => $user->id
+            'verified_at' => now()
         ]);
 
 
-
-        DocumentRequest::factory(10)->pending()->create();
+        // DocumentRequest::factory(10)->pending()->create();
     }
 }

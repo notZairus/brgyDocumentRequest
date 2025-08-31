@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
                 "totalRequests" => DocumentRequest::all()->count(),
                 "totalVerifications" => User::where('verified_at', null)->where('is_admin', 0)->count(),
                 "pendingRequests" => DocumentRequest::whereIn('status', ['Pending', 'Under Review'])->count(),
-                'approvedToday' => DocumentRequest::where('status', 'Approved')->whereDate('updated_at', today())->count(),
+                'approvedToday' => DocumentRequest::whereIn('status', ['Approved', 'Ready for Pickup', 'Completed'])->whereDate('updated_at', today())->count(),
                 'declinedToday' => DocumentRequest::where('status', 'Declined')->whereDate('updated_at', today())->count(),
             ]);
         }
