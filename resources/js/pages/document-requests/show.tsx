@@ -98,7 +98,7 @@ export default function show() {
                                 <span className="ml-8">{`( ${format(documentRequest.created_at, "MMMM d, yyyy")} )`}</span>
                             </h1>
 
-                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && documentRequest.status === "Declined" && (
+                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && documentRequest.status === "Declined" ? (
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="destructive">
@@ -131,16 +131,16 @@ export default function show() {
                                         </DialogFooter>
                                     </DialogContent>
                                 </Dialog>
-                            )}
+                            ) : null}
 
-                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") && (
-                                <a href={`/download-docx/${documentRequest.id}`} rel="noopener">
+                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") ? (
+                                <a href={`/download-docx/${documentRequest.id}`} target="_blank" rel="noopener">
                                     <Button size="lg">
                                         <Printer />
                                         Print
                                     </Button>
                                 </a>
-                            )}
+                            ) : null}
 
                         </div>
         

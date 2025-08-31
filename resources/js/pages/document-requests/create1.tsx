@@ -51,6 +51,11 @@ interface MyProps {
     }
 };
 
+type IdType = {
+    'base64': string,
+    'file': File
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Request Document',
@@ -100,7 +105,7 @@ export default function create() {
 
 
     function setTab(tab: string) {
-        setData('document_typerequest_type', tab);
+        setData('document_request_type', tab);
         setCurrentTab(tab);
     }
 
@@ -108,17 +113,20 @@ export default function create() {
     function submit() {
         clearErrors();
 
-        if (data['document_type'] === 'Certificate of Indigency') {
-
-            if (currentTab !== 'user') {
-                if (!data['name'] || data['name'].trim().length <= 5) {
-                    setError('name', "Please enter your full name.")
-                    return;
-                }
+        if (currentTab === 'other') {
+            if (!data['name'] || data['name'].trim().length <= 5) {
+                setError('name', "Please enter your full name.")
+                return;
             }
-            
-            
 
+            if (! data['brgyIdFront'] || ! data['brgyIdBack']) {
+                setError('brgyId', 'Upload your Barangay ID.')
+                return;
+            }
+        }
+
+
+        if (data['document_type'] === 'Certificate of Indigency') {            
             if (! data['purpose']) {
                 setError('purpose', 'Purpose is required. Please select a purpose.');
                 return;
@@ -128,8 +136,21 @@ export default function create() {
                 setError('sitio', 'Sitio is required. Please select a sitio.');
                 return;
             }
-            
         }
+
+        if (data['document_type'] === 'Certificate of Residency') {            
+            if (! data['civil_status']) {
+                setError('civil_status', 'Civil Status is required. Please select a civil status.');
+                return;
+            }
+
+            if (! data['sitio']) {
+                setError('sitio', 'Sitio is required. Please select a sitio.');
+                return;
+            }
+        }
+
+        
 
         post("/document-requests", {
             onFinish: () => {
@@ -192,50 +213,180 @@ export default function create() {
                                 <>
                                     { selectedDocumentType && (
                                         selectedDocumentType.information
-                                            .filter((info) => {
-                                                return info.label !== 'Name' ? true : currentTab !== 'user' ? true : false
-                                            })
-                                            .map((info, index) => (
+                                        .map((info) => (
                                             <div className="flex flex-col gap-2">
-                                                <Label>{info.label.replace('_', ' ')}</Label>
         
-        
-                                                {   info.type === 'text' && 
-                                                    <Input
-                                                        value={data[info.label.toLowerCase()]}
-                                                        placeholder={info.placeholder}
-                                                        required={info.required}
-                                                        onChange={(e) => setData(info.label.toLowerCase(), e.target.value)}
-                                                    />
+                                                {   info.type === 'text' && info.label !== 'Name' &&
+                                                    <div>
+                                                        <div>
+                                                            <Label>{info.label.replace('_', ' ')}</Label>
+                                                            <Input
+                                                                value={data[info.label.toLowerCase()]}
+                                                                placeholder={info.placeholder}
+                                                                required={info.required}
+                                                                onChange={(e) => setData(info.label.toLowerCase(), e.target.value)}
+                                                            />
+                                                            {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                        </div>
+                                                    </div>
+                                                    
                                                 }
+
+                                                {   info.label === 'Name' && currentTab === 'other' && (
+                                                    <>
+                                                        <div>
+                                                            <Label>{info.label.replace('_', ' ')}</Label>
+                                                            <Input
+                                                                value={data[info.label.toLowerCase()]}
+                                                                placeholder={info.placeholder}
+                                                                required={info.required}
+                                                                onChange={(e) => setData(info.label.toLowerCase(), e.target.value)}
+                                                            />
+                                                            {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                        </div>
+
+                                                        <div className="w-full flex gap-4 my-4">
+                                                            <div className="aspect-video w-[240px] rounded">
+                                                                <Label>ID Front:</Label>
+                                                                <Input
+                                                                    id="brgy_id_front"
+                                                                    type="file"
+                                                                    accept="images/*"
+                                                                    hidden
+                                                                    ref={brgyIdFrontRef}
+                                                                    onChange={async (e) => {
+                                                                        const selectedImage = e.target.files?.[0];
+                                                                        if (!selectedImage) return;
+                                                    
+                                                                        const base64Image = await imgToBase64(selectedImage);
+                                                    
+                                                                        if (!selectedImage) return;
+                                                                        setData('brgyIdFront', {
+                                                                            base64: base64Image,
+                                                                            file: selectedImage
+                                                                        } as IdType);
+                                                                    }}
+                                                                />
+                                                    
+                                                                <div className="w-full h-full bg-white/15 rounded mt-1"
+                                                                    onClick={() => {
+                                                                        const img_input: any = brgyIdFrontRef.current;
+                                                                        img_input.click();
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        !data.brgyIdFront
+                                                                        ?
+                                                                            (
+                                                                                <div className="w-full h-full text-xl flex items-center justify-center">
+                                                                                    <p className="text-foreground/50">No Image Uploaded</p>
+                                                                                </div>
+                                                                            )
+                                                                        :
+                                                                            (
+                                                                                <div className="w-full h-full overflow-hidden border rounded">
+                                                                                    <img 
+                                                                                        src={"base64" in data.brgyIdFront ? data.brgyIdFront.base64 : ""} 
+                                                                                        className="w-full h-full object-cover"
+                                                                                    />
+                                                                                </div>
+                                                                            )
+                                                                    }
+                                                    
+                                                                </div>
+                                                            </div>
+                                                    
+                                                            <div className="aspect-video w-[240px] rounded">
+                                                                <Label>ID Back:</Label>
+                                                                <Input
+                                                                    id="brgy_id_back"
+                                                                    type="file"
+                                                                    accept="images/*"
+                                                                    hidden
+                                                                    ref={brgyIdBackRef}
+                                                                    onChange={async (e) => {
+                                                                        const selectedImage = e.target.files?.[0];
+                                                                        if (!selectedImage) return;
+                                                    
+                                                                        const base64Image = await imgToBase64(selectedImage);
+                                                    
+                                                                        if (!selectedImage) return;
+                                                                        setData('brgyIdBack', {
+                                                                            base64: base64Image,
+                                                                            file: selectedImage
+                                                                        } as IdType);
+                                                    
+                                                                    }}
+                                                                />
+                                                    
+                                                                <div className="w-full h-full bg-white/15 rounded mt-1"
+                                                                    onClick={() => {
+                                                                        const img_input: any = brgyIdBackRef.current;
+                                                                        img_input.click();
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        !data.brgyIdBack
+                                                                        ?
+                                                                            (
+                                                                                <div className="w-full h-full text-xl flex items-center justify-center">
+                                                                                    <p className="text-foreground/50">No Image Uploaded</p>
+                                                                                </div>
+                                                                            )
+                                                                        :
+                                                                            (
+                                                                                <div className="w-full h-full overflow-hidden border rounded">
+                                                                                    <img 
+                                                                                        src={"base64" in data.brgyIdBack ? data.brgyIdBack.base64 : ""} 
+                                                                                        className="w-full h-full object-cover"
+                                                                                    />
+                                                                                </div>
+                                                                            )
+                                                                    }
+                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {errors['brgyId'] && <p className="text-red-500 text-sm">{errors['brgyId']}</p>}
+
+                                                    </>
+                                                )}
         
         
                                                 {   info.type === 'select' && 
-                                                    <Select 
-                                                        onValueChange={(value) => {
-                                                            setData(info.label.toLowerCase(), value)
-                                                        }} 
-                                                        required={info.required}
-                                                        value={data[info.label.toLowerCase()]}
-                                                    >
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder={info.placeholder} />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                        {
-                                                            info?.options?.map(doc => (
-                                                                <SelectItem value={doc}>{doc}</SelectItem>
-                                                            ))
-                                                        }
-                                                        </SelectContent>
-                                                    </Select>
+                                                    <div>
+                                                        <Label>{info.label.replace('_', ' ')}</Label>
+                                                        <Select 
+                                                            onValueChange={(value) => {
+                                                                setData(info.label.toLowerCase(), value)
+                                                            }} 
+                                                            required={info.required}
+                                                            value={data[info.label.toLowerCase()]}
+                                                        >
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder={info.placeholder} />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                            {
+                                                                info?.options?.map(doc => (
+                                                                    <SelectItem value={doc}>{doc}</SelectItem>
+                                                                ))
+                                                            }
+                                                            </SelectContent>
+                                                        </Select>
+                                                        {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                    </div>
                                                 }
         
         
-                                                {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                
                                             </div>
                                         ))
+
+                                        
                                     )}
+
+                                    
                                 </>
                             </div>
 

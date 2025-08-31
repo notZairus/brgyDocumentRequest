@@ -42,6 +42,33 @@ class DocumentRequestController extends Controller
     }
 
     public function store(Request $request) {
+    
+        if ($request->get('document_request_type') === 'other') {
+            if (! $request->get('brgyIdBack')) {
+                return back()->with('error', 'Please upload the back of your Barangay ID.');
+            }
+
+            if (! $request->get('brgyIdFront')) {
+                return back()->with('error', 'Please upload the front of your Barangay ID.');
+            }
+
+            if (! $request->get('name')) {
+                return back()->with('error', 'Please enter your full name.');
+            }
+
+            $extension = $request->file('brgyIdFront')['file']->getClientOriginalExtension();
+
+            $request->file('brgyIdFront')['file']->storeAs(
+                'ids/'. $request->user()->getAttribute('email') . '/' . $request->get('name'), 
+                'front.' . $extension,
+            );
+
+            $request->file('brgyIdBack')['file']->storeAs(
+                'ids/' . $request->user()->getAttribute('email')  . '/' . $request->get('name'),
+                'back.' . $extension,
+            );
+        }
+
         switch ($request->get('document_type')) {
             case 'Certificate of Indigency':
                 handleCertificateOfIndigency($request);
@@ -53,84 +80,6 @@ class DocumentRequestController extends Controller
 
         return back()->with('success', 'Document request submitted successfully.');
     }
-
-
-
-//     document_type: string;
-//     purpose: string;
-//     notes: string;
-//     preferred_pickup: string;
-
-//     name?: string;
-//     brgyIdFront?: IdType | File | null;
-//     brgyIdBack?: IdType | File | null;
-
-//     // delivery feature (experimental)
-//     delivery_method: DeliveryMethod;
-//     delivery_address: string | null;
-//     total?: number;
-
-    // public function store(Request $request) 
-    // {
-    //     if (! $request->get('name')) {
-    //         $validated_data = $request->validate([
-    //             "preferred_pickup" => ['required', 'date'],
-    //             "document_type" => ['required'],
-    //             "purpose" => ['required'],
-    //             "name" => [],
-    //             "total" => []
-    //         ]);
-
-    //         $new_doc_req = DocumentRequest::create([
-    //             'user_id' => $request->user()->id,
-    //             'name' => $validated_data['name'] ? $validated_data['name'] : $request->user()->getAttribute('name'),
-    //             'document_type' => $validated_data['document_type'],
-    //             'purpose' => $validated_data['purpose'],
-    //             'notes' => $request->notes,
-    //             'preferred_pickup' => new \DateTime($request->preferred_pickup),
-    //             'total_amount' => $validated_data['total'],
-    //         ]);
-
-    //         return back()->with('success', 'Document request submitted successfully.');
-    //     }
-
-
-    //     $validated_data = $request->validate([
-    //         "document_type" => ['required'],
-    //         "preferred_pickup" => ['required', 'date'],
-    //         "purpose" => ['required'],
-
-    //         "name" => ['required'],
-    //         "brgyIdFront" => ['required'],
-    //         "brgyIdBack" => ['required'],
-
-    //         "total" => []
-    //     ]);
-
-    //     $extension = $request->file('brgyIdFront')['file']->getClientOriginalExtension();
-
-    //     $request->file('brgyIdFront')['file']->storeAs(
-    //         'ids/'. $request->user()->getAttribute('email') . '/' . $validated_data['name'], 
-    //         'front.' . $extension,
-    //     );
-
-    //     $request->file('brgyIdBack')['file']->storeAs(
-    //         'ids/' . $request->user()->getAttribute('email')  . '/' . $validated_data['name'],
-    //         'back.' . $extension,
-    //     );
-
-    //     $new_doc_req = DocumentRequest::create([
-    //         'user_id' => $request->user()->id,
-    //         'name' => $validated_data['name'] ? $validated_data['name'] : $request->user()->getAttribute('name'),
-    //         'document_type' => $validated_data['document_type'],
-    //         'purpose' => $validated_data['purpose'],
-    //         'notes' => $request->notes,
-    //         'preferred_pickup' => new \DateTime($request->preferred_pickup),
-    //         'total_amount' => $validated_data['total'],
-    //     ]);
- 
-    //     return back()->with('success', 'Document request submitted successfully.');
-    // }
 
     public function show(DocumentRequest $document_request, Request $request) 
     {
@@ -206,48 +155,42 @@ class DocumentRequestController extends Controller
 
 function handleCertificateOfIndigency(Request $request) 
 {
-    if ($request->get('document_request_type') === 'user') {
-        $validated_data = $request->validate([
-            "document_type" => ['required'],
-            "purpose" => ['required'],
-            "sitio" => ['required'],
-        ]);
+    $validated_data = $request->validate([
+        "document_type" => ['required'],
+        "purpose" => ['required'],
+        "sitio" => ['required'],
+    ]);
 
-        $new_doc_req = DocumentRequest::create([
-            'user_id' => $request->user()->id,
-            'document_type' => $validated_data['document_type'],
-            'notes' => $request->notes,
-            'document_details' => [
-                'sitio' => $validated_data['sitio'],
-                'name' => $request->user()->name,
-                'purpose' => $validated_data['purpose'],
-            ],
-        ]);
-    } else {
-        
-    }
+    $new_doc_req = DocumentRequest::create([
+        'user_id' => $request->user()->id,
+        'document_type' => $validated_data['document_type'],
+        'notes' => $request->notes,
+        'document_details' => [
+            'sitio' => $validated_data['sitio'],
+            'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
+            'purpose' => $validated_data['purpose'],
+        ],
+    ]);
+    
 }
 
 function handleCertificateOfResidency(Request $request) 
 {
-    if ($request->get('document_request_type') === 'user') {
-        $validated_data = $request->validate([
-            "document_type" => ['required'],
-            "sitio" => ['required'],
-            "civil_status" => ['required'],
-        ]);
+    $validated_data = $request->validate([
+        "document_type" => ['required'],
+        "sitio" => ['required'],
+        "civil_status" => ['required'],
+    ]);
 
-        $new_doc_req = DocumentRequest::create([
-            'user_id' => $request->user()->id,
-            'document_type' => $validated_data['document_type'],
-            'notes' => $request->notes,
-            'document_details' => [
-                'sitio' => $validated_data['sitio'],
-                'name' => $request->user()->name,
-                'civil_status' => $validated_data['civil_status'],
-            ],
-        ]);
-    } else {
-        
-    }
+    $new_doc_req = DocumentRequest::create([
+        'user_id' => $request->user()->id,
+        'document_type' => $validated_data['document_type'],
+        'notes' => $request->notes,
+        'document_details' => [
+            'sitio' => $validated_data['sitio'],
+            'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
+            'civil_status' => $validated_data['civil_status'],
+        ],
+    ]);
+    
 }

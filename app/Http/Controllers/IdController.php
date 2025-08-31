@@ -45,7 +45,7 @@ class IdController extends Controller
         $document_request->load('user');
 
 
-        $dir = storage_path('app/private/ids/'. $document_request->user->email . '/' . $document_request->name . '/');
+        $dir = storage_path('app/private/ids/'. $document_request->user->email . '/' . $document_request->document_details['name'] . '/');
 
         if (!file_exists($dir)) {
             abort(404);
@@ -64,7 +64,7 @@ class IdController extends Controller
         $document_request->load('user');
 
 
-        $dir = storage_path('app/private/ids/'. $document_request->user->email . '/' . $document_request->name . '/');
+        $dir = storage_path('app/private/ids/'. $document_request->user->email . '/' . $document_request->document_details['name'] . '/');
 
         if (!file_exists($dir)) {
             abort(404);

@@ -45,21 +45,46 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 
+
+
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
+use ConvertApi\ConvertApi;
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/download-docx/{document_request}', function(DocumentRequest $document_request) {
-        // $templatePath = storage_path('app/templates/template.docx');
 
-        // $templateProcessor = new TemplateProcessor($templatePath);
-        // $templateProcessor->setValue('zname', $document_request->name);
+        dd($document_request);
 
-        // $fileName = $document_request->name . '.docx';
-        // $savePath = storage_path('app/' . $fileName);
-        // $templateProcessor->saveAs($savePath);
 
-        // return response()->download($savePath)->deleteFileAfterSend(true);
+        $templatePath = storage_path('app/templates/template.docx');
+
+        $templateProcessor = new TemplateProcessor($templatePath);
+        $templateProcessor->setValue('zname', 'John Doe');
+        $templateProcessor->setValue('order_no', '12345');
+
+        $fileName = 'filled_document.docx';
+        $savePath = storage_path('app/' . $fileName);
+        $templateProcessor->saveAs($savePath);
+
+        ConvertApi::setApiCredentials(env('CONVERT_API_TOKEN'));
+        $result = ConvertApi::convert('pdf', [ 'File' => $savePath ]);
+        
+        $pdfPath = storage_path('app/filled_document.pdf');
+        $result->saveFiles($pdfPath);
+
+        register_shutdown_function(function () use ($savePath, $pdfPath) {
+            if (file_exists($savePath)) {
+                unlink($savePath);
+            }
+            if (file_exists($pdfPath)) {
+                unlink($pdfPath);
+            }
+        });
+
+        return response()->file($pdfPath, [
+            'Content-Type' => 'application/pdf'
+        ])->deleteFileAfterSend(true);
     });
 }); 
