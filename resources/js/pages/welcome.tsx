@@ -19,7 +19,7 @@ export default function Welcome() {
                     <div className="aspect-square h-full bg-red-400 overflow-hidden rounded-full shadow-md hover:shadow-lg hover:scale-105 transition-all" >
                         <img src="/logo_matictic.jpg" alt="matictic logo" className="w-full object-fit" />
                     </div>
-                    <div className="lg:flex items-center gap-12 hidden">
+                    <div className="lg:flex items-center gap-12 hidden text-white">
 
                         <nav className="space-x-5 text-lg">
                             <Link href="#home">Home</Link>
@@ -35,7 +35,7 @@ export default function Welcome() {
                                 </Button>
                             </Link>
                             <Link href="/register">
-                                <Button size="lg" variant="default" className="text-matictic cursor-pointer">
+                                <Button size="lg" variant="default" className="bg-yellow-400 text-black cursor-pointer">
                                     Register
                                 </Button>
                             </Link>
@@ -210,10 +210,15 @@ export default function Welcome() {
 
                 </main>
 
-                <footer className="bg-matictic w-full h-20 flex items-center justify-center" id="services">
-                    <p className="text-white text-center">
-                        Copyright &copy; {new Date().getFullYear()} Barangay Matictic. All rights reserved.
-                    </p>
+                <footer className="bg-matictic w-full items-center justify-center shadow" id="services">
+                    <div className="flex items-center justify-center p-4 bg-[#f9fafb]">
+                        <p className="tracking-widest text-center">Developed by Group ABC for their research subject.</p>
+                    </div>
+                    <div className="flex items-center justify-center p-5 bg-matictic">
+                        <p className="text-white text-center tracking-wider">
+                            Copyright &copy; {new Date().getFullYear()} Barangay Matictic. All rights reserved.
+                        </p>
+                    </div>
                 </footer>
             </div>
         </>
