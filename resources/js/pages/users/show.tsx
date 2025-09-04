@@ -26,8 +26,6 @@ export default function Users() {
             href: `/verify-accounts/${user.id}`
         }
     ];
-
-    console.log(user);
     
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

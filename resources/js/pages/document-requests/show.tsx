@@ -54,13 +54,13 @@ interface CustomPageProps {
  * @returns The page element.
  */
 export default function show() {
-    const { documentRequest, hasPenalty, auth: { user }, flash } = usePage<MyPageProps & CustomPageProps>().props;
+    const { documentRequest, hasPenalty, auth: { user } } = usePage<MyPageProps & CustomPageProps>().props;
     const [showDeclineReason, setShowDeclineReason] = useState(false);
     const { data, setData, patch } = useForm({
         action: '',
         reason: '',
     });
-    const [penaltyReason, setPenaltyReason] = useState("User doesn't show up to get the document.");
+    const [penaltyReason, setPenaltyReason] = useState(documentRequest.status === 'Ready for Pickup' ? "User doesn't show up to get the document." : "Troll request.");
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Document Requests',
@@ -78,14 +78,6 @@ export default function show() {
         });
     } 
 
-    useEffect(() => {
-        flash.success && toast.success(flash.success);
-        flash.error && toast.error(flash.error);
-    }, [flash]);
-
-    
-
-
     return (
         <>  
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -101,49 +93,51 @@ export default function show() {
                                 <span className="ml-8">{`( ${format(documentRequest.created_at, "MMMM d, yyyy")} )`}</span>
                             </h1>
 
-                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && documentRequest.status === "Declined" ? (
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="destructive">
-                                            <Flag />
-                                            Report
+                            <div className="flex items-center gap-2">
+                                { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") ? (
+                                    <a href={`/download-docx/${documentRequest.id}`} rel="noopener noreferer">
+                                        <Button size="lg">
+                                            <Printer />
+                                            Print
                                         </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[425px]">
-                                        <DialogHeader>
-                                            <DialogTitle>Penalize User</DialogTitle>
-                                            <DialogDescription>
-                                                Please provide a reason for penalizing this user.  
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="grid gap-4">
-                                            <div className="grid gap-3">
-                                                <Label htmlFor="name-1">Reason</Label>
-                                                <Textarea defaultValue={penaltyReason} onChange={(e) => setPenaltyReason(e.target.value)} required minLength={10} />
-                                            </div>
-                                        </div>
-                                        <DialogFooter>
-                                            <DialogClose asChild>
-                                                <Button variant="outline">Cancel</Button>
-                                            </DialogClose>
-                                            <DialogClose asChild>
-                                                <Link preserveScroll href={`/penalties`} method="post" data={{ document_request_id: documentRequest.id, user_id: documentRequest.user_id, reason: penaltyReason }}>
-                                                    <Button className="w-full">Report</Button>
-                                                </Link>
-                                            </DialogClose>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
-                            ) : null}
+                                    </a>
+                                ) : null}
 
-                            { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") ? (
-                                <a href={`/download-docx/${documentRequest.id}`} rel="noopener noreferer">
-                                    <Button size="lg">
-                                        <Printer />
-                                        Print
-                                    </Button>
-                                </a>
-                            ) : null}
+                                { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && documentRequest.status !== "Approved" ? (
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button variant="destructive" size="lg">
+                                                <Flag />
+                                                Report
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-[425px]">
+                                            <DialogHeader>
+                                                <DialogTitle>Penalize User</DialogTitle>
+                                                <DialogDescription>
+                                                    Please provide a reason for penalizing this user.  
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="grid gap-4">
+                                                <div className="grid gap-3">
+                                                    <Label htmlFor="name-1">Reason</Label>
+                                                    <Textarea defaultValue={penaltyReason} onChange={(e) => setPenaltyReason(e.target.value)} required minLength={10} />
+                                                </div>
+                                            </div>
+                                            <DialogFooter>
+                                                <DialogClose asChild>
+                                                    <Button variant="outline">Cancel</Button>
+                                                </DialogClose>
+                                                <DialogClose asChild>
+                                                    <Link preserveScroll href={`/penalties`} method="post" data={{ document_request_id: documentRequest.id, user_id: documentRequest.user_id, reason: penaltyReason }}>
+                                                        <Button className="w-full">Report</Button>
+                                                    </Link>
+                                                </DialogClose>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+                                ) : null}
+                            </div>
 
                         </div>
         

@@ -1,8 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { PageProps } from "@inertiajs/core";
-import type { User } from "@/types/index.d.ts";
+import { Head } from '@inertiajs/react';
 import {
   Select,
   SelectTrigger,
@@ -15,15 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useForm } from "@inertiajs/react";
-import { FormEvent, useState, useEffect, useRef } from "react";
-import { toast } from "sonner";
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { ChevronDownIcon } from "lucide-react";
+import { useState, useRef } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { imgToBase64 } from '@/lib/utils';
 import { availableDocuments } from "@/datas";
@@ -39,17 +29,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-
-
-interface MyProps {
-    auth: {
-        user: User
-    }, 
-    flash: {
-        success: string,
-        error: string
-    }
-};
 
 type IdType = {
     'base64': string,
@@ -84,9 +63,7 @@ type useFormProps = {
  */
 
 export default function create() {
-    const [open, setOpen] = useState(false)
     const [date, setDate] = useState<Date | undefined>(undefined)
-    const { flash } = usePage<PageProps & MyProps>().props;
     const { data, setData, post, processing, errors, setError, reset, clearErrors } = useForm<useFormProps>({
         document_request_type: 'user',
         document_type: '',
@@ -97,14 +74,6 @@ export default function create() {
     const brgyIdBackRef = useRef(null);
 
     let selectedDocumentType = availableDocuments.find((doc) => doc.type == data.document_type);
-
-    useEffect(() => {
-        flash.success && toast.success(flash.success);
-        flash.error && toast.error(flash.error, {
-            description: 'Input a valid address'
-        });
-    }, [flash]);
-
 
     function setTab(tab: string) {
         setData('document_request_type', tab as 'other' | 'user');
@@ -181,8 +150,8 @@ export default function create() {
                             setTab(value);
                         }}
                     >
-                        <TabsList className="w:md bg-transparent lg:w-md mx-auto">
-                            <TabsTrigger value="user" >For You</TabsTrigger>
+                        <TabsList className="w:md bg-primary/5 lg:w-md mx-auto">
+                            <TabsTrigger value="user">For You</TabsTrigger>
                             <TabsTrigger value="other">For Others</TabsTrigger>
                         </TabsList>
                         

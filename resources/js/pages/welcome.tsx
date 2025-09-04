@@ -35,7 +35,7 @@ export default function Welcome() {
                                 </Button>
                             </Link>
                             <Link href="/register">
-                                <Button size="lg" variant="default" className="bg-yellow-400 text-black cursor-pointer">
+                                <Button size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black cursor-pointer">
                                     Register
                                 </Button>
                             </Link>

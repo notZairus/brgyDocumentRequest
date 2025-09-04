@@ -38,6 +38,10 @@ class DocumentRequestController extends Controller
 
     public function create()
     {
+        if (checkPenalty()) {
+            return back()->with('error', 'You have an active penalty. Please wait for ' . ceil(checkPenalty()) . ' day(s) before making a new request.');
+        }
+
         return Inertia::render('document-requests/create');
     }
 
@@ -156,6 +160,24 @@ class DocumentRequestController extends Controller
 // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS // HELPER FUNCTIONSSSS //
 
 
+
+function checkPenalty() {
+    $penalties = Auth::user()->penalties;
+    $there_is_penalty = false;
+
+    if ($penalties->isNotEmpty()) {
+        $latest_penalty = $penalties->sortByDesc('created_at')->first();
+        $now = Carbon::now();
+        $end = Carbon::parse($latest_penalty->created_at)->addDays(count($penalties) * 3);
+        
+        if ($now->lessThan($end)) {
+            $days_left = $now->diffInDays($end);
+            return $days_left;
+        }
+    }
+
+    return null;
+}
 
 
 

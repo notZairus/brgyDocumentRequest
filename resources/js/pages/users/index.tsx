@@ -6,7 +6,7 @@ import { format, formatDistance } from "date-fns";
 import type { User } from "@/types/index.d.ts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 
