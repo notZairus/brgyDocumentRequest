@@ -9,9 +9,8 @@ use App\Models\User;
 use App\Models\DocumentRequest;
 
 
-// serve the ids
-
-Route::middleware('auth')->get('/user', function (Request $request) {
+// id server routes
+Route::middleware(['auth'])->group(function () {
     Route::get('/getId/{user}/front', [IdController::class, 'serveFrontId']);
     Route::get('/getId/{user}/back', [IdController::class, 'serveBackId']);
     Route::get('/getOtherId/{document_request}/front', [IdController::class, 'serveOtherFrontId']);
@@ -20,7 +19,6 @@ Route::middleware('auth')->get('/user', function (Request $request) {
 
 
 // polling routes
-
 Route::get('/poll/dashboard-data', function () {
     $is_admin = Auth::user()->is_admin;
 
