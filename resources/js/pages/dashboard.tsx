@@ -46,6 +46,7 @@ export default function Dashboard() {
     useEffect(() => {
       const interval = setInterval(() => {
         axios.get('/poll/dashboard-data').then(response => {
+            console.log(response.data);
             setData(response.data);
         });
       }, (5000));
