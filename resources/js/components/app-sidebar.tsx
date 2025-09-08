@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Users, LayoutGrid, ShieldAlert, ScrollText, List, Logs, ListChecks } from 'lucide-react';
+import { Users, LayoutGrid, ShieldAlert, ScrollText, List, Logs, Flag } from 'lucide-react';
 import AppLogo from './app-logo';
 import { MyPageProps } from "@/types/index.d";
 
@@ -46,7 +46,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Appeals',
         href: '/appeals',
-        icon: ScrollText,
+        icon: Flag,
         for: "admin"
     },
 

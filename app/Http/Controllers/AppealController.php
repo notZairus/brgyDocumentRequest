@@ -61,19 +61,21 @@ class AppealController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Appeal $appeal)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Appeal $appeal)
     {
-        //
+        $appeal->load('penalty');
+
+        $appeal->penalty->update([
+            'status' => $request->action === 'approved' ? 'ineffective' : 'effective',
+        ]);
+
+        $appeal->update([
+            'status' => $request->action,
+        ]);
+
+        return redirect()->back()->with('success', 'Appeal status updated successfully.');
     }
 
     /**

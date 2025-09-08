@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(DocumentRequest::class);
             $table->text('reason')->nullable();
+            $table->enum('status', ['effective', 'ineffective'])->default('effective');
             $table->timestamps();
         });
     }

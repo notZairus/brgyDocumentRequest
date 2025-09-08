@@ -79,6 +79,7 @@ Route::post('/penalties', [PenaltyController::class, 'store']);
 Route::post('/appeals', [AppealController::class, 'store']);
 Route::get('/appeals', [AppealController::class, 'index']);
 Route::get('/appeals/{appeal}', [AppealController::class, 'show']);
+Route::patch('/appeals/{appeal}', [AppealController::class, 'update']);
 
 
 

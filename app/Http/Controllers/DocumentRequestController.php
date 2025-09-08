@@ -171,6 +171,13 @@ function checkPenalty($penalties) {
 
     if ($penalties->isNotEmpty()) {
         $latest_penalty = $penalties->sortByDesc('created_at')->first();
+
+        $there_is_penalty = $latest_penalty->status === 'effective';
+
+        if (! $there_is_penalty) {
+            return null;
+        }
+
         $now = Carbon::now();
         $end = Carbon::parse($latest_penalty->created_at)->addDays(count($penalties) * 3);
         
