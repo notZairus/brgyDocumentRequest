@@ -121,7 +121,11 @@ export default function show() {
                                             <div className="grid gap-4">
                                                 <div className="grid gap-3">
                                                     <Label htmlFor="name-1">Reason</Label>
-                                                    <Textarea defaultValue={penaltyReason} onChange={(e) => setPenaltyReason(e.target.value)} required minLength={10} />
+                                                    <Textarea 
+                                                        defaultValue={penaltyReason} 
+                                                        onChange={(e) => setPenaltyReason(e.target.value)} 
+                                                        required 
+                                                        minLength={10} />
                                                 </div>
                                             </div>
                                             <DialogFooter>

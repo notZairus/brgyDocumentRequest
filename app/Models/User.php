@@ -65,4 +65,8 @@ class User extends Authenticatable
     public function penalties() {
         return $this->hasMany(Penalty::class);
     }
+
+    public function appeals() {
+        return $this->hasManyThrough(Appeal::class, Penalty::class);
+    }
 }

@@ -21,5 +21,9 @@ class Penalty extends Model
     public function document_request() {
         return $this->belongsTo(DocumentRequest::class);
     }
+    
+    public function appeals() {
+        return $this->hasOne(Appeal::class);
+    }
 
 }

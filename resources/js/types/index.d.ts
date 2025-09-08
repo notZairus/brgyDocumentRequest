@@ -42,6 +42,16 @@ export interface Penalty {
     updated_at: string;
 }
 
+export interface Appeal {
+    'id': number;
+    'penalty_id': number;
+    'reason': string;
+    'status': string;
+    'penalty': Penalty;
+    'created_at': string;
+    'user': User;
+}
+
 export interface User {
     id: number;
     name: string;

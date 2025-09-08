@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DocumentRequestController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PenaltyController;
+use App\Http\Controllers\AppealController;
 
 use App\Models\DocumentRequest;
 use App\Models\User;
@@ -34,16 +35,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('/verify-accounts/{user}', [VerifyUserController::class, 'patch']);
     Route::delete('/verify-accounts/{user}', [VerifyUserController::class, 'destroy']);
 
-    Route::post('/penalties', [PenaltyController::class, 'store']);
 });
 
 // authenticated
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {
 
-        $is_admin = Auth::user()->is_admin;
-
-        if ($is_admin) {
+        if (Auth::user()->is_admin) {
             return Inertia::render('dashboard', [
                 "totalRequests" => DocumentRequest::all()->count(),
                 "totalVerifications" => User::where('verified_at', null)->where('is_admin', 0)->count(),
@@ -70,6 +68,18 @@ Route::middleware(['auth'])->group(function () {
         ->can('show', 'user');
     Route::get('/my-requests', [UserController::class, 'requests']);
 });
+
+
+
+// penalty routes
+Route::post('/penalties', [PenaltyController::class, 'store']);
+
+
+// appeal routes
+Route::post('/appeals', [AppealController::class, 'store']);
+Route::get('/appeals', [AppealController::class, 'index']);
+Route::get('/appeals/{appeal}', [AppealController::class, 'show']);
+
 
 
 

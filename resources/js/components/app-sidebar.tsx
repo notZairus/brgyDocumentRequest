@@ -43,6 +43,12 @@ const mainNavItems: NavItem[] = [
         icon: ScrollText,
         for: "user/verified"
     },
+    {
+        title: 'Appeals',
+        href: '/appeals',
+        icon: ScrollText,
+        for: "admin"
+    },
 
 
     

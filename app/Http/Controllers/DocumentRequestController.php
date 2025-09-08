@@ -38,8 +38,13 @@ class DocumentRequestController extends Controller
 
     public function create()
     {
-        if (checkPenalty()) {
-            return back()->with('error', 'You have an active penalty. Please wait for ' . ceil(checkPenalty()) . ' day(s) before making a new request.');
+        $penalties = Auth::user()->penalties;
+
+        if ($penalties && checkPenalty($penalties)) {
+            return back()->with('error', [
+                'message' => 'You have an active penalty. Please wait for ' . ceil(checkPenalty($penalties)) . ' day(s) before making a new request.',
+                'penalty_id' => $penalties->sortByDesc('created_at')->first()->id
+            ]);
         }
 
         return Inertia::render('document-requests/create');
@@ -161,8 +166,7 @@ class DocumentRequestController extends Controller
 
 
 
-function checkPenalty() {
-    $penalties = Auth::user()->penalties;
+function checkPenalty($penalties) {
     $there_is_penalty = false;
 
     if ($penalties->isNotEmpty()) {
