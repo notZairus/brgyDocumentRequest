@@ -9,6 +9,19 @@ import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 import { imgToBase64 } from "@/lib/utils";
 import { useRef } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Checkbox } from '@/components/ui/checkbox';
+
 
 
 type IdType = {
@@ -24,6 +37,7 @@ type RegisterForm = {
     password_confirmation: string;
     brgyIdFront: IdType | File | null;
     brgyIdBack: IdType | File | null;
+    accept_terms?: boolean;
 };
 
 
@@ -35,6 +49,7 @@ export default function Register() {
         password_confirmation: '',
         brgyIdFront: null,
         brgyIdBack: null,
+        accept_terms: false,
     });
     const brgyIdFrontRef = useRef(null);
     const brgyIdBackRef = useRef(null);
@@ -68,7 +83,7 @@ export default function Register() {
     return (
         <AuthLayout title="Create an account" description="Enter your details below to create your account">
             <Head title="Register" />
-            <form className="flex flex-col gap-6" onSubmit={submit}>
+            <div className="flex flex-col gap-6">
                 <div className="grid gap-6">
                     <div className="grid gap-2">
                         <Label htmlFor="name">Name</Label>
@@ -233,10 +248,73 @@ export default function Register() {
                         <InputError message={errors.brgyIdBack} />
                     </div>
 
-                    <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
-                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Create account
-                    </Button>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button>Create Account</Button>
+                        </DialogTrigger>
+                        <DialogContent className="">
+                            <DialogHeader>
+                                <DialogTitle>Terms and Conditions</DialogTitle>
+                                <DialogDescription>
+                                    Please read and accept the terms and conditions before creating an account.
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <ScrollArea className="h-[300px] text-sm rounded-md border p-4">
+                                <div className="space-y-4 text-foreground">
+                                    <p>
+                                        By creating an account, you agree to abide by the following terms and conditions:
+                                    </p>
+                                    <ol className="list-decimal list-inside space-y-2">
+                                        <li>
+                                            <strong>Accuracy of Information:</strong> You confirm that all information and documents provided are true, accurate, and complete. Providing false or misleading information may result in account suspension or termination.
+                                        </li>
+                                        <li>
+                                            <strong>Use of Personal Data:</strong> Your personal data and uploaded documents will be used solely for verification and account management purposes in accordance with our privacy policy.
+                                        </li>
+                                        <li>
+                                            <strong>Account Security:</strong> You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
+                                        </li>
+                                        <li>
+                                            <strong>Prohibited Activities:</strong> You agree not to use this service for any unlawful, fraudulent, or malicious activities.
+                                        </li>
+                                        <li>
+                                            <strong>Changes to Terms:</strong> We reserve the right to update these terms and conditions at any time. Continued use of your account constitutes acceptance of any changes.
+                                        </li>
+                                        <li>
+                                            <strong>Termination:</strong> Violation of these terms may result in suspension or permanent removal of your account.
+                                        </li>
+                                    </ol>
+                                    <p>
+                                        Please review our full privacy policy and contact us if you have any questions before proceeding.
+                                    </p>
+                                    <div className="flex items-center gap-2 mt-5">
+                                        <Checkbox
+                                            id="accept_terms"
+                                            checked={data.accept_terms ?? false}
+                                            onCheckedChange={e => setData('accept_terms', e as boolean)}
+                                            disabled={processing}
+                                            required
+                                        />
+                                        <Label htmlFor="accept_terms" className="cursor-pointer select-none">
+                                            I have read and accept the terms and conditions.
+                                        </Label>
+                                    </div>
+                                    <InputError message={errors.accept_terms} />
+                                </div>
+                            </ScrollArea>
+
+                            <DialogFooter className="flex items-center mt-4">
+                                <DialogClose asChild>
+                                    <Button variant="outline">Cancel</Button>
+                                </DialogClose>
+                                <Button disabled={!data.accept_terms || processing } onClick={submit} tabIndex={5} >
+                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                    Create account
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
 
                 <div className="text-center text-sm text-muted-foreground">
@@ -245,7 +323,7 @@ export default function Register() {
                         Log in
                     </TextLink>
                 </div>
-            </form>
+            </div>
         </AuthLayout>
     );
 }
