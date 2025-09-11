@@ -25,6 +25,8 @@ Route::get('/poll/dashboard-data', function () {
     if ($is_admin) {
         return response()->json([
             "totalRequests" => DocumentRequest::all()->count(),
+            "verifiedUsers" => User::whereNot('verified_at', null)->where('is_admin', 0)->count(),
+            "completedRequests" => DocumentRequest::where('status', 'Completed')->count(),
             "totalVerifications" => User::where('verified_at', null)->where('is_admin', 0)->count(),
             "pendingRequests" => DocumentRequest::whereIn('status', ['Pending', 'Under Review'])->count(),
             'approvedToday' => DocumentRequest::whereIn('status', ['Approved', 'Ready for Pickup', 'Completed'])->whereDate('updated_at', today())->count(),
@@ -38,6 +40,32 @@ Route::get('/poll/dashboard-data', function () {
         "pendingRequests" => DocumentRequest::where('user_id', Auth::user()->id)->whereIn('status', ['Pending', 'Under Review'])->count(),
     ]);
 })->middleware('auth'); 
+
+
+Route::post('/dashboard/filter', function (\Illuminate\Http\Request $request) {
+    $is_admin = Auth::user()->is_admin;
+    $from = $request->input('from');
+    $to = $request->input('to');
+
+    if ($is_admin) {
+        return response()->json([
+            "totalRequests" => DocumentRequest::whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
+            "verifiedUsers" => User::whereNot('verified_at', null)->where('is_admin', 0)->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
+            "completedRequests" => DocumentRequest::where('status', 'Completed')->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
+            "totalVerifications" => User::where('verified_at', null)->where('is_admin', 0)->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
+            "pendingRequests" => DocumentRequest::whereIn('status', ['Pending', 'Under Review'])->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
+            'approvedToday' => DocumentRequest::whereIn('status', ['Approved', 'Ready for Pickup', 'Completed'])->whereDate('updated_at', today())->count(),
+            'declinedToday' => DocumentRequest::where('status', 'Declined')->whereDate('updated_at', today())->count(),
+        ]);
+    }
+
+    return response()->json([
+        "totalRequests" => DocumentRequest::where('user_id', Auth::user()->id)->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
+        "completedRequests" => DocumentRequest::where('user_id', Auth::user()->id)->where('status', 'Completed')->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
+        "pendingRequests" => DocumentRequest::where('user_id', Auth::user()->id)->whereIn('status', ['Pending', 'Under Review'])->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
+    ]);
+})->middleware('auth');
+
 
 Route::get('/poll/unverified-accounts', [PollingController::class, 'getUnverifiedAccounts'])
 ->middleware('auth', 'admin');

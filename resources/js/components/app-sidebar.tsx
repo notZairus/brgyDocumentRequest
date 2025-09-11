@@ -74,7 +74,7 @@ export function AppSidebar() {
     const { auth: { user }} = usePage<MyPageProps>().props;
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="floating">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>

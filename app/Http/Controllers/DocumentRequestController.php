@@ -119,6 +119,7 @@ class DocumentRequestController extends Controller
 
         return Inertia::render('document-requests/show', [
             'documentRequest' => $document_request,
+            'activityLog' => ActivityLog::where('document_request_id', $document_request->id)->where('action', 'Declined')->with('user')->first(),
             'hasPenalty' => $document_request->penalty ? true : false,
         ]);
     }

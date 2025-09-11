@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
         if (Auth::user()->is_admin) {
             return Inertia::render('dashboard', [
                 "totalRequests" => DocumentRequest::all()->count(),
+                "verifiedUsers" => User::whereNot('verified_at', null)->where('is_admin', 0)->count(),
+                "completedRequests" => DocumentRequest::where('status', 'Completed')->count(),
                 "totalVerifications" => User::where('verified_at', null)->where('is_admin', 0)->count(),
                 "pendingRequests" => DocumentRequest::whereIn('status', ['Pending', 'Under Review'])->count(),
                 'approvedToday' => DocumentRequest::whereIn('status', ['Approved', 'Ready for Pickup', 'Completed'])->whereDate('updated_at', today())->count(),

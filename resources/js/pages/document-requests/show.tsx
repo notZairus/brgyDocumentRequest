@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Flag, Printer } from "lucide-react";
 import {
   AlertDialog,
@@ -30,12 +30,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { toast } from "sonner";
 
 
 
 interface CustomPageProps {
     documentRequest: DocumentRequest,
+    activityLog: any,
     flash: {
         success: string,
         error: string
@@ -54,7 +54,7 @@ interface CustomPageProps {
  * @returns The page element.
  */
 export default function show() {
-    const { documentRequest, hasPenalty, auth: { user } } = usePage<MyPageProps & CustomPageProps>().props;
+    const { documentRequest, hasPenalty, auth: { user }, activityLog } = usePage<MyPageProps & CustomPageProps>().props;
     const [showDeclineReason, setShowDeclineReason] = useState(false);
     const { data, setData, patch } = useForm({
         action: '',
@@ -77,6 +77,8 @@ export default function show() {
             preserveScroll: true
         });
     } 
+
+    console.log(activityLog);
 
     return (
         <>  
@@ -350,6 +352,19 @@ export default function show() {
                                 </div>
                             </>
                         ) : null}
+
+                        { documentRequest.status === "Declined" && activityLog.reason ? (
+                            <>
+                                <Separator className="my-6" />
+
+                                <div>
+                                    <div className="p-4 bg-red-400/15 border border-primary/15 rounded wfull max-w-2/3">
+                                        <h2 className="text-lg font-bold mb-2">Reason for Decline</h2>
+                                        <p>{activityLog.reason}</p>
+                                    </div>
+                                </div>
+                            </>
+                        ) : null }
                         
                     </div>
                 </main>
