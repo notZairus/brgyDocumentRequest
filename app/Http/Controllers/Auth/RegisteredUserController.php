@@ -33,6 +33,7 @@ class RegisteredUserController extends Controller
         $validatedAttributes = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'sitio' => 'required|string|max:255',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'brgyIdFront' => ['required'],
             'brgyIdBack' => ['required'],
@@ -53,6 +54,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'sitio' => $request->sitio,
             'password' => Hash::make($request->password),
             'isAdmin' => false
         ]);

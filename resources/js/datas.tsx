@@ -1,5 +1,5 @@
 
-const sitios = ['Matictic', 'Kanyakan', 'Gulod', 'Coral', 'Proper', 'Padling', 'Dynamite'];
+export const sitios = ['Matictic', 'Kanyakan', 'Gulod', 'Coral', 'Proper', 'Padling', 'Dynamite'];
 
 
 

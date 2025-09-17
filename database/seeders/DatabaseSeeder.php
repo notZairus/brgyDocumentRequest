@@ -15,28 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'User Bermillo',
-        //     'email' => 'user@gmail.com',
-        //     'password' => 'QZr8408o'
-        // ]);
-
         User::factory()->admin()->create([
             'name' => 'Admin Bermillo',
             'email' => 'admin@gmail.com',
+            'sitio' => 'Matictic',
             'password' => 'QZr8408o'
         ]);
-
-        $user = User::create([
-            'name' => 'Zairus Bermillo',
-            'email' => 'zairusb12@gmail.com',
-            'password' => Hash::make('QZr8408o'),
-            'verified_at' => now()
-        ]);
-
-
-        // DocumentRequest::factory(10)->pending()->create();
     }
 }

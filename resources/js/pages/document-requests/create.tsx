@@ -63,8 +63,7 @@ type useFormProps = {
  */
 
 export default function create() {
-    const [date, setDate] = useState<Date | undefined>(undefined)
-    const { data, setData, post, processing, errors, setError, reset, clearErrors } = useForm<useFormProps>({
+    const { data, setData, post, errors, setError, reset, clearErrors } = useForm<useFormProps>({
         document_request_type: 'user',
         document_type: '',
         note: '',
@@ -126,7 +125,6 @@ export default function create() {
         post("/document-requests", {
             onFinish: () => {
                 reset();
-                setDate(undefined);
                 clearErrors();
             },
             preserveScroll: true

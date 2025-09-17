@@ -46,10 +46,11 @@ export default function Users() {
                     <div className="flex-1 w-full">
                         <div className="p-4 bg-primary/5 rounded border-primary/15 border">
                             <h1 className="font-bold text-xl">Details</h1>
-                            <div className="mt-4 space-y-2">
+                            <div className="mt-2 space-y-2">
                                 <p className="text-foreground/50">Name: <br /> <span className="text-lg text-foreground">{user.name}</span></p>
+                                <p className="text-foreground/50">Sitio: <br /> <span className="text-lg text-foreground">{user.sitio}</span></p>
                                 <p className="text-foreground/50">Email: <br /> <span className="text-lg text-foreground">{user.email}</span></p>
-                                <p className="text-foreground/50">Requested at: <br /> <span className="text-lg text-foreground">{format(user.updated_at, 'EEEE, MMMM d • h:mm a')  }</span></p>
+                                <p className="text-foreground/50">Verification Date: <br /> <span className="text-lg text-foreground">{format(user.updated_at, 'EEEE, MMMM d • h:mm a')  }</span></p>
                             </div>
                         </div>
                     </div>

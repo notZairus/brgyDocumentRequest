@@ -22,23 +22,27 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+
 // admin only
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/verify-accounts', [VerifyUserController::class, 'index']);
-    Route::get('/document-requests', [DocumentRequestController::class, 'index']);
-    Route::get('/logs', [ActivityLogController::class, 'index']);
+Route::middleware(['auth', 'admin'])->group(function () 
+{
     Route::get('/users', [UserController::class, 'index']);
 
-    Route::patch('/document-requests/{document_request}', [DocumentRequestController::class, 'update']);
-
+    Route::get('/verify-accounts', [VerifyUserController::class, 'index']);
     Route::get('/verify-accounts/{user}', [VerifyUserController::class, 'show']);
     Route::patch('/verify-accounts/{user}', [VerifyUserController::class, 'patch']);
     Route::delete('/verify-accounts/{user}', [VerifyUserController::class, 'destroy']);
 
+    Route::get('/document-requests', [DocumentRequestController::class, 'index']);
+    Route::put('/document-requests/{document_request}', [DocumentRequestController::class, 'update']);
+
+    Route::get('/logs', [ActivityLogController::class, 'index']);
 });
 
+
 // authenticated
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->group(function () 
+{
     Route::get('dashboard', function () {
 
         if (Auth::user()->is_admin) {
@@ -63,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/request-document', [DocumentRequestController::class, 'create']);
     Route::post('/document-requests', [DocumentRequestController::class, 'store']);
+    Route::patch('/document-requests/{document_request}', [DocumentRequestController::class, 'update']);
     Route::get('/document-requests/{document_request}', [DocumentRequestController::class, 'show'])
         ->can('view', 'document_request');
 

@@ -13,25 +13,14 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $regustered_users;
+        $registered_users = User::whereNotNull('verified_at')
+            ->where('is_admin', 0)
+            ->with('penalties')
+            ->get();
 
-        if ($request->get('search')) {
-            $registered_users = User::whereNotNull('verified_at')
-                ->where('is_admin', 0)
-                ->where('name', 'like', '%' . $request->get('search') . '%')
-                ->paginate(5);
-
-            return response()->json($registered_users);
-
-        } else {
-            $registered_users = User::whereNotNull('verified_at')
-                ->where('is_admin', 0)
-                ->paginate(5);
-
-            return Inertia::render('users/index', [
-                'registeredUsers' => $registered_users
-            ]);
-        }
+        return Inertia::render('users/index', [
+            'registeredUsers' => $registered_users
+        ]);
 
         
     }

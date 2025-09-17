@@ -24,7 +24,9 @@ class DocumentRequestController extends Controller
             return redirect('/my-requests');
         }
 
-        $allDR = DocumentRequest::with('user')->get();
+        $pending = DocumentRequest::where('status', StatusEnum::PENDING)->get();
+        $unpending = DocumentRequest::where('status', '!=', StatusEnum::PENDING)->get();
+        $allDR = [...$pending, ...$unpending];
 
         $mapped = collect($allDR)->map(function ($rd) {
             $rd->user_name = $rd->user->name;
@@ -126,29 +128,35 @@ class DocumentRequestController extends Controller
 
     public function update(DocumentRequest $document_request, Request $request) 
     {
-        $status = StatusEnum::From($request->get('action'));
+        if ($request->method() === 'PATCH') {
+            $document_request->document_details = $request->all();
+            $document_request->save();
+            return back()->with('success', 'Document details updated successfully.');
+        } else {
+            $status = StatusEnum::From($request->get('action'));
 
-        if (!$status) {
-            return back()->with('error', 'Invalid action.');
+            if (!$status) {
+                return back()->with('error', 'Invalid action.');
+            }
+
+            $document_request->update([
+                'status' => $status->value,
+                'updated_at' => now()
+            ]);
+
+            $document_request->load('user');
+
+            ActivityLog::create([
+                'action' => $request->get('action'),
+                'user_id' => Auth::user()->id,
+                'reason' => $request->get('reason') ? $request->get('reason') : null,
+                'document_request_id' => $document_request->id,
+            ]);
+
+            Mail::to($document_request->user->email)->queue(new DocumentRequestReviewed($document_request));
+
+            return redirect('/document-requests/' . $document_request->id)->with('success', 'Document request ' . $status->value . ' successfully.');
         }
-
-        $document_request->update([
-            'status' => $status->value,
-            'updated_at' => now()
-        ]);
-
-        $document_request->load('user');
-
-        ActivityLog::create([
-            'action' => $request->get('action'),
-            'user_id' => Auth::user()->id,
-            'reason' => $request->get('reason') ? $request->get('reason') : null,
-            'document_request_id' => $document_request->id,
-        ]);
-
-        Mail::to($document_request->user->email)->queue(new DocumentRequestReviewed($document_request));
-
-        return redirect('/document-requests/' . $document_request->id)->with('success', 'Document request ' . $status->value . ' successfully.');
     }
 }
 

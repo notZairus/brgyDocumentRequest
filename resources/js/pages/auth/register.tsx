@@ -18,7 +18,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { sitios } from "@/datas";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -33,6 +41,7 @@ type IdType = {
 type RegisterForm = {
     name: string;
     email: string;
+    sitio: string;
     password: string;
     password_confirmation: string;
     brgyIdFront: IdType | File | null;
@@ -45,6 +54,7 @@ export default function Register() {
     const { data, setData, post, processing, errors, reset, setError } = useForm<Required<RegisterForm>>({
         name: '',
         email: '',
+        sitio: '',
         password: '',
         password_confirmation: '',
         brgyIdFront: null,
@@ -100,6 +110,29 @@ export default function Register() {
                             placeholder="Full name"
                         />
                         <InputError message={errors.name} className="mt-2" />
+                    </div>
+
+                    <div>
+                        <Label>Sitio</Label>
+                        <Select 
+                            onValueChange={(value) => {
+                                setData('sitio', value)
+                            }} 
+                            required={true}
+                            value={data['sitio']}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder={'Select a sitio'} />
+                            </SelectTrigger>
+                            <SelectContent>
+                            {
+                                sitios.map(doc => (
+                                    <SelectItem value={doc}>{doc}</SelectItem>
+                                ))
+                            }
+                            </SelectContent>
+                        </Select>
+                        {errors['sitio'] && <p className="text-red-500 text-sm">{errors['sitio']}</p>}
                     </div>
 
                     <div className="grid gap-2">

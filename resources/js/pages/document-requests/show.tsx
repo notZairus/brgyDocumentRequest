@@ -30,6 +30,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import EditDocumentDialog from '@/components/edit-document-modal';
 
 
 
@@ -56,11 +57,13 @@ interface CustomPageProps {
 export default function show() {
     const { documentRequest, hasPenalty, auth: { user }, activityLog } = usePage<MyPageProps & CustomPageProps>().props;
     const [showDeclineReason, setShowDeclineReason] = useState(false);
-    const { data, setData, patch } = useForm({
+    const { data, setData, put } = useForm({
         action: '',
         reason: '',
     });
     const [penaltyReason, setPenaltyReason] = useState(documentRequest.status === 'Ready for Pickup' ? "User doesn't show up to get the document." : "Troll request.");
+
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Document Requests',
@@ -71,14 +74,13 @@ export default function show() {
             href: `/document-requests/${documentRequest.id}`,
         }
     ];
+    
 
-    const handlePatch = () => {
-        patch(`/document-requests/${documentRequest.id}`, {
+    const handlePut = () => {
+        put(`/document-requests/${documentRequest.id}`, {
             preserveScroll: true
         });
     } 
-
-    console.log(activityLog);
 
     return (
         <>  
@@ -97,7 +99,7 @@ export default function show() {
 
                             <div className="flex items-center gap-2">
                                 { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") ? (
-                                    <a href={`/download-docx/${documentRequest.id}`} rel="noopener noreferer">
+                                    <a href={`/download-docx/${documentRequest.id}`} target="_blank" rel="noopener noreferer">
                                         <Button size="lg">
                                             <Printer />
                                             Print
@@ -154,7 +156,15 @@ export default function show() {
                             <p>Requested On: <span className="text-lg font-medium">{format(documentRequest.created_at, "MMMM d, yyyy")}</span></p>
 
                             <div className="w-full flex-1 p-2 mt-8 bg-primary/5 border border-primary/15 max-w-2/3">
-                                <p className="text-lg font-bold mb-2">Document Details</p>
+                                <div className="flex justify-between items-center">
+                                    <p className="text-lg font-bold mb-2">Document Details</p>
+
+                                    { documentRequest.status !== 'Completed' && (
+                                        <EditDocumentDialog />
+                                    )}
+                                    
+                                    
+                                </div>
                                 <div className="space-y-1">
                                     <p>Document Type: <span className="text-lg font-medium">{documentRequest.document_type}</span></p>
                                     {   documentRequest.document_details && Object.entries(documentRequest.document_details).map(([key, value]) => (
@@ -172,7 +182,7 @@ export default function show() {
                             <div className="mt-2 flex gap-4 rounded flex-wrap lg:max-w-3xl">
                                 <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
                                     <img 
-                                        src={documentRequest.user?.name === documentRequest.name 
+                                        src={documentRequest.user?.name === documentRequest.document_details.name 
                                             ? `/getId/${documentRequest.user?.id}/front`
                                             : `/getOtherId/${documentRequest.id}/front`
                                         } 
@@ -182,7 +192,7 @@ export default function show() {
                                 </div>
                                 <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
                                     <img 
-                                        src={documentRequest.user?.name === documentRequest.name 
+                                        src={documentRequest.user?.name === documentRequest.document_details.name 
                                             ? `/getId/${documentRequest.user?.id}/back`
                                             : `/getOtherId/${documentRequest.id}/back`
                                         } 
@@ -223,7 +233,7 @@ export default function show() {
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
                                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={handlePatch}>Continue</AlertDialogAction>
+                                                    <AlertDialogAction onClick={handlePut}>Continue</AlertDialogAction>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
@@ -267,7 +277,7 @@ export default function show() {
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
                                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={handlePatch}>Continue</AlertDialogAction>
+                                                        <AlertDialogAction onClick={handlePut}>Continue</AlertDialogAction>
                                                     </AlertDialogFooter>
                                                 </AlertDialogContent>
                                             </AlertDialog>
@@ -305,7 +315,7 @@ export default function show() {
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
                                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                <AlertDialogAction onClick={handlePatch}>Continue</AlertDialogAction>
+                                                <AlertDialogAction onClick={handlePut}>Continue</AlertDialogAction>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
@@ -343,7 +353,7 @@ export default function show() {
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
                                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                <AlertDialogAction onClick={handlePatch}>Continue</AlertDialogAction>
+                                                <AlertDialogAction onClick={handlePut}>Continue</AlertDialogAction>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
