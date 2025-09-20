@@ -1,5 +1,16 @@
 
-export const sitios = ['Matictic', 'Kanyakan', 'Gulod', 'Coral', 'Proper', 'Padling', 'Dynamite'];
+export const sitios = [
+    'Matictic Proper', 
+    'Riverside',
+    'Coral',
+    'Sapang Kawayan', 
+    'Dynamite', 
+    'Malaganit', 
+    'Padling',
+    'Gulod',
+    'Kanyakan',
+    'Lupa'
+];
 
 
 
@@ -101,7 +112,7 @@ export const availableDocuments = [
     },
     { 
         type: "Barangay Clearance", 
-        price: 0,
+        price: 50,
         information: [
             {   
                 label: 'Name',
