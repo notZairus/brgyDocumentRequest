@@ -208,18 +208,8 @@ function handleCertificateOfIndigency(Request $request)
         "purpose" => ['required'],
         "sitio" => ['required'],
     ]);
-
-    $new_doc_req = DocumentRequest::create([
-        'user_id' => $request->user()->id,
-        'document_type' => $validated_data['document_type'],
-        'notes' => $request->note,
-        'document_details' => [
-            'sitio' => $validated_data['sitio'],
-            'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
-            'purpose' => $validated_data['purpose'],
-        ],
-    ]);
     
+    createDocumentRequest($request);
 }
 
 function handleCertificateOfResidency(Request $request) 
@@ -230,17 +220,7 @@ function handleCertificateOfResidency(Request $request)
         "civil_status" => ['required'],
     ]);
 
-    $new_doc_req = DocumentRequest::create([
-        'user_id' => $request->user()->id,
-        'document_type' => $validated_data['document_type'],
-        'notes' => $request->note,
-        'document_details' => [
-            'sitio' => $validated_data['sitio'],
-            'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
-            'civil_status' => $validated_data['civil_status'],
-        ],
-    ]);
-    
+    createDocumentRequest($request);
 }
 
 function handleCertificateOfEmployment(Request $request) 
@@ -252,18 +232,7 @@ function handleCertificateOfEmployment(Request $request)
         "occupation" => ['required'],
     ]);
 
-    $new_doc_req = DocumentRequest::create([
-        'user_id' => $request->user()->id,
-        'document_type' => $validated_data['document_type'],
-        'notes' => $request->note,
-        'document_details' => [
-            'sitio' => $validated_data['sitio'],
-            'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
-            'income' => $validated_data['income'],
-            'occupation' => $validated_data['occupation'],
-        ],
-    ]);
-    
+    createDocumentRequest($request);
 }
 
 function handleBarangayClearance(Request $request) 
@@ -275,16 +244,22 @@ function handleBarangayClearance(Request $request)
         "purpose" => ['required'],
     ]);
 
-    $new_doc_req = DocumentRequest::create([
+    createDocumentRequest($request);
+}
+
+
+
+function createDocumentRequest(Request $request) {
+    DocumentRequest::create([
         'user_id' => $request->user()->id,
-        'document_type' => $validated_data['document_type'],
+        'document_type' => $request['document_type'],
         'notes' => $request->note,
+        'price' => $request->price,
         'document_details' => [
-            'sitio' => $validated_data['sitio'],
+            'sitio' => $request['sitio'],
             'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
-            'purpose' => $validated_data['purpose'],
-            'civil_status' => $validated_data['civil_status'],
+            'purpose' => $request['purpose'],
+            'civil_status' => $request['civil_status'],
         ],
     ]);
-    
 }

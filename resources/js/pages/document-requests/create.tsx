@@ -46,6 +46,7 @@ type useFormProps = {
     document_request_type: 'user' | 'other',
     document_type: string,
     note: string
+    price: string | number;
     [key: string]: any
 }
 
@@ -66,6 +67,7 @@ export default function create() {
     const { data, setData, post, errors, setError, reset, clearErrors } = useForm<useFormProps>({
         document_request_type: 'user',
         document_type: '',
+        price: '',
         note: '',
     });
     const [currentTab, setCurrentTab] = useState<string>('user');
@@ -74,11 +76,11 @@ export default function create() {
 
     let selectedDocumentType = availableDocuments.find((doc) => doc.type == data.document_type);
 
+
     function setTab(tab: string) {
         setData('document_request_type', tab as 'other' | 'user');
         setCurrentTab(tab);
     }
-
 
     function submit() {
         clearErrors();
@@ -120,8 +122,6 @@ export default function create() {
             }
         }
 
-        
-
         post("/document-requests", {
             onFinish: () => {
                 reset();
@@ -130,9 +130,6 @@ export default function create() {
             preserveScroll: true
         });
     }
-
-
-
 
     return (
         <>
@@ -159,7 +156,12 @@ export default function create() {
                                 <Label>Document Type</Label>
                                 <Select 
                                     onValueChange={(value) => {
-                                        setData("document_type", value)
+                                        const selected = availableDocuments.find(doc => doc.type === value);
+                                        
+                                        if (!selected) return;
+
+                                        setData('document_type', selected.type)
+                                        setData('price', selected.price);
                                     }} 
                                     required
                                     value={data.document_type}
@@ -170,11 +172,14 @@ export default function create() {
                                     <SelectContent>
                                     {
                                         availableDocuments.map(doc => (
-                                            <SelectItem value={doc.type}>{doc.type}</SelectItem>
+                                            <SelectItem value={doc.type}>{doc.type}  (₱{doc.price})</SelectItem>
                                         ))
                                     }
                                     </SelectContent>
                                 </Select>
+                                { data.document_type && (
+                                    <p className='text-red-500 text-sm'>Price: ₱{data.price}.00</p>
+                                )}
                                 {errors.document_type && <p className="text-red-500 text-sm">{errors.document_type}</p>}
                             </div>
 

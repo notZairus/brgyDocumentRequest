@@ -5,6 +5,8 @@ Hello {{ $req->user->name }},
 
 Your document request for **{{ $req->document_type }}** has been reviewed.
 
+**Price:** {{ $req->price }}
+
 **Status:** {{ $req->status }}
 
 Thanks,<br>

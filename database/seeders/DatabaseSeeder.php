@@ -21,5 +21,12 @@ class DatabaseSeeder extends Seeder
             'sitio' => 'Matictic',
             'password' => 'QZr8408o'
         ]);
+
+        User::factory()->create([
+            'name' => 'Wency Cain',
+            'email' => 'wency@gmail.com',
+            'sitio' => 'Kanyakan',
+            'password' => 'qwertyuiop'
+        ]);
     }
 }

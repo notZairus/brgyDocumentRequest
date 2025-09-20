@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->string('document_type');
+            $table->integer('price')->default(0);
             $table->json('document_details')->nullable();
             $table->text('notes')->nullable();
 
