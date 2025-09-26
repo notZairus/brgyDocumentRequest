@@ -28,5 +28,12 @@ class DatabaseSeeder extends Seeder
             'sitio' => 'Kanyakan',
             'password' => 'qwertyuiop'
         ]);
+
+        User::factory()->create([
+            'name' => 'Zairus V. Bermillo',
+            'email' => 'zairusb12@gmail.com',
+            'sitio' => 'Matictic Proper',
+            'password' => 'qwertyuiop'
+        ]);
     }
 }

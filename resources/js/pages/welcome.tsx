@@ -76,8 +76,6 @@ export default function Welcome() {
                         </div>
                     </section>
 
-                    
-
                     <section className="w-full" >
                         <p id="about" className="pt-20"></p>
                         <div className="bg-yellow-400 py-12">
@@ -152,67 +150,62 @@ export default function Welcome() {
                             </div>
                             </div>
                         </div>
-                        </section>
+                    </section>
 
+                    <section className="py-16 bg-yellow-400" id="services">
+                        <div className="max-w-5xl mx-auto text-center px-6">
+                            <h1 className="text-4xl md:text-5xl font-bold text-matictic mb-4">
+                                Our Services
+                            </h1>
+                            <p className="text-matictic max-w-2xl mx-auto mb-12">
+                                We provide essential documents for your needs. Choose from the services below.
+                            </p>
 
-
-                        <section className="py-16 bg-yellow-400" id="services">
-                            <div className="max-w-5xl mx-auto text-center px-6">
-                                <h1 className="text-4xl md:text-5xl font-bold text-matictic mb-4">
-                                    Our Services
-                                </h1>
-                                <p className="text-matictic max-w-2xl mx-auto mb-12">
-                                    We provide essential documents for your needs. Choose from the services below.
-                                </p>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-                                    {/* Service Card */}
-                                    <div className="bg-white/90 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition transform p-8 flex flex-col items-center">
-                                        <div className="bg-yellow-100 p-4 rounded-full mb-4">
-                                            <FileText className="w-8 h-8 text-yellow-500" />
-                                        </div>
-                                        <h2 className="text-xl font-semibold text-gray-800 text-center">
-                                            Certificate of Indigency
-                                        </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                                {/* Service Card */}
+                                <div className="bg-white/90 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition transform p-8 flex flex-col items-center">
+                                    <div className="bg-yellow-100 p-4 rounded-full mb-4">
+                                        <FileText className="w-8 h-8 text-yellow-500" />
                                     </div>
+                                    <h2 className="text-xl font-semibold text-gray-800 text-center">
+                                        Certificate of Indigency
+                                    </h2>
+                                </div>
 
-                                    <div className="bg-white/90 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition transform p-8 flex flex-col items-center">
-                                        <div className="bg-green-100 p-4 rounded-full mb-4">
-                                            <FileText className="w-8 h-8 text-green-500" />
-                                        </div>
-                                        <h2 className="text-xl font-semibold text-gray-800 text-center">
-                                            Certificate of Residency
-                                        </h2>
+                                <div className="bg-white/90 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition transform p-8 flex flex-col items-center">
+                                    <div className="bg-green-100 p-4 rounded-full mb-4">
+                                        <FileText className="w-8 h-8 text-green-500" />
                                     </div>
+                                    <h2 className="text-xl font-semibold text-gray-800 text-center">
+                                        Certificate of Residency
+                                    </h2>
+                                </div>
 
-                                    <div className="bg-white/90 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition transform p-8 flex flex-col items-center">
-                                        <div className="bg-blue-100 p-4 rounded-full mb-4">
-                                            <FileText className="w-8 h-8 text-blue-500" />
-                                        </div>
-                                        <h2 className="text-xl font-semibold text-gray-800 text-center">
-                                            Certificate of Employment
-                                        </h2>
+                                <div className="bg-white/90 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition transform p-8 flex flex-col items-center">
+                                    <div className="bg-blue-100 p-4 rounded-full mb-4">
+                                        <FileText className="w-8 h-8 text-blue-500" />
                                     </div>
+                                    <h2 className="text-xl font-semibold text-gray-800 text-center">
+                                        Certificate of Employment
+                                    </h2>
+                                </div>
 
-                                    <div className="bg-white/90 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition transform p-8 flex flex-col items-center">
-                                        <div className="bg-purple-100 p-4 rounded-full mb-4">
-                                            <FileText className="w-8 h-8 text-purple-500" />
-                                        </div>
-                                        <h2 className="text-xl font-semibold text-gray-800 text-center">
-                                            Barangay Clearance
-                                        </h2>
+                                <div className="bg-white/90 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition transform p-8 flex flex-col items-center">
+                                    <div className="bg-purple-100 p-4 rounded-full mb-4">
+                                        <FileText className="w-8 h-8 text-purple-500" />
                                     </div>
+                                    <h2 className="text-xl font-semibold text-gray-800 text-center">
+                                        Barangay Clearance
+                                    </h2>
                                 </div>
                             </div>
-                        </section>
-
-
-
+                        </div>
+                    </section>
                 </main>
 
                 <footer className="bg-matictic w-full items-center justify-center shadow" id="services">
                     <div className="flex items-center justify-center p-4 bg-[#f9fafb]">
-                        <p className="tracking-widest text-center">Developed by Group ABC for their research subject.</p>
+                        <p className="tracking-widest text-center text-black">Developed by Group ABC for their research subject.</p>
                     </div>
                     <div className="flex items-center justify-center p-5 bg-matictic">
                         <p className="text-white text-center tracking-wider">

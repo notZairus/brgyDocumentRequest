@@ -5,7 +5,7 @@ Hello {{ $req->user->name }},
 
 Your document request for **{{ $req->document_type }}** has been reviewed.
 
-**Price:** {{ $req->price }}
+**Price:** ₱{{ $req->price }}.00
 
 **Status:** {{ $req->status }}
 

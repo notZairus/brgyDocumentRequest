@@ -181,7 +181,7 @@ export function DataTable<TData, TValue>({
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
-                                        <Link href={`/document-requests/${row.getValue('id')}`}>
+                                        <Link href={`/users/${row.getValue('id')}`}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </Link>
                                     </TableCell>
