@@ -7,7 +7,12 @@ export default function AppLogo() {
                 <img src="/logo_matictic.jpg" alt="" className="rounded-full"/>
             </div>
             <div className="ml-1 grid flex-1 text-left text-2xl">
-                <span className="truncate leading-tight font-semibold">BDRS</span>
+                <span className="truncate leading-tight font-semibold">
+                    R
+                    <span className="text-lg">EQ</span>
+                    M
+                    <span className="text-lg">ATIC</span>
+                </span>
             </div>
         </div>
     );
