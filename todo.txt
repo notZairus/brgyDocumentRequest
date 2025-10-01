@@ -37,3 +37,12 @@
 
 
 app-layout: penalty feature.
+
+
+
+oct. 1: 
+    sitio form field, (done)
+    bug on document request (admin side), (done)
+    back to index when reported (admin side), (done)
+    if else on docReq show, (done)
+    remove report btn on completed request (done)

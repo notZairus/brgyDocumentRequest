@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Flag, Printer } from "lucide-react";
 import {
   AlertDialog,
@@ -62,6 +62,9 @@ export default function show() {
         reason: '',
     });
     const [penaltyReason, setPenaltyReason] = useState(documentRequest.status === 'Ready for Pickup' ? "User doesn't show up to get the document." : "Troll request.");
+    const origName = useRef<string>(documentRequest.document_details.name);
+
+    console.log(origName)
 
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -107,7 +110,7 @@ export default function show() {
                                     </a>
                                 ) : null}
 
-                                { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && documentRequest.status !== "Approved" ? (
+                                { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && documentRequest.status !== "Approved" && documentRequest.status !== "Completed"  ? (
                                     <Dialog>
                                         <DialogTrigger asChild>
                                             <Button variant="destructive" size="lg">
@@ -167,9 +170,11 @@ export default function show() {
                                 </div>
                                 <div className="space-y-1">
                                     <p>Document Type: <span className="text-lg font-medium">{documentRequest.document_type}</span></p>
-                                    {   documentRequest.document_details && Object.entries(documentRequest.document_details).map(([key, value]) => (
-                                        <p>{key.replace("_", " ")[0].toUpperCase() + key.replace("_", " ").slice(1)}: <span className="text-lg font-medium">{value as string}</span></p>
-                                    ))}
+                                    {   documentRequest.document_details && Object.entries(documentRequest.document_details).map(([key, value]) => {
+                                        if (value) {
+                                            return <p>{key.replace("_", " ")[0].toUpperCase() + key.replace("_", " ").slice(1)}: <span className="text-lg font-medium">{value as string}</span></p>
+                                        }
+                                    })}
 
                                     {documentRequest.notes && <p className="mt-4">Additional Notes: <span className="text-lg font-medium">{documentRequest.notes}</span></p>}
                                 </div>
@@ -182,7 +187,7 @@ export default function show() {
                             <div className="mt-2 flex gap-4 rounded flex-wrap lg:max-w-3xl">
                                 <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
                                     <img 
-                                        src={documentRequest.user?.name === documentRequest.document_details.name 
+                                        src={documentRequest.user?.name === origName.current 
                                             ? `/getId/${documentRequest.user?.id}/front`
                                             : `/getOtherId/${documentRequest.id}/front`
                                         } 
@@ -192,7 +197,7 @@ export default function show() {
                                 </div>
                                 <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
                                     <img 
-                                        src={documentRequest.user?.name === documentRequest.document_details.name 
+                                        src={documentRequest.user?.name === origName.current 
                                             ? `/getId/${documentRequest.user?.id}/back`
                                             : `/getOtherId/${documentRequest.id}/back`
                                         } 
@@ -363,14 +368,14 @@ export default function show() {
                             </>
                         ) : null}
 
-                        { documentRequest.status === "Declined" && activityLog.reason ? (
+                        { documentRequest.status === "Declined" ?(
                             <>
                                 <Separator className="my-6" />
 
                                 <div>
                                     <div className="p-4 bg-red-400/15 border border-primary/15 rounded wfull max-w-2/3">
                                         <h2 className="text-lg font-bold mb-2">Reason for Decline</h2>
-                                        <p>{activityLog.reason}</p>
+                                        <p>{activityLog?.reason ?? 'Reported'}</p>
                                     </div>
                                 </div>
                             </>

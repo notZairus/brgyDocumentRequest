@@ -106,7 +106,7 @@ export const availableDocuments = [
                     'ten thousand pesos (₱10,000)',
                 ],
                 required: true,
-                placeholder: 'Enter your employer',
+                placeholder: 'Enter your monthly income',
             }
         ]
     },

@@ -104,7 +104,7 @@ export default function create() {
                 return;
             }
 
-            if (! data['sitio']) {
+            if (! data['sitio'] && currentTab === 'other') {
                 setError('sitio', 'Sitio is required. Please select a sitio.');
                 return;
             }
@@ -116,7 +116,7 @@ export default function create() {
                 return;
             }
 
-            if (! data['sitio']) {
+            if (! data['sitio'] && currentTab === 'other') {
                 setError('sitio', 'Sitio is required. Please select a sitio.');
                 return;
             }
@@ -190,22 +190,7 @@ export default function create() {
                                         .map((info) => (
                                             <>
                                                 <div className="flex flex-col gap-2">
-            
-                                                    {   info.type === 'text' && info.label !== 'Name' &&
-                                                        <div>
-                                                            <div>
-                                                                <Label>{info.label.replace('_', ' ')}</Label>
-                                                                <Input
-                                                                    value={data[info.label.toLowerCase()]}
-                                                                    placeholder={info.placeholder}
-                                                                    required={info.required}
-                                                                    onChange={(e) => setData(info.label.toLowerCase(), e.target.value)}
-                                                                />
-                                                                {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
-                                                            </div>
-                                                        </div>
-                                                    }
-    
+
                                                     {   info.label === 'Name' && currentTab === 'other' && (
                                                         <>
                                                             <div>
@@ -326,8 +311,23 @@ export default function create() {
                                                         </>
                                                     )}
             
-            
-                                                    {   info.type === 'select' && 
+                                                    {   info.type === 'text' && info.label !== 'Name' && (
+                                                        <div>
+                                                            <div>
+                                                                <Label>{info.label.replace('_', ' ')}</Label>
+                                                                <Input
+                                                                    value={data[info.label.toLowerCase()]}
+                                                                    placeholder={info.placeholder}
+                                                                    required={info.required}
+                                                                    onChange={(e) => setData(info.label.toLowerCase(), e.target.value)}
+                                                                />
+                                                                {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+
+                                                    {   info.label === 'Sitio' && currentTab === 'other' && (
                                                         <div>
                                                             <Label>{info.label.replace('_', ' ')}</Label>
                                                             <Select 
@@ -350,10 +350,33 @@ export default function create() {
                                                             </Select>
                                                             {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
                                                         </div>
-                                                    }
-            
-            
-                                                    
+                                                    )}
+
+                                                    {   info.type === 'select' && info.label !== 'Sitio' && (
+                                                        <div>
+                                                            <Label>{info.label.replace('_', ' ')}</Label>
+                                                            <Select 
+                                                                onValueChange={(value) => {
+                                                                    setData(info.label.toLowerCase(), value)
+                                                                }} 
+                                                                required={info.required}
+                                                                value={data[info.label.toLowerCase()]}
+                                                            >
+                                                                <SelectTrigger>
+                                                                    <SelectValue placeholder={info.placeholder} />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                {
+                                                                    info?.options?.map(doc => (
+                                                                        <SelectItem value={doc}>{doc}</SelectItem>
+                                                                    ))
+                                                                }
+                                                                </SelectContent>
+                                                            </Select>
+                                                            {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                        </div>
+                                                    )}
+
                                                 </div>
                                                 
                                             </>

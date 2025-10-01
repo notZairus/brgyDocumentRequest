@@ -67,6 +67,10 @@ class DocumentRequestController extends Controller
                 return back()->with('error', 'Please enter your full name.');
             }
 
+            if (! $request->get('sitio')) {
+                return back()->with('error', 'Please enter your sitio.');
+            }
+
             $extension = $request->file('brgyIdFront')['file']->getClientOriginalExtension();
 
             $request->file('brgyIdFront')['file']->storeAs(
@@ -206,7 +210,6 @@ function handleCertificateOfIndigency(Request $request)
     $validated_data = $request->validate([
         "document_type" => ['required'],
         "purpose" => ['required'],
-        "sitio" => ['required'],
     ]);
     
     createDocumentRequest($request);
@@ -216,7 +219,6 @@ function handleCertificateOfResidency(Request $request)
 {
     $validated_data = $request->validate([
         "document_type" => ['required'],
-        "sitio" => ['required'],
         "civil_status" => ['required'],
     ]);
 
@@ -227,7 +229,6 @@ function handleCertificateOfEmployment(Request $request)
 {
     $validated_data = $request->validate([
         "document_type" => ['required'],
-        "sitio" => ['required'],
         "income" => ['required'],
         "occupation" => ['required'],
     ]);
@@ -239,7 +240,6 @@ function handleBarangayClearance(Request $request)
 {
     $validated_data = $request->validate([
         "document_type" => ['required'],
-        "sitio" => ['required'],
         "civil_status" => ['required'],
         "purpose" => ['required'],
     ]);
@@ -256,7 +256,7 @@ function createDocumentRequest(Request $request) {
         'notes' => $request->note,
         'price' => $request->price,
         'document_details' => [
-            'sitio' => $request['sitio'],
+            'sitio' => $request->get('sitio') ? $request->get('sitio') : $request->user()->sitio,
             'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
             'purpose' => $request['purpose'],
             'civil_status' => $request['civil_status'],
