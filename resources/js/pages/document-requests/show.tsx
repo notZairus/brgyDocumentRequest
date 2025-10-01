@@ -62,10 +62,7 @@ export default function show() {
         reason: '',
     });
     const [penaltyReason, setPenaltyReason] = useState(documentRequest.status === 'Ready for Pickup' ? "User doesn't show up to get the document." : "Troll request.");
-    const origName = useRef<string>(documentRequest.document_details.name);
-
-    console.log(origName)
-
+    const origName = useRef<string>(documentRequest.document_details?.name || "");
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
