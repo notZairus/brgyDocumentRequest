@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 import { imgToBase64 } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 import { useRef } from "react";
 import {
   Dialog,
@@ -97,7 +98,7 @@ export default function Register() {
             <div className="flex flex-col gap-6">
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name">Name (eg. Jack E. Chan)</Label>
                         <Input
                             id="name"
                             type="text"
@@ -108,7 +109,7 @@ export default function Register() {
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             disabled={processing}bg-red-400
-                            placeholder="Full name"
+                            placeholder="Firstname MI. Lastname"
                         />
                         <InputError message={errors.name} className="mt-2" />
                     </div>
@@ -191,6 +192,10 @@ export default function Register() {
                         />
                         <InputError message={errors.password_confirmation} />
                     </div>
+
+                    <Separator className="mt-8"/>
+
+                    <p className="text-red-500">We only accept. Government IDs</p>
 
                     <div className="grid gap-2">
                         <Label htmlFor="brgy_id">Brgy ID Front:</Label>

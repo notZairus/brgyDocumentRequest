@@ -53,7 +53,7 @@ class DocumentRequestController extends Controller
     }
 
     public function store(Request $request) {
-
+    
         if ($request->get('document_request_type') === 'other') {
             if (! $request->get('brgyIdBack')) {
                 return back()->with('error', 'Please upload the back of your Barangay ID.');

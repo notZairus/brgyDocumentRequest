@@ -43,11 +43,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 type useFormProps = {
-    document_request_type: 'user' | 'other',
-    document_type: string,
-    note: string
+    document_request_type: 'user' | 'other';
+    document_type: string;
+    note: string;
     price: string | number;
-    other_purpose: string,
+    purpose: string;
+    other_purpose: string;
     [key: string]: any
 }
 
@@ -70,6 +71,7 @@ export default function create() {
         document_type: '',
         price: '',
         note: '',
+        purpose: '',
         other_purpose: '',
     });
     const [currentTab, setCurrentTab] = useState<string>('user');
@@ -390,7 +392,7 @@ export default function create() {
                                                                 {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
                                                             </div>
     
-                                                            {   data['purpose'] === 'other' && (
+                                                            { info.label.toLowerCase() === 'purpose' && data['purpose'] === 'other' && (
                                                                 <div>
                                                                     <Input 
                                                                         type="text"

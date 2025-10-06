@@ -91,11 +91,16 @@ export default function show() {
     
                     <div className="pb-8">
                         <div className="flex justify-between items-center gap-8 pr-4">
-                            <h1 className="text-xl font-bold">
-                                Document Request 
-                                <span className="text-blue-400">{` #${documentRequest.id}`}</span>
-                                <span className="ml-8">{`( ${format(documentRequest.created_at, "MMMM d, yyyy")} )`}</span>
-                            </h1>
+                            <div className="flex items-center justify-between w-full">
+                                <h1 className="text-xl font-bold">
+                                    Document Request 
+                                    <span className="text-blue-400">{` #${documentRequest.id}`}</span>
+                                    <span className="ml-8">{`( ${format(documentRequest.created_at, "MMMM d, yyyy")} )`}</span>
+                                </h1>
+                                { !user.is_admin && (
+                                    <p className="font-bold text-2xl">{documentRequest.status}</p>
+                                )}
+                            </div>
 
                             <div className="flex items-center gap-2">
                                 { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") ? (
@@ -376,8 +381,7 @@ export default function show() {
                                     </div>
                                 </div>
                             </>
-                        ) : null }
-                        
+                        ) : null } 
                     </div>
                 </main>
             </AppLayout>

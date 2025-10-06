@@ -18,13 +18,43 @@ class DocumentRequestFactory extends Factory
      */
     public function definition(): array
     {
-        $documentTypes = ['Barangay Clearance', 'Certificate of Indigency', 'Certificate of Residency'];
+        $documentTypes = ['Barangay Clearance', 'Certificate of Indigency', 'Certificate of Residency', 'Certificate of Employment'];
+        $user = User::factory();
+        $document_details = [
+            'Certificate of Indigency' => [
+                "name" => 'Dummy Name',
+                "sitio" => "Matictic Proper", 
+                "purpose" => "Medical Assistance", 
+                "civil_status" => null
+            ],
+            'Certificate of Employment' => [
+                "name" => 'Dummy Name', 
+                "sitio" => "Matictic Proper", 
+                "purpose" => null, 
+                "civil_status" => null
+            ],
+            'Certificate of Residency' => [
+                "name" => 'Dummy Name', 
+                "sitio" => "Matictic Proper", 
+                "purpose" => null, 
+                "civil_status" => "Single"
+            ],
+            'Barangay Clearance' => [
+                "name" => 'Dummy Name', 
+                "sitio" => "Matictic Proper", 
+                "purpose" => "MTOP", 
+                "civil_status" => "Divorced"
+            ]
+        ];
+
+
 
         return [
-            'user_id' => User::factory(),
+            'user_id' => $user,
+            'price' => 0,
             'document_type' => $this->faker->randomElement($documentTypes),
             'notes' => $this->faker->optional()->paragraph(),
-            'document_details' => null,
+            'document_details' => $document_details[$this->faker->randomElement($documentTypes)],
             'status' => $this->faker->randomElement(StatusEnum::cases()),
         ];
     }

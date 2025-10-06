@@ -68,10 +68,14 @@ export default function VerifyAccounts() {
                     </div>
 
                     <div className="flex-1 flex flex-col gap-4 w-full">
-                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15">
+                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15
+                            hover:scale-150 hover:-ml-50 hover:mt-12 transition-all duration-500
+                        ">
                             <img src={`/getId/${user.id}/front`} alt="front id" className="rounded border" />
                         </div>
-                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15">
+                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15
+                            hover:scale-150 hover:-ml-50 hover:-mt-80 transition-all duration-500
+                        ">
                             <img src={`/getId/${user.id}/back`} alt="front id" className="rounded border" />
                         </div>
                     </div>
