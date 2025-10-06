@@ -51,9 +51,9 @@ export default function AuthSplitLayout({ children, title, description }: PropsW
             <div className="md:w-[500px] max-h-dvh w-full hidden md:block" />
 
             <div className="md:w-[500px] max-h-dvh w-full md:fixed md:top-0 md:bottom-0 bg-matictic text-white shadow-lg flex flex-col items-center justify-between py-20 gap-8 px-12">
-                <Link href={route('home')} className="relative z-20 flex mt-auto items-center font-medium flex-col gap-8 text-3xl sm:text-left text-center">
+                <Link href={route('home')} className="relative text-center z-20 flex mt-auto items-center font-medium flex-col gap-8 text-3xl">
                     <AppLogoIcon className="mr-2 size-24 fill-current text-white" />
-                    Matictic Document Portal
+                    Matictic Document Request Platform
                 </Link>
                 {quote && (
                     <div className="relative z-20 mt-auto">

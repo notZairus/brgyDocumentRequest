@@ -270,7 +270,7 @@ export default function Dashboard() {
 
                                     <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[300px] h-32 p-4 flex flex-col justify-between">
                                         <div>
-                                            <p className="text-muted-foreground">Waiting  Requests</p>
+                                            <p className="text-muted-foreground">Pending Requests</p>
                                             <p className="text-4xl font-semibold text-green-600">{data.pendingRequests}</p> {/* replace with {pendingRequests} */}
                                         </div>
                                         <p className="text-xs text-muted-foreground">Document requests waiting for approval</p>
@@ -301,36 +301,52 @@ export default function Dashboard() {
                     } 
 
                     { (!user.is_admin && user.verified_at != null) ? (
-                        <div className="w-full mt-8 space-y-4">
-                            <div className="w-full space-x-4 space-y-4">
-                                <div className="w-full flex flex-wrap gap-4">
-                                    
-                                    <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
-                                        <div>
-                                            <p className="text-muted-foreground">Your Total Requests</p>
-                                            <p className="text-4xl font-semibold text-primary">{data.totalRequests}</p>
+                        <>
+                            <div className="w-full mt-8 space-y-4">
+                                <div className="w-full space-x-4 space-y-4">
+                                    <div className="w-full flex flex-wrap gap-4">
+                                        
+                                        <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
+                                            <div>
+                                                <p className="text-muted-foreground">Your Total Requests</p>
+                                                <p className="text-4xl font-semibold text-primary">{data.totalRequests}</p>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground">Your all-time submitted requests</p>
                                         </div>
-                                        <p className="text-xs text-muted-foreground">Your all-time submitted requests</p>
-                                    </div>
-
-                                    <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
-                                        <div>
-                                            <p className="text-muted-foreground">Completed Requests</p>
-                                            <p className="text-4xl font-semibold text-green-600">{data.completedRequests}</p>
+    
+                                        <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
+                                            <div>
+                                                <p className="text-muted-foreground">Completed Requests</p>
+                                                <p className="text-4xl font-semibold text-green-600">{data.completedRequests}</p>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground">Completed requests that you made</p>
                                         </div>
-                                        <p className="text-xs text-muted-foreground">Completed requests that you made</p>
-                                    </div>
-
-                                    <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
-                                        <div>
-                                            <p className="text-muted-foreground">Pending Requests</p>
-                                            <p className="text-4xl font-semibold text-red-700">{data.pendingRequests}</p>
+    
+                                        <div className="flex-1 border border-primary/15 bg-primary/5 rounded-xl min-w-[200px] h-32 p-4 flex flex-col justify-between">
+                                            <div>
+                                                <p className="text-muted-foreground">Pending Requests</p>
+                                                <p className="text-4xl font-semibold text-red-700">{data.pendingRequests}</p>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground">Document requests not yet approved</p>
                                         </div>
-                                        <p className="text-xs text-muted-foreground">Document requests not yet approved</p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </>
+                    ) : null}
+
+                    { (!user.is_admin && user.verified_at === null) ? (
+                        <>
+                            <div className="mx-auto p-4 mt-8 space-y-4 bg-primary/5 border border-primary/10 rounded">
+                                <h1 className='md:text-3xl text-2xl'>
+                                    Wait for Admin to Verify Your Account
+                                </h1>
+                                <p className='md:text-xl text-md'>
+                                  Thank you for registering! Your account is currently under review. An administrator will verify your details shortly. You'll receive a notification once your account has been approved.
+Please allow up to 24 hours for verification.
+                                </p>
+                            </div>
+                        </>
                     ) : null}
 
 

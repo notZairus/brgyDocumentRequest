@@ -47,6 +47,7 @@ type useFormProps = {
     document_type: string,
     note: string
     price: string | number;
+    other_purpose: string,
     [key: string]: any
 }
 
@@ -69,6 +70,7 @@ export default function create() {
         document_type: '',
         price: '',
         note: '',
+        other_purpose: '',
     });
     const [currentTab, setCurrentTab] = useState<string>('user');
     const brgyIdFrontRef = useRef(null);
@@ -156,11 +158,12 @@ export default function create() {
                                 <Label>Document Type</Label>
                                 <Select 
                                     onValueChange={(value) => {
+                                        reset();
+
                                         const selected = availableDocuments.find(doc => doc.type === value);
-                                        
                                         if (!selected) return;
 
-                                        setData('document_type', selected.type)
+                                        setData('document_type', selected.type);
                                         setData('price', selected.price);
                                     }} 
                                     required
@@ -353,28 +356,52 @@ export default function create() {
                                                     )}
 
                                                     {   info.type === 'select' && info.label !== 'Sitio' && (
-                                                        <div>
-                                                            <Label>{info.label.replace('_', ' ')}</Label>
-                                                            <Select 
-                                                                onValueChange={(value) => {
-                                                                    setData(info.label.toLowerCase(), value)
-                                                                }} 
-                                                                required={info.required}
-                                                                value={data[info.label.toLowerCase()]}
-                                                            >
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder={info.placeholder} />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                {
-                                                                    info?.options?.map(doc => (
-                                                                        <SelectItem value={doc}>{doc}</SelectItem>
-                                                                    ))
-                                                                }
-                                                                </SelectContent>
-                                                            </Select>
-                                                            {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
-                                                        </div>
+                                                        <>
+                                                            <div>
+                                                                <Label>{info.label.replace('_', ' ')}</Label>
+                                                                <Select 
+                                                                    onValueChange={(value) => {
+                                                                        setData('other_purpose', '');
+                                                                        setData(info.label.toLowerCase(), value)
+                                                                    }} 
+                                                                    required={info.required}
+                                                                    value={data[info.label.toLowerCase()]}
+                                                                >
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder={info.placeholder} />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                    {
+                                                                        info?.options?.map(doc => (
+                                                                            <SelectItem value={doc}>{doc}</SelectItem>
+                                                                        ))
+                                                                    }
+    
+                                                                    { info.label.toLowerCase() === 'purpose' && 
+                                                                        <SelectItem 
+                                                                            value='other'
+                                                                        >
+                                                                            Other
+                                                                        </SelectItem>
+                                                                    }
+    
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                {errors[info.label.toLowerCase()] && <p className="text-red-500 text-sm">{errors[info.label.toLowerCase()]}</p>}
+                                                            </div>
+    
+                                                            {   data['purpose'] === 'other' && (
+                                                                <div>
+                                                                    <Input 
+                                                                        type="text"
+                                                                        placeholder='Type a purpose'
+                                                                        onChange={(e) => {
+                                                                            setData('other_purpose', e.target.value)
+                                                                        }}  
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </>
                                                     )}
 
                                                 </div>
@@ -413,10 +440,9 @@ export default function create() {
                                         </AlertDialogTrigger>
                                         <AlertDialogContent>
                                             <AlertDialogHeader>
-                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogTitle>Confirmation</AlertDialogTitle>
                                                 <AlertDialogDescription>
-                                                    This action cannot be undone. This will permanently delete your account
-                                                    and remove your data from our servers.
+                                                    Are you sure? This action cannot be undone.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
@@ -428,10 +454,9 @@ export default function create() {
                                                 </AlertDialogAction>
                                             </AlertDialogFooter>
                                         </AlertDialogContent>
-                                    </AlertDialog>
+                                    </AlertDialog>  
                                 </div>
                             )}
-
                         </div>
                     </Tabs>
                 </main>

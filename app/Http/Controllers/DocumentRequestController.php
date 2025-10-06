@@ -53,7 +53,7 @@ class DocumentRequestController extends Controller
     }
 
     public function store(Request $request) {
-    
+
         if ($request->get('document_request_type') === 'other') {
             if (! $request->get('brgyIdBack')) {
                 return back()->with('error', 'Please upload the back of your Barangay ID.');
@@ -258,7 +258,7 @@ function createDocumentRequest(Request $request) {
         'document_details' => [
             'sitio' => $request->get('sitio') ? $request->get('sitio') : $request->user()->sitio,
             'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
-            'purpose' => $request['purpose'],
+            'purpose' => $request['purpose'] === 'other' ? $request['other_purpose'] : $request['purpose'],
             'civil_status' => $request['civil_status'],
         ],
     ]);

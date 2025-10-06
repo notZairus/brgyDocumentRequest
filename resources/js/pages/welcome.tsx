@@ -48,9 +48,9 @@ export default function Welcome() {
                         <div className="w-full h-full flex flex-col lg:flex-row gap-8 max-w-11/12 lg:max-w-[960px] mx-auto">
                             <div className="flex-1 flex flex-col  justify-center">
                                 <h1 className="text-5xl font-bold text-matictic w-full">
-                                    <span className="text-yellow-400 font-black">Matictic</span>
+                                    <span className="text-yellow-400 font-black text-5xl"><span className='text-6xl'>R</span>EQ<span className='text-6xl'>M</span>ATIC</span>
                                     <br/>
-                                    Document Request Platform</h1>
+                                    Matictic Document Request Platform</h1>
                                 <p className="text-black/80 text-xl tracking-wider mt-4">Digital Document Request Platform for Matictic Residents</p>
                                 <div className="mt-8 flex items-center gap-4">
                                     <Link as="button" href="/dashboard" className="text-matictic lg:text-lg flex items-center gap-2 hover:bg-yellow-500 transition-all bg-yellow-400 border-2 border-yellow-400 px-4 py-2 rounded-md" >

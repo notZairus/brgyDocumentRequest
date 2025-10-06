@@ -1,6 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { LoaderCircle, Eye, EyeClosed } from 'lucide-react';
+import { FormEventHandler, useState } from 'react';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -61,6 +61,7 @@ export default function Register() {
         brgyIdBack: null,
         accept_terms: false,
     });
+    const [showPassword, setShowPassword] = useState(false);
     const brgyIdFrontRef = useRef(null);
     const brgyIdBackRef = useRef(null);
 
@@ -152,10 +153,18 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
+                        <div className='flex items-center justify-between'>
+                            <Label htmlFor="password">Password</Label>
+                             <div className='cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
+                                { showPassword 
+                                    ? <EyeClosed className='text-primary/50'/> 
+                                    : <Eye className='text-primary/50'/>
+                                }
+                            </div>
+                        </div>
                         <Input
                             id="password"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             required
                             tabIndex={3}
                             autoComplete="new-password"
@@ -171,7 +180,7 @@ export default function Register() {
                         <Label htmlFor="password_confirmation">Confirm password</Label>
                         <Input
                             id="password_confirmation"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             required
                             tabIndex={4}
                             autoComplete="new-password"
