@@ -40,23 +40,6 @@ export const columns: ColumnDef<DocumentRequest>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          ID
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return <div className="flex px-4 font-medium">{row.getValue('id')}</div>
-    },
-  },
-  {
     accessorKey: "user_name",
     header: "Name",
   },

@@ -37,6 +37,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+import type { User } from "@/types/index.d.ts"
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
@@ -44,13 +46,13 @@ import { Link } from "@inertiajs/react";
 
 
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends User, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends User, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
@@ -181,7 +183,7 @@ export function DataTable<TData, TValue>({
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
-                                        <Link href={`/users/${row.getValue('id')}`}>
+                                        <Link href={`/users/${row.original.id}`}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </Link>
                                     </TableCell>
