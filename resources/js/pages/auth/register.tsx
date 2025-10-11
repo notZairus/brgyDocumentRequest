@@ -40,7 +40,9 @@ type IdType = {
 
 
 type RegisterForm = {
-    name: string;
+    first_name: string;
+    last_name: string, 
+    middle_initial: string,
     email: string;
     sitio: string;
     password: string;
@@ -53,7 +55,9 @@ type RegisterForm = {
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset, setError } = useForm<Required<RegisterForm>>({
-        name: '',
+        first_name: '',
+        last_name: '', 
+        middle_initial: '',
         email: '',
         sitio: '',
         password: '',
@@ -81,6 +85,11 @@ export default function Register() {
             return;
         }
 
+        if (data.middle_initial && data.middle_initial.length >= 3) {
+            setError('brgyIdBack', 'Invalid Middle Initial.');
+            return;
+        }
+
         const idFrontFile = "file" in data.brgyIdFront ? data.brgyIdFront.file : data.brgyIdFront;
         const idBackFile = "file" in data.brgyIdBack ? data.brgyIdBack.file : data.brgyIdBack; 
 
@@ -97,22 +106,59 @@ export default function Register() {
             <Head title="Register" />
             <div className="flex flex-col gap-6">
                 <div className="grid gap-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Name (eg. Jack E. Chan)</Label>
-                        <Input
-                            id="name"
-                            type="text"
-                            required
-                            autoFocus
-                            tabIndex={1}
-                            autoComplete="name"
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            disabled={processing}bg-red-400
-                            placeholder="Firstname MI. Lastname"
-                        />
-                        <InputError message={errors.name} className="mt-2" />
+                    <div className='flex items-center gap-4'>
+                        <div className="grid gap-2 flex-2">
+                            <Label htmlFor="first_name">First Name</Label>
+                            <Input
+                                id="first_name"
+                                type="text"
+                                required
+                                autoFocus
+                                tabIndex={1}
+                                value={data.first_name}
+                                onChange={(e) => setData('first_name', e.target.value)}
+                                disabled={processing}bg-red-400
+                                placeholder="John"
+                            />
+                            <InputError message={errors.first_name} className="mt-2" />
+                        </div>
+    
+                        <div className="grid gap-2 flex-1">
+                            <Label htmlFor="middle_initial">MI.</Label>
+                            <Input
+                                id="middle_initial"
+                                type="text"
+                                required
+                                autoFocus
+                                tabIndex={2}
+                                value={data.middle_initial}
+                                onChange={(e) => setData('middle_initial', e.target.value)}
+                                disabled={processing}bg-red-400
+                                placeholder="L"
+                            />
+                            <InputError message={errors.middle_initial} className="mt-2" />
+                        </div>
+    
+                        <div className="grid gap-2 flex-2">
+                            <Label htmlFor="last_name">Last Name</Label>
+                            <Input
+                                id="last_name"
+                                type="text"
+                                required
+                                autoFocus
+                                tabIndex={2}
+                                value={data.last_name}
+                                onChange={(e) => setData('last_name', e.target.value)}
+                                disabled={processing}bg-red-400
+                                placeholder="Doe"
+                            />
+                            <InputError message={errors.last_name} className="mt-2" />
+                        </div>
                     </div>
+
+
+
+
 
                     <div>
                         <Label>Sitio</Label>
