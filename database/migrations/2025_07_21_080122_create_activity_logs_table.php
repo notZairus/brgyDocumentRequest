@@ -16,8 +16,9 @@ return new class extends Migration
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
             $table->string('action');
-            $table->foreignIdFor(User::class);
-            $table->foreignIdFor(DocumentRequest::class);
+            $table->foreignIdFor(User::class, 'admin_id');
+            $table->foreignIdFor(User::class, 'user_id')->nullable();
+            $table->foreignIdFor(DocumentRequest::class)->nullable();
             $table->text('reason')->nullable();
             $table->timestamps();
         });

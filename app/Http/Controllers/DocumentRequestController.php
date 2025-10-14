@@ -112,8 +112,9 @@ class DocumentRequestController extends Controller
             {
                 ActivityLog::create([
                     'action' => 'Reviewed',
-                    'user_id' => Auth::user()->id,
+                    'admin_id' => Auth::user()->id,
                     'document_request_id' => $document_request->id,
+                    'user_id' => $document_request->user_id,
                 ]);
 
                 $document_request->update([
@@ -152,9 +153,10 @@ class DocumentRequestController extends Controller
 
             ActivityLog::create([
                 'action' => $request->get('action'),
-                'user_id' => Auth::user()->id,
+                'admin_id' => Auth::user()->id,
                 'reason' => $request->get('reason') ? $request->get('reason') : null,
                 'document_request_id' => $document_request->id,
+                'user_id' => $document_request->user_id,
             ]);
 
             Mail::to($document_request->user->email)->queue(new DocumentRequestReviewed($document_request));

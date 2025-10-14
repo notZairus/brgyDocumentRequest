@@ -33,6 +33,19 @@ export const columns: ColumnDef<ActivityLog>[] = [
     },
   },
   {
+    accessorKey: "admin_name",
+    header: ({ column }) => {
+      return (
+        <Button
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Admin
+        </Button>
+      )
+    },
+  },
+  {
     accessorKey: "action",
     header: ({ column }) => {
       return (
@@ -61,28 +74,13 @@ export const columns: ColumnDef<ActivityLog>[] = [
       const action = row.getValue('action');
       let message = "N/A";
 
-      switch (action) {
-        case "Approved":
-          message = "Valid Request";
-          break;
-        case "Declined":
-          message = row.getValue('reason') ? row.getValue('reason') : "N/A";
+      if (action === 'Approved') {
+        message = "Valid Request";
+      } else {
+        message = row.getValue('reason') ? row.getValue('reason') : "N/A";
       }
 
-      return <div className="max-w-[200px] overflow-hidden text-wrap">{message}</div>
-    },
-  },
-  {
-    accessorKey: "user_name",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Admin
-        </Button>
-      )
+      return <div className="max-w-[200px] overflow-hidden text-wrap text-center">{message}</div>
     },
   },
   {
@@ -97,7 +95,20 @@ export const columns: ColumnDef<ActivityLog>[] = [
       )
     },
     cell: ({ row }) => {
-      return <div className="flex px-12">{row.getValue('document_request_id')}</div>
+      return <div className="flex px-12">{row.getValue('document_request_id') ? row.getValue('document_request_id') : "N/A"}</div>
+    },
+  },
+  {
+    accessorKey: "user_name",
+    header: ({ column }) => {
+      return (
+        <Button
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Resident
+        </Button>
+      )
     },
   },
   {

@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\DocumentRequest;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Models\ActivityLog; 
+use Illuminate\Support\Facades\Auth;
 
 
 class VerifyUserController extends Controller
@@ -30,6 +32,12 @@ class VerifyUserController extends Controller
         $user->update([
             'verified_at' => now(),
             'status' => 'active'
+        ]);
+
+        ActivityLog::create([
+            'action' => 'Verify New User',
+            'admin_id' => Auth::user()->id,
+            'user_id' => $user->id,
         ]);
 
         return redirect('/verify-accounts');
