@@ -2,23 +2,39 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\VerifyUserController;
 use App\Http\Controllers\PollingController;
 use App\Http\Controllers\IdController;
 use App\Models\User;
 use App\Models\DocumentRequest;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DocumentRequestReviewed;
+use PhpOffice\PhpWord\TemplateProcessor;
+use ConvertApi\ConvertApi;
 
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // id server routes
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/getId/{user}/front', [IdController::class, 'serveFrontId']);
     Route::get('/getId/{user}/back', [IdController::class, 'serveBackId']);
     Route::get('/getOtherId/{document_request}/front', [IdController::class, 'serveOtherFrontId']);
     Route::get('/getOtherId/{document_request}/back', [IdController::class, 'serveOtherBackId']);
 });
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // polling routes
+
 Route::get('/poll/dashboard-data', function () {
     $is_admin = Auth::user()->is_admin;
 
@@ -41,6 +57,21 @@ Route::get('/poll/dashboard-data', function () {
     ]);
 })->middleware('auth'); 
 
+Route::get('/poll/unverified-accounts', [PollingController::class, 'getUnverifiedAccounts'])
+->middleware('auth', 'admin');
+
+Route::get('/poll/document-requests', [PollingController::class, 'getDocumentRequests'])
+->middleware('auth', 'admin');
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// filter dashboard data
 
 Route::post('/dashboard/filter', function (\Illuminate\Http\Request $request) {
     $is_admin = Auth::user()->is_admin;
@@ -65,22 +96,30 @@ Route::post('/dashboard/filter', function (\Illuminate\Http\Request $request) {
         "pendingRequests" => DocumentRequest::where('user_id', Auth::user()->id)->whereIn('status', ['Pending', 'Under Review'])->whereDate('created_at', '>=', $from)->whereDate('created_at', '<=', $to)->count(),
     ]);
 })->middleware('auth');
-
-
-Route::get('/poll/unverified-accounts', [PollingController::class, 'getUnverifiedAccounts'])
-->middleware('auth', 'admin');
-
-Route::get('/poll/document-requests', [PollingController::class, 'getDocumentRequests'])
-->middleware('auth', 'admin');
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
 
-use PhpOffice\PhpWord\TemplateProcessor;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\Settings;
-use ConvertApi\ConvertApi;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// notify user
+
+Route::post('/notify-user/{document_request}', function (DocumentRequest $document_request) {
+    $document_request->load('user');
+    Mail::to($document_request->user->email)->queue(new DocumentRequestReviewed($document_request));
+    return redirect()->back()->with('success', 'User notified successfully.');
+})->middleware(['auth', 'admin']);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
 
 Route::middleware(['auth', 'admin'])->group(function () {
 
@@ -142,7 +181,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
         return response()->download($savePath)->deleteFileAfterSend(true);
     });
-
 
     // PDF FORMAT
     // Route::get('/download-docx/{document_request}', function(DocumentRequest $document_request) {
@@ -219,9 +257,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     //         'Content-Type' => 'application/pdf'
     //     ])->deleteFileAfterSend(true);
     // });
-
-
-
 }); 
 
 

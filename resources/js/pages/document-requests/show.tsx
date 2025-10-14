@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { useState, useRef } from "react"
-import { Flag, Printer } from "lucide-react";
+import { Flag, Printer, Bell } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -103,6 +103,19 @@ export default function show() {
                             </div>
 
                             <div className="flex items-center gap-2">
+
+                                {
+                                    documentRequest.status === "Ready for Pickup" && (
+                                        <Link method="post" href={`/notify-user/${documentRequest.id}`} preserveScroll>
+                                            <Button variant="outline" size="lg" onClick={() => setShowDeclineReason(true)}>
+                                                <Bell />
+                                                Notify User
+                                            </Button>
+                                        </Link>
+                                    )
+                                }
+
+
                                 { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") ? (
                                     <a href={`/download-docx/${documentRequest.id}`} target="_blank" rel="noopener noreferer">
                                         <Button size="lg">
