@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Penalty;
 use Illuminate\Http\Request;
 use App\StatusEnum;
+use App\Models\ActivityLog; 
+use Illuminate\Support\Facades\Auth;
 
 class PenaltyController extends Controller
 {
@@ -16,19 +18,27 @@ class PenaltyController extends Controller
      */
     public function store(Request $request)
     {   
-        $doc_req = \App\Models\DocumentRequest::find($request->document_request_id);
+        $document_request = \App\Models\DocumentRequest::find($request->document_request_id);
 
-        $doc_req->update([
-            'status' => $doc_req->status === StatusEnum::UNDER_REVIEW ? StatusEnum::DECLINED : StatusEnum::COMPLETED,
+        $document_request->update([
+            'status' => $document_request->status === StatusEnum::UNDER_REVIEW ? StatusEnum::DECLINED : StatusEnum::COMPLETED,
             'updated_at' => now(),
         ]);
 
         $newPenalty = Penalty::create([
             'user_id' => $request->user_id,
-            'document_request_id' => $request->document_request_id,
+            'document_request_id' => $document_request->id,
             'reason' => $request->reason
         ]);
 
-        return redirect()->back();
+        ActivityLog::create([
+            'action' => 'Penalty Issued',
+            'reason' => $request->get('reason'),
+            'admin_id' => Auth::user()->id,
+            'document_request_id' =>$document_request->id,
+            'user_id' => $document_request->user_id,
+        ]);
+
+        return redirect()->back()->with('success', 'Penalty issued successfully.');
     }
 }
