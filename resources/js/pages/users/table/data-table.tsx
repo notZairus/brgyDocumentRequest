@@ -86,8 +86,7 @@ export function DataTable<TData extends User, TValue>({
     return (
         <>
             <div className="text-muted-foreground flex-1 text-sm">
-                {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                {table.getFilteredRowModel().rows.length} row(s) selected.
+                {table.getFilteredRowModel().rows.length} row(s).
             </div>
             <div className="flex items-center py-4">
                 <div className="flex space-x-4">
@@ -143,7 +142,7 @@ export function DataTable<TData extends User, TValue>({
                                     column.toggleVisibility(!!value)
                                     }
                                 >
-                                    {column.id.includes("_") ? column.id.replace("_", " ") : column.id }
+                                    {column.id === 'verified_at' ? "Verification Date" : column.id.includes("_") ? column.id.replace("_", " ") : column.id }
                                 </DropdownMenuCheckboxItem>
                                 )
                             })
@@ -167,7 +166,7 @@ export function DataTable<TData extends User, TValue>({
                                 : flexRender(
                                     header.column.columnDef.header,
                                     header.getContext()
-                                    )}
+                                )}
                             </TableHead>
                             )
                         })}

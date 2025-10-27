@@ -24,7 +24,7 @@ export const columns: ColumnDef<DocumentRequest>[] = [
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Document Type
@@ -32,13 +32,16 @@ export const columns: ColumnDef<DocumentRequest>[] = [
         </Button>
       )
     },
+    cell: ({ row }) => {
+      return <div className=" text-center">{row.getValue('document_type')}</div>
+    },
   },
   {
     accessorKey: "status",
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Status
@@ -46,22 +49,25 @@ export const columns: ColumnDef<DocumentRequest>[] = [
         </Button>
       )
     },
+    cell: ({ row }) => {
+      return <div className=" text-center">{row.getValue('status')}</div>
+    },
   },
   {
     accessorKey: "created_at",
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Date
+          Request Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      return <div>{format(row.getValue('created_at'), "MMMM d, yyyy")}</div>
+      return <div className="text-center">{format(row.getValue('created_at'), "MMMM d, yyyy")}</div>
     },
   },
 ]

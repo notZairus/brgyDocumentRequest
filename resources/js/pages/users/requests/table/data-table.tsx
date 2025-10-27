@@ -84,8 +84,7 @@ export function DataTable<TData, TValue>({
     return (
         <>
             <div className="text-muted-foreground flex-1 text-sm">
-                {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                {table.getFilteredRowModel().rows.length} row(s) selected.
+                {table.getFilteredRowModel().rows.length} row(s).
             </div>
             <div className="flex items-center py-4">
                 <div className="flex space-x-4">
@@ -167,7 +166,7 @@ export function DataTable<TData, TValue>({
                                 : flexRender(
                                     header.column.columnDef.header,
                                     header.getContext()
-                                    )}
+                                )}
                             </TableHead>
                             )
                         })}

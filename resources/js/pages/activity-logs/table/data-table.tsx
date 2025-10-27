@@ -102,7 +102,7 @@ export function DataTable<TData, TValue>({
                                     column.toggleVisibility(!!value)
                                     }
                                 >
-                                    {column.id.includes("_") ? column.id.replace("_", " ") : column.id }
+                                    {column.id === 'created_at' ? "Commit Date" : column.id.includes("_") ? column.id.replace("_", " ") : column.id }
                                 </DropdownMenuCheckboxItem>
                                 )
                             })

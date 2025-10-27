@@ -41,7 +41,7 @@ export default function index() {
             axios.get('/poll/document-requests').then(response => {
                 setData(response.data.documentRequests);
             })
-        }, (10000));
+        }, (20000));
 
         return () => clearInterval(interval);
     }, [])

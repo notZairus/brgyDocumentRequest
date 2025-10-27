@@ -37,20 +37,23 @@ export const columns: ColumnDef<ActivityLog>[] = [
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Admin
         </Button>
       )
     },
+    cell: ({ row }) => (
+      <div className="text-center">{ row.getValue('admin_name') }</div>
+    )
   },
   {
     accessorKey: "action",
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Action
@@ -58,13 +61,16 @@ export const columns: ColumnDef<ActivityLog>[] = [
         </Button>
       )
     },
+    cell: ({ row }) => (
+      <div className="text-center">{ row.getValue('action') }</div>
+    )
   },
   {
     accessorKey: "reason",
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
         >
           Reason
         </Button>
@@ -88,14 +94,14 @@ export const columns: ColumnDef<ActivityLog>[] = [
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
         >
           Document ID
         </Button>
       )
     },
     cell: ({ row }) => {
-      return <div className="flex px-12">{row.getValue('document_request_id') ? row.getValue('document_request_id') : "N/A"}</div>
+      return <div className="text-center">{row.getValue('document_request_id') ? row.getValue('document_request_id') : "N/A"}</div>
     },
   },
   {
@@ -103,29 +109,32 @@ export const columns: ColumnDef<ActivityLog>[] = [
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Resident
         </Button>
       )
     },
+    cell: ({ row }) => (
+      <div className="text-center">{ row.getValue('user_name') }</div>
+    )
   },
   {
     accessorKey: "created_at",
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Date
+          Commit Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      return <div>{format(row.getValue('created_at'), "MMMM d, yyyy")}</div>
+      return <div className="text-center">{format(row.getValue('created_at'), "MMMM d, yyyy")}</div>
     },
   },
 ]

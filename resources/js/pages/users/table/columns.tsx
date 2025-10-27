@@ -34,7 +34,7 @@ export const columns: ColumnDef<User>[] = [
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Sitio
@@ -42,13 +42,16 @@ export const columns: ColumnDef<User>[] = [
         </Button>
       )
     },
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue('sitio')}</div>
+    )
   },
   {
     accessorKey: "verified_at",
     header: ({ column }) => {
       return (
         <Button
-          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-start"
+          className="bg-transparent text-foreground hover:bg-transparent w-full flex justify-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Verification Date
@@ -57,7 +60,7 @@ export const columns: ColumnDef<User>[] = [
       )
     },
     cell: ({ row }) => {
-      return <div>{format(row.getValue('verified_at'), "MMMM d, yyyy")}</div>
+      return <div className="text-center">{format(row.getValue('verified_at'), "MMMM d, yyyy")}</div>
     },
   },
 ]

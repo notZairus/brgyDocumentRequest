@@ -54,7 +54,7 @@ type RegisterForm = {
 
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset, setError } = useForm<Required<RegisterForm>>({
+    const { data, setData, post, processing, errors, reset, setError, clearErrors } = useForm<Required<RegisterForm>>({
         first_name: '',
         last_name: '', 
         middle_initial: '',
@@ -69,11 +69,31 @@ export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const brgyIdFrontRef = useRef(null);
     const brgyIdBackRef = useRef(null);
+    const [showTerms, setShowTerms] = useState(false);
 
+    const validateRegisterForm = () => {
 
+        clearErrors();
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+        if (!data.first_name) {
+            setError('first_name', 'This field is required.');
+            return;
+        }
+
+        if (!data.last_name) {
+            setError('last_name', 'This field is required.');
+            return;
+        }
+        
+        if (!data.sitio) {
+            setError('sitio', 'This field is required.');
+            return;
+        }
+
+        if (!data.email) {
+            setError('email', 'This field is required.');
+            return;
+        }
 
         if (!data.brgyIdFront) {
             setError('brgyIdFront', 'The Brgy ID Front image is required.');
@@ -86,12 +106,26 @@ export default function Register() {
         }
 
         if (data.middle_initial && data.middle_initial.length >= 3) {
-            setError('brgyIdBack', 'Invalid Middle Initial.');
+            setError('middle_initial', 'Invalid Middle Initial.');
             return;
         }
 
-        const idFrontFile = "file" in data.brgyIdFront ? data.brgyIdFront.file : data.brgyIdFront;
-        const idBackFile = "file" in data.brgyIdBack ? data.brgyIdBack.file : data.brgyIdBack; 
+        setShowTerms(true);
+    }
+
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+
+        setShowTerms(false);
+
+        const idFrontFile = data.brgyIdFront && "file" in data.brgyIdFront 
+                                ? data.brgyIdFront.file 
+                                : data.brgyIdFront;
+
+        const idBackFile = data.brgyIdBack && "file" in data.brgyIdBack 
+                                ? data.brgyIdBack.file 
+                                : data.brgyIdBack; 
 
         setData('brgyIdFront', idFrontFile);
         setData('brgyIdBack', idBackFile);
@@ -117,10 +151,10 @@ export default function Register() {
                                 tabIndex={1}
                                 value={data.first_name}
                                 onChange={(e) => setData('first_name', e.target.value)}
-                                disabled={processing}bg-red-400
+                                disabled={processing}
                                 placeholder="John"
                             />
-                            <InputError message={errors.first_name} className="mt-2" />
+                            <InputError message={errors.first_name} className="mt-2 text-red-500" />
                         </div>
     
                         <div className="grid gap-2 flex-1">
@@ -133,10 +167,10 @@ export default function Register() {
                                 tabIndex={2}
                                 value={data.middle_initial}
                                 onChange={(e) => setData('middle_initial', e.target.value)}
-                                disabled={processing}bg-red-400
+                                disabled={processing}
                                 placeholder="L"
                             />
-                            <InputError message={errors.middle_initial} className="mt-2" />
+                            <InputError message={errors.middle_initial} className="mt-2 text-red-500" />
                         </div>
     
                         <div className="grid gap-2 flex-2">
@@ -149,10 +183,10 @@ export default function Register() {
                                 tabIndex={2}
                                 value={data.last_name}
                                 onChange={(e) => setData('last_name', e.target.value)}
-                                disabled={processing}bg-red-400
+                                disabled={processing}
                                 placeholder="Doe"
                             />
-                            <InputError message={errors.last_name} className="mt-2" />
+                            <InputError message={errors.last_name} className="mt-2 text-red-500" />
                         </div>
                     </div>
 
@@ -341,10 +375,12 @@ export default function Register() {
                         <InputError message={errors.brgyIdBack} />
                     </div>
 
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button>Create Account</Button>
-                        </DialogTrigger>
+
+                        <div>
+                            <Button className="w-full" onClick={validateRegisterForm}>Create Account</Button>
+                        </div>
+
+                    <Dialog open={showTerms}>
                         <DialogContent className="">
                             <DialogHeader>
                                 <DialogTitle>Terms and Conditions</DialogTitle>
@@ -401,10 +437,12 @@ export default function Register() {
                                 <DialogClose asChild>
                                     <Button variant="outline">Cancel</Button>
                                 </DialogClose>
-                                <Button disabled={!data.accept_terms || processing } onClick={submit} tabIndex={5} >
-                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                    Create account
-                                </Button>
+                                    <Button disabled={!data.accept_terms || processing } onClick={submit} tabIndex={5} >
+                                        <DialogClose>
+                                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                            Create account
+                                        </DialogClose>
+                                    </Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
