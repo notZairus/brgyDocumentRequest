@@ -145,7 +145,9 @@ export function DataTable<TData extends DocumentRequest, TValue>({
                                     column.toggleVisibility(!!value)
                                     }
                                 >
-                                    {column.id.includes("_") ? column.id.replace("_", " ") : column.id }
+                                    {
+                                        column.id === "created_at" ? "Date" : column.id.includes("_") ? column.id.replace("_", " ") : column.id 
+                                    }
                                 </DropdownMenuCheckboxItem>
                                 )
                             })
