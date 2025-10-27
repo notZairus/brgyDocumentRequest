@@ -262,6 +262,8 @@ function createDocumentRequest(Request $request) {
             'name' => $request->get('name') ? $request->get('name') : $request->user()->name,
             'purpose' => $request['purpose'] === 'other' ? $request['other_purpose'] : $request['purpose'],
             'civil_status' => $request['civil_status'],
+            'income' => $request['income'],
+            'occupation' => $request['occupation']
         ],
     ]);
 }
