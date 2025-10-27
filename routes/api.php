@@ -132,7 +132,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
             $templatePath = storage_path('app/templates/indigency.docx');
             $templateProcessor = new TemplateProcessor($templatePath);
 
-            $templateProcessor->setValue('name', $document_request['document_details']['name']);
+            $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
             $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
             $templateProcessor->setValue('purpose', strtoupper($document_request['document_details']['purpose']));
             $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
@@ -142,7 +142,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
             $templatePath = storage_path('app/templates/residency.docx');
             $templateProcessor = new TemplateProcessor($templatePath);
 
-            $templateProcessor->setValue('name', $document_request['document_details']['name']);
+            $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
             $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
             $templateProcessor->setValue('civil_status', strtolower($document_request['document_details']['civil_status']));
             $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
@@ -152,7 +152,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
             $templatePath = storage_path('app/templates/employment.docx');
             $templateProcessor = new TemplateProcessor($templatePath);
 
-            $name = $document_request['document_details']['name'];
+            $name = strtoupper($document_request['document_details']['name']);
             $temp = explode(' ', $name);
             $last_name = end($temp);
 
