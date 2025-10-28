@@ -95,6 +95,16 @@ export default function Register() {
             return;
         }
 
+        if (!data.password) {
+            setError('password', 'This field is required.');
+            return;
+        }
+
+        if (!data.password_confirmation) {
+            setError('password_confirmation', 'This field is required.');
+            return;
+        }
+
         if (!data.brgyIdFront) {
             setError('brgyIdFront', 'The Brgy ID Front image is required.');
             return;
@@ -434,15 +444,13 @@ export default function Register() {
                             </ScrollArea>
 
                             <DialogFooter className="flex items-center mt-4">
-                                <DialogClose asChild>
+                                <DialogClose asChild onClick={() => setShowTerms(false)}>
                                     <Button variant="outline">Cancel</Button>
                                 </DialogClose>
-                                    <Button disabled={!data.accept_terms || processing } onClick={submit} tabIndex={5} >
-                                        <DialogClose>
-                                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                            Create account
-                                        </DialogClose>
-                                    </Button>
+                                <Button disabled={!data.accept_terms || processing } onClick={submit} tabIndex={5} >
+                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                    Create account
+                                </Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
