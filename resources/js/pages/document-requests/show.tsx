@@ -107,7 +107,7 @@ export default function show() {
                                 {
                                     documentRequest.status === "Ready for Pickup" && (
                                         <Link method="post" href={`/notify-user/${documentRequest.id}`} preserveScroll>
-                                            <Button variant="outline" size="lg" onClick={() => setShowDeclineReason(true)}>
+                                            <Button variant="outline" size="lg" >
                                                 <Bell />
                                                 Notify User
                                             </Button>
@@ -245,10 +245,9 @@ export default function show() {
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
                                                 <AlertDialogHeader>
-                                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                    <AlertDialogTitle>Confirm Approval</AlertDialogTitle>
                                                     <AlertDialogDescription>
-                                                        This action cannot be undone. This will permanently delete your account
-                                                        and remove your data from our servers.
+                                                        Approving this request will mark it as "Approved", notify the requester, and allow staff to prepare or print the document. This action is final and cannot be undone. If you need to modify the document details, do so before confirming.
                                                     </AlertDialogDescription>
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
@@ -270,37 +269,69 @@ export default function show() {
                                     </div>
         
                                     {showDeclineReason && (
-                                        <div className="space-y-4">
-                                            <label className="text-sm font-medium">Reason for Decline:</label>
-                                            <Textarea
-                                                className="resize-none mt-1"
-                                                placeholder="Enter your reason here..."
-                                                value={data.reason}
-                                                onChange={(e) => setData('reason', e.target.value)}
-                                            />
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button 
-                                                        variant="default"
-                                                        size="lg"
+                                        <div>
+                                            
+                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                {[
+                                                    'Incomplete requirements',
+                                                    'Suspicious request',
+                                                    'Duplicate request',
+                                                    'Invalid ID provided',
+                                                    'Missing informations',
+                                                    'Invalid informations',
+                                                    "User didn't respond",
+                                                ].map((reason) => (
+                                                    <div
+                                                        key={reason}
+                                                        onClick={() => setData('reason', reason)}
+                                                        className={`px-3 py-1 rounded-md cursor-pointer text-sm border transition-colors ${
+                                                            data.reason === reason
+                                                                ? 'bg-primary/20 border-primary'
+                                                                : 'bg-primary/5 border-primary/15'
+                                                        } hover:opacity-90`}
                                                     >
-                                                        Confirm
-                                                    </Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            This action cannot be undone. This will permanently delete your account
-                                                            and remove your data from our servers.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={handlePut}>Continue</AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
+                                                        {reason}
+                                                    </div>
+                                                ))}
+                                            </div>
+
+
+                                            <div className="space-y-4">
+                                                <label className="text-sm font-medium">Reason for Decline:</label>
+                                                <Textarea
+                                                    className="resize-none mt-1"
+                                                    placeholder="Enter your reason here..."
+                                                    value={data.reason}
+                                                    onChange={(e) => setData('reason', e.target.value)}
+                                                />
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button 
+                                                            variant="default"
+                                                            size="lg"
+                                                        >
+                                                            Confirm
+                                                        </Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Confirm Decline</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                You are about to decline this document request. The requester will be notified and the reason you provide will be saved to the activity log. This action cannot be undone.
+                                                            </AlertDialogDescription>
+                                                            {data.reason && (
+                                                                <div className="mt-2 text-sm">
+                                                                    <strong>Reason provided:</strong> <span className="italic">{data.reason}</span>
+                                                                </div>
+                                                            )}
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={handlePut}>Continue</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -327,11 +358,10 @@ export default function show() {
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
                                                 <AlertDialogHeader>
-                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                                <AlertDialogDescription>
-                                                    This action cannot be undone. This will permanently delete your account
-                                                    and remove your data from our servers.
-                                                </AlertDialogDescription>
+                                                    <AlertDialogTitle>Confirm: Mark as Ready for Pickup</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        Marking this request as "Ready for Pickup" will notify the requester and allow staff to prepare the document for collection. This action is final and cannot be undone — please verify that all document details are correct before continuing.
+                                                    </AlertDialogDescription>
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
                                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -365,15 +395,14 @@ export default function show() {
                                             </AlertDialogTrigger>
                                             <AlertDialogContent>
                                                 <AlertDialogHeader>
-                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                                <AlertDialogDescription>
-                                                    This action cannot be undone. This will permanently delete your account
-                                                    and remove your data from our servers.
-                                                </AlertDialogDescription>
+                                                    <AlertDialogTitle>Confirm Completion</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        Mark this request as "Completed" to record that the document has been handed over and notify the requester — this action cannot be undone.
+                                                    </AlertDialogDescription>
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
-                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                <AlertDialogAction onClick={handlePut}>Continue</AlertDialogAction>
+                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                    <AlertDialogAction onClick={handlePut}>Continue</AlertDialogAction>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
