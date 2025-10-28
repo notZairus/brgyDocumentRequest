@@ -152,11 +152,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
             $templatePath = storage_path('app/templates/employment.docx');
             $templateProcessor = new TemplateProcessor($templatePath);
 
-            $name = strtoupper($document_request['document_details']['name']);
+            $name = $document_request['document_details']['name'];
             $temp = explode(' ', $name);
             $last_name = end($temp);
 
-            $templateProcessor->setValue('name', $name);
+            $templateProcessor->setValue('name', strtoupper($name));
             $templateProcessor->setValue('last_name', $last_name);
             $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
             $templateProcessor->setValue('income', $document_request['document_details']['income']);
