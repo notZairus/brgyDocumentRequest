@@ -57,7 +57,7 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Manage Users',
+        title: 'Manage Residents',
         href: '/users',
         icon: Users,
         for: "admin"
