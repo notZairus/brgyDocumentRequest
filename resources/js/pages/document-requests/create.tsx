@@ -16,7 +16,7 @@ import { useForm } from "@inertiajs/react";
 import { useState, useRef } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { imgToBase64 } from '@/lib/utils';
-import { availableDocuments } from "@/datas";
+// import { availableDocuments } from "@/datas";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +28,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { usePage } from '@inertiajs/react';
+import type { Document } from "@/types/index.d.ts"
 
 
 type IdType = {
@@ -66,6 +68,14 @@ type useFormProps = {
  */
 
 export default function create() {
+    const { available_documents } = usePage<Document[] & { [key: string ]: any }>().props;
+    const [availableDocuments, setAvailableDocuments] = useState<Document[]>(
+        available_documents.map((doc: Document) => ({
+            ...doc,
+            information: JSON.parse(doc.information as string)
+        }))
+    ); 
+
     const { data, setData, post, errors, setError, reset, clearErrors } = useForm<useFormProps>({
         document_request_type: 'user',
         document_type: '',
@@ -74,12 +84,12 @@ export default function create() {
         purpose: '',
         other_purpose: '',
     });
+
     const [currentTab, setCurrentTab] = useState<string>('user');
     const brgyIdFrontRef = useRef(null);
     const brgyIdBackRef = useRef(null);
 
-    let selectedDocumentType = availableDocuments.find((doc) => doc.type == data.document_type);
-
+    const selectedDocumentType: Document | undefined = availableDocuments.find((doc: Document) => doc.type == data.document_type);
 
     function setTab(tab: string) {
         setData('document_request_type', tab as 'other' | 'user');
@@ -176,7 +186,7 @@ export default function create() {
                                     </SelectTrigger>
                                     <SelectContent>
                                     {
-                                        availableDocuments.map(doc => (
+                                        availableDocuments.map((doc : Document) => (
                                             <SelectItem value={doc.type}>{doc.type}  (₱{doc.price})</SelectItem>
                                         ))
                                     }
@@ -191,8 +201,7 @@ export default function create() {
                             <div className="mt-8 space-y-4">
                                 <>
                                     { selectedDocumentType && (
-                                        selectedDocumentType.information
-                                        .map((info) => (
+                                        selectedDocumentType.information.map((info: any) => (
                                             <>
                                                 <div className="flex flex-col gap-2">
 
@@ -346,9 +355,9 @@ export default function create() {
                                                                     <SelectValue placeholder={info.placeholder} />
                                                                 </SelectTrigger>
                                                                 <SelectContent>
-                                                                {
-                                                                    info?.options?.map(doc => (
-                                                                        <SelectItem value={doc}>{doc}</SelectItem>
+                                                                {   
+                                                                    info?.options?.map((opt: string) => (
+                                                                        <SelectItem value={opt}>{opt}</SelectItem>
                                                                     ))
                                                                 }
                                                                 </SelectContent>
@@ -374,7 +383,7 @@ export default function create() {
                                                                     </SelectTrigger>
                                                                     <SelectContent>
                                                                     {
-                                                                        info?.options?.map(doc => (
+                                                                        info?.options?.map((doc: string) => (
                                                                             <SelectItem value={doc}>{doc}</SelectItem>
                                                                         ))
                                                                     }
@@ -410,7 +419,6 @@ export default function create() {
                                                 
                                             </>
                                         ))
-
                                         
                                     )}
 

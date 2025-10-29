@@ -10,9 +10,9 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DocumentRequestReviewed;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Enum;
 use App\StatusEnum;
+
+use App\Models\Document;
 
 
 
@@ -41,15 +41,18 @@ class DocumentRequestController extends Controller
     public function create()
     {
         $penalties = Auth::user()->penalties;
+        $available_documents = Document::all();
 
         if ($penalties && checkPenalty($penalties)) {
             return back()->with('error', [
                 'message' => 'You have an active penalty. Please wait for ' . ceil(checkPenalty($penalties)) . ' day(s) before making a new request.',
-                'penalty_id' => $penalties->sortByDesc('created_at')->first()->id
+                'penalty_id' => $penalties->sortByDesc('created_at')->first()->id,
             ]);
         }
 
-        return Inertia::render('document-requests/create');
+        return Inertia::render('document-requests/create', [
+            'available_documents' => $available_documents,
+        ]);
     }
 
     public function store(Request $request) {

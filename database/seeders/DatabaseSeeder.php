@@ -3,11 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\DocumentRequest;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Database\Seeders\DocumentRequestSeeder;
+use Database\Seeders\DocumentSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,6 +27,10 @@ class DatabaseSeeder extends Seeder
             'sitio' => 'Matictic Proper',
             'password' => 'QZr8408o'
         ]);
+
+        $this->call(
+            DocumentSeeder::class
+        );
 
         $this->call(
             DocumentRequestSeeder::class

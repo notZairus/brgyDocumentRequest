@@ -11,6 +11,8 @@ use App\Mail\DocumentRequestReviewed;
 use PhpOffice\PhpWord\TemplateProcessor;
 use ConvertApi\ConvertApi;
 
+use App\Models\Document;
+
 
 
 
@@ -127,9 +129,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/download-docx/{document_request}', function(DocumentRequest $document_request) {
         $templatePath = null;
         $templateProcessor = null;
+        $document = Document::where('type', $document_request->document_type)->first();
 
-        if ($document_request->document_type === 'Certificate of Indigency') {
-            $templatePath = storage_path('app/templates/indigency.docx');
+        if ($document->type === 'Certificate of Indigency') {
+            
+            $templatePath = storage_path($document->path);
             $templateProcessor = new TemplateProcessor($templatePath);
 
             $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
@@ -138,8 +142,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
             $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
         }
 
-        if ($document_request->document_type === 'Certificate of Residency') {
-            $templatePath = storage_path('app/templates/residency.docx');
+        if ($document->type === 'Certificate of Residency') {
+            $templatePath = storage_path($document->path);
             $templateProcessor = new TemplateProcessor($templatePath);
 
             $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
@@ -148,8 +152,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
             $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
         }
 
-        if ($document_request->document_type === 'Certificate of Employment') {
-            $templatePath = storage_path('app/templates/employment.docx');
+        if ($document->type === 'Certificate of Employment') {
+            $templatePath = storage_path($document->path);
             $templateProcessor = new TemplateProcessor($templatePath);
 
             $name = $document_request['document_details']['name'];
@@ -164,8 +168,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
             $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
         }
 
-        if ($document_request->document_type === 'Barangay Clearance') {
-            $templatePath = storage_path('app/templates/clearance.docx');
+        if ($document->type === 'Barangay Clearance') {
+            $templatePath = storage_path($document->path);
             $templateProcessor = new TemplateProcessor($templatePath);
 
             $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));

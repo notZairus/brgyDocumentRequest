@@ -17,12 +17,15 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Documents() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Appearance settings" />
+            <Head title="Documents settings" />
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Appearance settings" description="Update your account's appearance settings" />
-                    <AppearanceTabs />
+                    <HeadingSmall
+                        title="Documents Settings"
+                        description="This tab is for configuring document templates, adding new document types, and managing other document-related settings."
+                    />
+                    
                 </div>
             </SettingsLayout>
         </AppLayout>

@@ -112,3 +112,11 @@ export interface MyPageProps extends PageProps {
     }
     [key: string]: unknown
 }
+
+
+export interface Document {
+    type: string; // unique identifier for the document
+    description?: string | null; // nullable field
+    price: number; // default 0.00
+    information: string | object; // JSON field
+}
