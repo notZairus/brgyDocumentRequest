@@ -42,15 +42,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
 import { Link } from "@inertiajs/react";
 
+import type { DocumentRequest } from "@/types/index.d.ts";
 
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends DocumentRequest, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends DocumentRequest, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
@@ -177,12 +178,12 @@ export function DataTable<TData, TValue>({
                     {table.getRowModel().rows?.length ? (
                         table.getRowModel().rows.map((row) => (
                             <TableRow
-                                key={row.id}
+                                key={row.original.id}
                                 data-state={row.getIsSelected() && "selected"}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
-                                        <Link href={`/document-requests/${row.getValue('id')}`}>
+                                        <Link href={`/document-requests/${row.original.id}`}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </Link>
                                     </TableCell>

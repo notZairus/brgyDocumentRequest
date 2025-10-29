@@ -416,7 +416,7 @@ export default function create() {
 
                                     {   data.document_type && 
                                         <div>
-                                            <Label>Note</Label>
+                                            <Label>Note <span className="text-foreground/50">(Optional)</span></Label>
                                             <Textarea
                                                 value={data['note']}
                                                 placeholder={"Add note"}

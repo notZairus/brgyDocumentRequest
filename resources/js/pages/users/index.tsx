@@ -14,7 +14,7 @@ import { columns } from "./table/columns";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Manage Users',
+        title: 'Manage Residents',
         href: '/users',
     },
 ];
