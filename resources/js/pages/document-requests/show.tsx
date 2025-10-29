@@ -177,7 +177,7 @@ export default function show() {
                                 <div className="flex justify-between items-center">
                                     <p className="text-lg font-bold mb-2">Document Details</p>
 
-                                    { documentRequest.status !== 'Completed' && (
+                                    { documentRequest.status !== 'Completed' && documentRequest.user_id === user.id && (
                                         <EditDocumentDialog />
                                     )}
                                     
