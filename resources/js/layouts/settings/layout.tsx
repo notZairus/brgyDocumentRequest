@@ -22,6 +22,11 @@ const sidebarNavItems: NavItem[] = [
         href: '/settings/appearance',
         icon: null,
     },
+    {
+        title: 'Documents',
+        href: '/settings/documents',
+        icon: null,  
+    }
 ];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
