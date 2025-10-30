@@ -26,7 +26,7 @@ interface MyProps {
 };
 
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
-    const { flash } = usePage<PageProps &MyProps>().props;
+    const { flash } = usePage<PageProps & MyProps>().props;
 
     useEffect(() => {
         flash.success && toast.success(flash.success);

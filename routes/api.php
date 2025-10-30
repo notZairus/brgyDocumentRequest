@@ -133,7 +133,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
         if ($document->type === 'Certificate of Indigency') {
             
-            $templatePath = storage_path($document->path);
+            $templatePath = storage_path('app/' . $document->path);
             $templateProcessor = new TemplateProcessor($templatePath);
 
             $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));

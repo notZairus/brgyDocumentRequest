@@ -22,7 +22,7 @@ class DocumentSeeder extends Seeder
                     ['label' => 'Purpose', 'type' => 'select', 'options' => ['Educational Assistance', 'Financial Assistance', 'Medical Assistance'], 'required' => true, 'placeholder' => 'Select a purpose'],
                     ['label' => 'Sitio', 'type' => 'select', 'options' => ['Matictic Proper',  'Riverside', 'Coral', 'Sapang Kawayan',  'Dynamite',  'Malaganit',  'Padling', 'Gulod', 'Kanyakan', 'Lupa'], 'required' => true, 'placeholder' => 'Select a sitio'],
                 ]),
-                'path' => 'app/templates/indigency.docx',
+                'path' => '',
             ],
             [
                 'type' => 'Certificate of Residency',
@@ -32,7 +32,7 @@ class DocumentSeeder extends Seeder
                     ['label' => 'Civil_Status', 'type' => 'select', 'options' => ['Single', 'Married', 'Divorced', 'Widowed'], 'required' => true, 'placeholder' => 'Select a civil status'],
                     ['label' => 'Sitio', 'type' => 'select', 'options' => ['Matictic Proper',  'Riverside', 'Coral', 'Sapang Kawayan',  'Dynamite',  'Malaganit',  'Padling', 'Gulod', 'Kanyakan', 'Lupa'], 'required' => true, 'placeholder' => 'Select a sitio'],
                 ]),
-                'path' => 'app/templates/residency.docx',
+                'path' => '',
             ],
             [
                 'type' => 'Certificate of Employment',
@@ -43,7 +43,7 @@ class DocumentSeeder extends Seeder
                     ['label' => 'Sitio', 'type' => 'select', 'options' => ['Matictic Proper',  'Riverside', 'Coral', 'Sapang Kawayan',  'Dynamite',  'Malaganit',  'Padling', 'Gulod', 'Kanyakan', 'Lupa'], 'required' => true, 'placeholder' => 'Select a sitio'],
                     ['label' => 'Income', 'type' => 'select', 'options' => ['one thousand pesos (₱1,000)', 'two thousand pesos (₱2,000)', 'three thousand pesos (₱3,000)', 'four thousand pesos (₱4,000)', 'five thousand pesos (₱5,000)', 'six thousand pesos (₱6,000)', 'seven thousand pesos (₱7,000)', 'eight thousand pesos (₱8,000)', 'nine thousand pesos (₱9,000)', 'ten thousand pesos (₱10,000)'], 'required' => true, 'placeholder' => 'Enter your monthly income'],
                 ]),
-                'path' => 'app/templates/employment.docx',
+                'path' => '',
             ],
             [
                 'type' => 'Barangay Clearance',
@@ -54,7 +54,7 @@ class DocumentSeeder extends Seeder
                     ['label' => 'Civil_Status', 'type' => 'select', 'options' => ['Single', 'Married', 'Divorced', 'Widowed'], 'required' => true, 'placeholder' => 'Select a civil status'],
                     ['label' => 'Sitio', 'type' => 'select', 'options' => ['Matictic Proper',  'Riverside', 'Coral', 'Sapang Kawayan',  'Dynamite',  'Malaganit',  'Padling', 'Gulod', 'Kanyakan', 'Lupa'], 'required' => true, 'placeholder' => 'Select a sitio'],
                 ]),
-                'path' => 'app/templates/clearance.docx',
+                'path' => '',
             ],
         ];
 

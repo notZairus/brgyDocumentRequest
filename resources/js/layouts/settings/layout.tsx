@@ -5,6 +5,10 @@ import { cn } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
+import { usePage } from "@inertiajs/react";
+import { useEffect } from 'react';
+import { toast } from 'sonner';
+
 
 const sidebarNavItems: NavItem[] = [
     {
@@ -26,10 +30,21 @@ const sidebarNavItems: NavItem[] = [
         title: 'Documents',
         href: '/settings/documents',
         icon: null,  
+        for: "admin"
     }
 ];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
+    const { auth: { user }, flash } = usePage<any>().props;
+
+
+
+    useEffect(() => {
+        flash.success && toast.success(flash.success);
+        flash.error && toast.error(flash.error.message ?? flash.error);
+    }, [flash]);
+
+
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
         return null;
@@ -44,21 +59,45 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">
                     <nav className="flex flex-col space-y-1 space-x-0">
-                        {sidebarNavItems.map((item, index) => (
-                            <Button
-                                key={`${item.href}-${index}`}
-                                size="sm"
-                                variant="ghost"
-                                asChild
-                                className={cn('w-full justify-start', {
-                                    'bg-muted': currentPath === item.href,
-                                })}
-                            >
-                                <Link href={item.href} prefetch>
-                                    {item.title}
-                                </Link>
-                            </Button>
-                        ))}
+                        {sidebarNavItems.map((item, index) => {
+                            if (item.title === 'Documents') {
+                                if (item.for === 'admin' && user.is_admin) {
+                                    return (
+                                        <Button
+                                            key={`${item.href}-${index}`}
+                                            size="sm"
+                                            variant="ghost"
+                                            asChild
+                                            className={cn('w-full justify-start', {
+                                                'bg-muted': currentPath === item.href,
+                                            })}
+                                        >
+                                            <Link href={item.href} prefetch>
+                                                {item.title}
+                                            </Link>
+                                        </Button>
+                                    )
+                                } else {
+                                    return null;
+                                }
+                            }
+
+                            return (
+                                <Button
+                                    key={`${item.href}-${index}`}
+                                    size="sm"
+                                    variant="ghost"
+                                    asChild
+                                    className={cn('w-full justify-start', {
+                                        'bg-muted': currentPath.includes(item.href),
+                                    })}
+                                >
+                                    <Link href={item.href} prefetch>
+                                        {item.title}
+                                    </Link>
+                                </Button>
+                            )  
+                        })}
                     </nav>
                 </aside>
 

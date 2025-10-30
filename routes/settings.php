@@ -4,6 +4,11 @@ use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Document;
+use App\Http\Controllers\DocumentController;
+use Illuminate\Http\Request;
+
+
 
 Route::middleware('auth')->group(function () {
     Route::redirect('settings', '/settings/profile');
@@ -19,8 +24,7 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('settings/appearance');
     })->name('appearance');
 
-    Route::get('settings/documents', function () {
-        return Inertia::render('settings/documents');
-    });
-
+    Route::get('settings/documents', [DocumentController::class, 'index']);
+    Route::get('settings/documents/{document}', [DocumentController::class, 'show']);
+    Route::post('settings/documents', [DocumentController::class, 'post_receiver']);
 });

@@ -31,7 +31,9 @@ class DocumentRequestFactory extends Factory
                 "name" => 'Dummy Name', 
                 "sitio" => "Matictic Proper", 
                 "purpose" => null, 
-                "civil_status" => null
+                "civil_status" => null,
+                "income" => "one thousand pesos (₱1,000.00)",
+                "occupation" => "Construction Worker",
             ],
             'Certificate of Residency' => [
                 "name" => 'Dummy Name', 
@@ -47,14 +49,16 @@ class DocumentRequestFactory extends Factory
             ]
         ];
 
+        $type = $this->faker->randomElement($documentTypes);
+
 
 
         return [
             'user_id' => $user,
             'price' => 0,
-            'document_type' => $this->faker->randomElement($documentTypes),
+            'document_type' => $type,
             'notes' => $this->faker->optional()->paragraph(),
-            'document_details' => $document_details[$this->faker->randomElement($documentTypes)],
+            'document_details' => $document_details[$type],
             'status' => $this->faker->randomElement(StatusEnum::cases()),
         ];
     }
