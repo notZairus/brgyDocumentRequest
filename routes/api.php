@@ -131,6 +131,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
         $templateProcessor = null;
         $document = Document::where('type', $document_request->document_type)->first();
 
+        $pathOfCurrentTemplate = storage_path($document->path);
+        if (!$document->path || !file_exists($pathOfCurrentTemplate)) {
+            return redirect()->back()->with('error', "No template found for this document type.");
+        }
+
         if ($document->type === 'Certificate of Indigency') {
             
             $templatePath = storage_path($document->path);

@@ -117,7 +117,7 @@ export default function show() {
 
 
                                 { user.is_admin && documentRequest.user_id !== user.id && !hasPenalty && (documentRequest.status === "Approved" || documentRequest.status === "Ready for Pickup") ? (
-                                    <a href={`/download-docx/${documentRequest.id}`} target="_blank" rel="noopener noreferer">
+                                    <a href={`/download-docx/${documentRequest.id}`} rel="noopener noreferer">
                                         <Button size="lg">
                                             <Printer />
                                             Print
