@@ -65,7 +65,7 @@ class DocumentController extends Controller
         $path = $request->file('template')->storeAs('templates', $filename, 'templates');
 
         $pathOfCurrentTemplate = storage_path($document->path);
-        if (file_exists($pathOfCurrentTemplate)) {
+        if ($document->path && file_exists($pathOfCurrentTemplate)) {
             unlink($pathOfCurrentTemplate);
         }
 
