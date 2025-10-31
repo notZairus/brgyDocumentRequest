@@ -23,8 +23,11 @@ Route::middleware('auth')->group(function () {
     Route::get('settings/appearance', function () {
         return Inertia::render('settings/appearance');
     })->name('appearance');
+});
 
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('settings/documents', [DocumentController::class, 'index']);
     Route::get('settings/documents/{document}', [DocumentController::class, 'show']);
     Route::post('settings/documents', [DocumentController::class, 'post_receiver']);
+    Route::delete('settings/documents', [DocumentController::class, 'delete']);
 });

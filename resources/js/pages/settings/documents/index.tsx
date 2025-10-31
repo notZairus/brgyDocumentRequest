@@ -1,18 +1,15 @@
 import { Head } from '@inertiajs/react';
-
 import HeadingSmall from '@/components/heading-small';
 import { type BreadcrumbItem } from '@/types';
-
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-
 import { usePage } from "@inertiajs/react";
 import { PageProps } from "@inertiajs/core";
 import { useState } from "react";
 import type { Document } from "@/types/index.d.ts";
-
 import { Link } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
+import { useForm } from "@inertiajs/react";
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -33,18 +30,15 @@ export default function Documents() {
             collapsed: false,
         }))
     );
+    const { data, setData, post } = useForm({
+        type: 'New Document',
+        description: '',
+        price: 0,
+        information: [],
+        method: 'post'
+    });
+
     
-
-    const addNewDocumentType = () => {
-        const newDocumentType = {
-            type: 'New Document',
-            description: '',
-            price: 0,
-            information: [],
-        };
-
-        setAvailableDocuments(prevDocs => [...prevDocs, newDocumentType]);
-    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -83,7 +77,7 @@ export default function Documents() {
                                                     <div className="text-sm p-2 bg-primary/5 border-primary/20 border w-full min-h-8 rounded">
                                                         <div className="flex justify-between">
                                                             <p>
-                                                                <span className="text-primary/50 block">Label:</span> { info.label.toUpperCase() }
+                                                                <span className="text-primary/50 block">Label:</span> { info.label ? info.label.toUpperCase().replace("_", " ") : "NO LABEL" }
                                                             </p>
                                                             <p className="w-[80px] text-left">
                                                                 <span className="text-primary/50 block">Type:</span> { info.type.toUpperCase() }
@@ -98,15 +92,15 @@ export default function Documents() {
                             </div>
                         ))}
 
-                        {/* <div className="w-full">
+                        <div className="w-full">
                             <Button
                                 size="lg"
                                 className="w-full bg-primary/10 hover:bg-primary/15 cursor-pointer transition text-white font-semibold py-2 rounded-md shadow"
-                                onClick={addNewDocumentType}
+                                onClick={() => post('/settings/documents')}
                             >
                                 Add New Document Type
                             </Button>
-                        </div> */}
+                        </div>
                     </div>
 
 

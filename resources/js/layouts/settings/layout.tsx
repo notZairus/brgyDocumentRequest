@@ -35,15 +35,7 @@ const sidebarNavItems: NavItem[] = [
 ];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
-    const { auth: { user }, flash } = usePage<any>().props;
-
-
-
-    useEffect(() => {
-        flash.success && toast.success(flash.success);
-        flash.error && toast.error(flash.error.message ?? flash.error);
-    }, [flash]);
-
+    const { auth: { user } } = usePage<any>().props;
 
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {

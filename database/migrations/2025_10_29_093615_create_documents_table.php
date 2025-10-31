@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->float('price')->default(0.00);
             $table->json('information');
-            $table->string('path');
+            $table->string('path')->nullable();
             $table->timestamps();
         });
     }

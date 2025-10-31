@@ -58,3 +58,20 @@ export function replacePaginationLink<T>(pagination: Pagination<T>, wordToBeRepl
 
     return newPagination;
 }
+
+
+export function base64ToDocx(base64: string, filename = 'document.docx') {
+  // Normalize and decode
+    const byteCharacters = atob(base64); // decode Base64
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+
+    return new File(
+        [byteArray],
+        filename,
+        { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
+    );
+}
