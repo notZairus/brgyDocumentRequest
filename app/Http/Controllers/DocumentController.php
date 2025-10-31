@@ -64,6 +64,11 @@ class DocumentController extends Controller
         $filename = time() . '.' . $file->getClientOriginalExtension();
         $path = $request->file('template')->storeAs('templates', $filename, 'templates');
 
+        $pathOfCurrentTemplate = storage_path($document->path);
+        if (file_exists($pathOfCurrentTemplate)) {
+            unlink($pathOfCurrentTemplate);
+        }
+
         $document->path = 'app/' . $path;
         $document->save();
 
