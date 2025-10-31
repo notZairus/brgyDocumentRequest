@@ -127,68 +127,71 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // DOCX FORMAT
     Route::get('/download-docx/{document_request}', function(DocumentRequest $document_request) {
+        $document = Document::where('type', $document_request->document_type)->first();
         $templatePath = null;
         $templateProcessor = null;
-        $document = Document::where('type', $document_request->document_type)->first();
 
         $pathOfCurrentTemplate = storage_path($document->path);
         if (!$document->path || !file_exists($pathOfCurrentTemplate)) {
             return redirect()->back()->with('error', "No template found for this document type.");
         }
 
-        if ($document->type === 'Certificate of Indigency') {
-            
-            $templatePath = storage_path($document->path);
-            $templateProcessor = new TemplateProcessor($templatePath);
+        try {
+            if ($document->type === 'Certificate of Indigency') {
+                $templatePath = storage_path($document->path);
+                $templateProcessor = new TemplateProcessor($templatePath);
 
-            $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
-            $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
-            $templateProcessor->setValue('purpose', strtoupper($document_request['document_details']['purpose']));
-            $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
+                $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
+                $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
+                $templateProcessor->setValue('purpose', strtoupper($document_request['document_details']['purpose']));
+                $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
+            }
+
+            if ($document->type === 'Certificate of Residency') {
+                $templatePath = storage_path($document->path);
+                $templateProcessor = new TemplateProcessor($templatePath);
+
+                $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
+                $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
+                $templateProcessor->setValue('civil_status', strtolower($document_request['document_details']['civil_status']));
+                $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
+            }
+
+            if ($document->type === 'Certificate of Employment') {
+                $templatePath = storage_path($document->path);
+                $templateProcessor = new TemplateProcessor($templatePath);
+
+                $name = $document_request['document_details']['name'];
+                $temp = explode(' ', $name);
+                $last_name = end($temp);
+
+                $templateProcessor->setValue('name', strtoupper($name));
+                $templateProcessor->setValue('last_name', $last_name);
+                $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
+                $templateProcessor->setValue('income', $document_request['document_details']['income']);
+                $templateProcessor->setValue('occupation', $document_request['document_details']['occupation']);
+                $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
+            }
+
+            if ($document->type === 'Barangay Clearance') {
+                $templatePath = storage_path($document->path);
+                $templateProcessor = new TemplateProcessor($templatePath);
+
+                $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
+                $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
+                $templateProcessor->setValue('civil_status', strtolower($document_request['document_details']['civil_status']));
+                $templateProcessor->setValue('purpose', strtoupper($document_request['document_details']['purpose']));
+                $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
+            }
+
+            $fileName = str_replace(' ', '_',strtolower($document_request['document_details']['name'])) . '.docx';
+            $savePath = storage_path('app/' . $fileName);
+            $templateProcessor->saveAs($savePath);
+
+            return response()->download($savePath)->deleteFileAfterSend(true);
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', "Unknown Error.");
         }
-
-        if ($document->type === 'Certificate of Residency') {
-            $templatePath = storage_path($document->path);
-            $templateProcessor = new TemplateProcessor($templatePath);
-
-            $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
-            $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
-            $templateProcessor->setValue('civil_status', strtolower($document_request['document_details']['civil_status']));
-            $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
-        }
-
-        if ($document->type === 'Certificate of Employment') {
-            $templatePath = storage_path($document->path);
-            $templateProcessor = new TemplateProcessor($templatePath);
-
-            $name = $document_request['document_details']['name'];
-            $temp = explode(' ', $name);
-            $last_name = end($temp);
-
-            $templateProcessor->setValue('name', strtoupper($name));
-            $templateProcessor->setValue('last_name', $last_name);
-            $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
-            $templateProcessor->setValue('income', $document_request['document_details']['income']);
-            $templateProcessor->setValue('occupation', $document_request['document_details']['occupation']);
-            $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
-        }
-
-        if ($document->type === 'Barangay Clearance') {
-            $templatePath = storage_path($document->path);
-            $templateProcessor = new TemplateProcessor($templatePath);
-
-            $templateProcessor->setValue('name', strtoupper($document_request['document_details']['name']));
-            $templateProcessor->setValue('sitio', $document_request['document_details']['sitio']);
-            $templateProcessor->setValue('civil_status', strtolower($document_request['document_details']['civil_status']));
-            $templateProcessor->setValue('purpose', strtoupper($document_request['document_details']['purpose']));
-            $templateProcessor->setValue('date', date('jS \d\a\y \o\f F Y', strtotime($document_request['created_at'])));
-        }
-
-        $fileName = str_replace(' ', '_',strtolower($document_request['document_details']['name'])) . '.docx';
-        $savePath = storage_path('app/' . $fileName);
-        $templateProcessor->saveAs($savePath);
-
-        return response()->download($savePath)->deleteFileAfterSend(true);
     });
 
     // PDF FORMAT
