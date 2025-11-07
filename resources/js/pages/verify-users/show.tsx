@@ -73,7 +73,7 @@ export default function VerifyAccounts() {
                             <img src={`/getId/${user.id}/front`} alt="front id" className="rounded border" />
                         </div>
                         <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15">
-                            <img src={`/getId/${user.id}/back`} alt="front id" className="rounded border" />
+                            <img src={`/getId/${user.id}/back`} alt="back id" className="rounded border" />
                         </div>
                     </div>
 

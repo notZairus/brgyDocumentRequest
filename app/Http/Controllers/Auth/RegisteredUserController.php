@@ -39,6 +39,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'brgyIdFront' => ['required'],
             'brgyIdBack' => ['required'],
+            'selfie' => ['required'],
         ]);
         
         $extension = $request->file('brgyIdFront')['file']->getClientOriginalExtension();
@@ -51,6 +52,11 @@ class RegisteredUserController extends Controller
         $request->file('brgyIdBack')['file']->storeAs(
             'ids/' . $validatedAttributes['email'],
             'back.' . $extension,
+        );
+
+        $request->file('selfie')['file']->storeAs(
+            'ids/' . $validatedAttributes['email'],
+            'selfie.' . $extension,
         );
 
         $user = User::create([

@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Eye, EyeClosed } from 'lucide-react';
+import { LoaderCircle, Eye, EyeClosed, Camera } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
-import { imgToBase64 } from "@/lib/utils";
+import { imgToBase64, base64ToBlob } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { useRef } from "react";
 import {
@@ -30,7 +30,7 @@ import {
 import { sitios } from "@/datas";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
-
+import Webcam from "react-webcam";
 
 
 type IdType = {
@@ -49,6 +49,7 @@ type RegisterForm = {
     password_confirmation: string;
     brgyIdFront: IdType | File | null;
     brgyIdBack: IdType | File | null;
+    selfie: IdType | File | null;
     number:  string;
     accept_terms?: boolean;
 };
@@ -65,6 +66,7 @@ export default function Register() {
         password_confirmation: '',
         brgyIdFront: null,
         brgyIdBack: null,
+        selfie: null,
         number: '09',
         accept_terms: false,
     });
@@ -72,6 +74,8 @@ export default function Register() {
     const brgyIdFrontRef = useRef(null);
     const brgyIdBackRef = useRef(null);
     const [showTerms, setShowTerms] = useState(false);
+    const [shotTaken, setShotTaken] = useState<any>(null);
+    const webcamRef = useRef<any>(null);
 
     const validateRegisterForm = () => {
 
@@ -127,12 +131,45 @@ export default function Register() {
             return;
         }
 
+        if (!data.selfie) {
+            setError('selfie', 'The Selfie image is required.');
+            return;
+        }
+
         if (data.middle_initial && data.middle_initial.length >= 3) {
             setError('middle_initial', 'Invalid Middle Initial.');
             return;
         }
 
         setShowTerms(true);
+    }
+
+    const takeAShot = () => {
+        if(!webcamRef.current) return;
+        const shot = webcamRef.current.getScreenshot();
+        setShotTaken(shot);
+    }
+
+    const confirmShot = () => {
+        if (!shotTaken) {
+            setError('selfie', 'Please take a selfie for verification.');
+            return;
+        }
+
+        const blobb = base64ToBlob(shotTaken);
+
+        const blobToFile = (blob: any, fileName = 'selfie.png') => {
+            return new File([blob], fileName, { type: 'image/png' });
+        };
+
+        const file = blobToFile(blobb);
+
+        setData('selfie', {
+            base64: shotTaken,
+            file: file
+        });
+
+        setShotTaken(null);
     }
 
 
@@ -149,11 +186,16 @@ export default function Register() {
                                 ? data.brgyIdBack.file 
                                 : data.brgyIdBack; 
 
+        const selfieFile = data.selfie && "file" in data.selfie 
+                                ? data.selfie.file 
+                                : data.selfie; 
+
         setData('brgyIdFront', idFrontFile);
         setData('brgyIdBack', idBackFile);
+        setData('selfie', selfieFile);
 
         post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation', 'brgyIdFront', 'brgyIdBack'),
+            onFinish: () => reset('password', 'password_confirmation', 'brgyIdFront', 'brgyIdBack', 'selfie'),
         });
     };
 
@@ -435,6 +477,85 @@ export default function Register() {
                             }
                         </div>
                         <InputError message={errors.brgyIdBack} />
+                    </div>
+
+
+                    <div>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button size="lg">
+                                    Take a Selfie for Verification
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Take a Selfie</DialogTitle>
+                                    <DialogDescription>
+                                        <p className="text-sm text-foreground/60">
+                                            Your selfie will be used only for identity verification and will not be shared.
+                                            Please position your face in the center of the frame and ensure good lighting.
+                                        </p>
+                                    </DialogDescription>
+                                </DialogHeader>
+
+                                <div className="grid gap-4">
+                                    <div>
+                                        { !shotTaken && !data.selfie && <Webcam ref={webcamRef} className="rounded-xl" /> }
+                                        { data.selfie &&
+                                            <div className="w-full h-full text-xl flex items-center justify-center relative rounded overflow-hidden bg-red-400">
+                                                <img src={"base64" in data.selfie ? data.selfie.base64 : ""} className="w-full h-full object-cover" />
+                                                <div className="absolute top-2 right-2">
+                                                    <Button 
+                                                        size="sm" 
+                                                        variant="destructive" 
+                                                        onClick={() => setData('selfie', null)}
+                                                    >
+                                                        Retake
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        }
+                                        { shotTaken && 
+                                            <div className="w-full h-full text-xl flex items-center justify-center relative rounded overflow-hidden bg-red-400">
+                                                <img src={shotTaken} className="w-full h-full object-cover" />
+                                                <div className="absolute top-2 right-2">
+                                                    <Button 
+                                                        size="sm" 
+                                                        variant="destructive" 
+                                                        onClick={() => setShotTaken(null)}
+                                                    >
+                                                        Retake
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div className="flex justify-center">
+                                        <Button size="lg" className="rounded-full aspect-square w-12 h-12" onClick={takeAShot}>
+                                            <Camera />
+                                        </Button>
+                                    </div>
+                                    
+                                </div>
+
+                                <DialogFooter>
+                                    <DialogClose asChild>
+                                        <Button variant="outline">Cancel</Button>
+                                    </DialogClose>
+                                    <DialogClose asChild>
+                                        <Button
+                                            variant="outline"
+                                            onClick={confirmShot}
+                                        >
+                                            Confirm
+                                        </Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        <InputError message={errors.selfie} className="mt-2 text-red-500" />
                     </div>
 
 
