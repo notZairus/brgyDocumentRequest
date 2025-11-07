@@ -36,10 +36,19 @@ export default function Users() {
 
                     <div className="flex-1 flex gap-4 w-full flex-wrap">
                         <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 sm:min-w-auto">
+                            <p>Brgy ID: Front</p>
                             <img src={`/getId/${user.id}/front`} alt="front id" className="rounded border" />
                         </div>
                         <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 sm:min-w-auto">
-                            <img src={`/getId/${user.id}/back`} alt="front id" className="rounded border" />
+                            <p>Brgy ID: Back</p>
+                            <img src={`/getId/${user.id}/back`} alt="back id" className="rounded border" />
+                        </div>
+                    </div>
+
+                    <div className="flex-1 flex gap-4 w-full flex-wrap">
+                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12">
+                            <p>Selfie of the resident</p>
+                            <img src={`/getId/${user.id}/selfie`} alt="selfie" className="rounded border w-full" />
                         </div>
                     </div>
 

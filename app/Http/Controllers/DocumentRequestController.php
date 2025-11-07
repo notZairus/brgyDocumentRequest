@@ -56,7 +56,7 @@ class DocumentRequestController extends Controller
     }
 
     public function store(Request $request) {
-    
+        
         if ($request->get('document_request_type') === 'other') {
             if (! $request->get('brgyIdBack')) {
                 return back()->with('error', 'Please upload the back of your Barangay ID.');
@@ -84,6 +84,11 @@ class DocumentRequestController extends Controller
             $request->file('brgyIdBack')['file']->storeAs(
                 'ids/' . $request->user()->getAttribute('email')  . '/' . $request->get('name'),
                 'back.' . $extension,
+            );
+
+            $request->file('selfie')['file']->storeAs(
+                'ids/' . $request->user()->getAttribute('email')  . '/' . $request->get('name'),
+                'selfie.' . $extension,
             );
         }
 

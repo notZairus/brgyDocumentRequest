@@ -77,6 +77,34 @@ export default function Register() {
     const [shotTaken, setShotTaken] = useState<any>(null);
     const webcamRef = useRef<any>(null);
 
+    const takeAShot = () => {
+        if(!webcamRef.current) return;
+        const shot = webcamRef.current.getScreenshot();
+        setShotTaken(shot);
+    }
+
+    const confirmShot = () => {
+        if (!shotTaken) {
+            setError('selfie', 'Please take a selfie for verification.');
+            return;
+        }
+
+        const blobb = base64ToBlob(shotTaken);
+
+        const blobToFile = (blob: any, fileName = 'selfie.png') => {
+            return new File([blob], fileName, { type: 'image/png' });
+        };
+
+        const file = blobToFile(blobb);
+
+        setData('selfie', {
+            base64: shotTaken,
+            file: file
+        });
+
+        setShotTaken(null);
+    }
+
     const validateRegisterForm = () => {
 
         clearErrors();
@@ -144,33 +172,7 @@ export default function Register() {
         setShowTerms(true);
     }
 
-    const takeAShot = () => {
-        if(!webcamRef.current) return;
-        const shot = webcamRef.current.getScreenshot();
-        setShotTaken(shot);
-    }
-
-    const confirmShot = () => {
-        if (!shotTaken) {
-            setError('selfie', 'Please take a selfie for verification.');
-            return;
-        }
-
-        const blobb = base64ToBlob(shotTaken);
-
-        const blobToFile = (blob: any, fileName = 'selfie.png') => {
-            return new File([blob], fileName, { type: 'image/png' });
-        };
-
-        const file = blobToFile(blobb);
-
-        setData('selfie', {
-            base64: shotTaken,
-            file: file
-        });
-
-        setShotTaken(null);
-    }
+    
 
 
     const submit: FormEventHandler = (e) => {

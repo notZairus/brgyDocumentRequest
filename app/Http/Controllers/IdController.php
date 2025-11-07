@@ -41,6 +41,22 @@ class IdController extends Controller
         );
     }
 
+    public function serveSelfie(User $user) {
+        $dir = storage_path('app/private/ids/'. $user->email . '/');
+
+        if (!file_exists($dir)) {
+            $dir = storage_path('app/private/ids/dummydata@gmail.com/');
+        }
+
+        $matching_file = collect(File::files($dir))->first(function ($file) {
+            return pathinfo($file, PATHINFO_FILENAME) == "selfie";
+        });
+
+        return response()->file(
+            $matching_file->getRealPath()
+        );
+    }
+
     public function serveOtherFrontId(DocumentRequest $document_request) {
         $document_request->load('user');
 
@@ -72,6 +88,25 @@ class IdController extends Controller
 
         $matching_file = collect(File::files($dir))->first(function ($file) {
             return pathinfo($file, PATHINFO_FILENAME) == "back";
+        });
+
+        return response()->file(
+            $matching_file->getRealPath()
+        );
+    }
+
+    public function serveOtherSelfie(DocumentRequest $document_request) {
+        $document_request->load('user');
+
+
+        $dir = storage_path('app/private/ids/'. $document_request->user->email . '/' . $document_request->document_details['name'] . '/');
+
+        if (!file_exists($dir)) {
+            $dir = storage_path('app/private/ids/dummydata@gmail.com/');
+        }
+
+        $matching_file = collect(File::files($dir))->first(function ($file) {
+            return pathinfo($file, PATHINFO_FILENAME) == "selfie";
         });
 
         return response()->file(

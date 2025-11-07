@@ -202,6 +202,7 @@ export default function show() {
                             <p>Valid ID:</p>
                             <div className="mt-2 flex gap-4 rounded flex-wrap lg:max-w-3xl">
                                 <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
+                                    <p>Brgy. ID: Back</p>
                                     <img 
                                         src={documentRequest.user?.name === origName.current 
                                             ? `/getId/${documentRequest.user?.id}/front`
@@ -212,10 +213,22 @@ export default function show() {
                                     />
                                 </div>
                                 <div className="w-full flex-1 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
+                                    <p>Brgy. ID: Back</p>
                                     <img 
                                         src={documentRequest.user?.name === origName.current 
                                             ? `/getId/${documentRequest.user?.id}/back`
                                             : `/getOtherId/${documentRequest.id}/back`
+                                        } 
+                                        alt="front id" 
+                                        className="object-fit w-full h-full"
+                                    />
+                                </div>
+                                <div className="w-full flex-2 p-2 bg-primary/5 border border-primary/15 min-w-11/12 lg:min-w-auto">
+                                    <p>Selfie of the resident</p>
+                                    <img 
+                                        src={documentRequest.user?.name === origName.current 
+                                            ? `/getId/${documentRequest.user?.id}/selfie`
+                                            : `/getOtherId/${documentRequest.id}/selfie`
                                         } 
                                         alt="front id" 
                                         className="object-fit w-full h-full"

@@ -8,6 +8,9 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import Webcam from "react-webcam";
+import { Camera } from "lucide-react";
+import { base64ToBlob } from '@/lib/utils';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -30,6 +33,19 @@ import {
 } from "@/components/ui/alert-dialog"
 import { usePage } from '@inertiajs/react';
 import type { Document } from "@/types/index.d.ts"
+import InputError from '@/components/input-error';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+
 
 
 type IdType = {
@@ -51,6 +67,7 @@ type useFormProps = {
     price: string | number;
     purpose: string;
     other_purpose: string;
+    selfie: null | IdType;
     [key: string]: any
 }
 
@@ -83,13 +100,46 @@ export default function create() {
         note: '',
         purpose: '',
         other_purpose: '',
+        selfie: null,
     });
 
     const [currentTab, setCurrentTab] = useState<string>('user');
     const brgyIdFrontRef = useRef(null);
     const brgyIdBackRef = useRef(null);
+    const [shotTaken, setShotTaken] = useState<any>(null);
+    const webcamRef = useRef<any>(null);
+
 
     const selectedDocumentType: Document | undefined = availableDocuments.find((doc: Document) => doc.type == data.document_type);
+
+    const takeAShot = () => {
+        if(!webcamRef.current) return;
+        const shot = webcamRef.current.getScreenshot();
+        setShotTaken(shot);
+    }
+
+    const confirmShot = () => {
+        if (!shotTaken) {
+            setError('selfie', 'Please take a selfie for verification.');
+            return;
+        }
+
+        const blobb = base64ToBlob(shotTaken);
+
+        const blobToFile = (blob: any, fileName = 'selfie.png') => {
+            return new File([blob], fileName, { type: 'image/png' });
+        };
+
+        const file = blobToFile(blobb);
+
+        setData('selfie', {
+            base64: shotTaken,
+            file: file
+        });
+
+        setShotTaken(null);
+    }
+
 
     function setTab(tab: string) {
         setData('document_request_type', tab as 'other' | 'user');
@@ -100,6 +150,7 @@ export default function create() {
         clearErrors();
 
         if (currentTab === 'other') {
+            
             if (!data['name'] || data['name'].trim().length <= 5) {
                 setError('name', "Please enter your full name.")
                 return;
@@ -107,6 +158,11 @@ export default function create() {
 
             if (! data['brgyIdFront'] || ! data['brgyIdBack']) {
                 setError('brgyId', 'Upload your Barangay ID.')
+                return;
+            }
+
+            if (! data['selfie']) {
+                setError('selfie', 'Upload your verification selfie.')
                 return;
             }
         }
@@ -157,6 +213,7 @@ export default function create() {
                                 defaultValue="user" 
                                 onValueChange={(value) => {
                                     reset();
+                                    console.log(value);
                                     setTab(value);
                                 }}
                             >
@@ -323,6 +380,83 @@ export default function create() {
                                                                     </div>
                                                                     {errors['brgyId'] && <p className="text-red-500 text-sm">{errors['brgyId']}</p>}
             
+                                                                    <div>
+                                                                        <Dialog>
+                                                                            <DialogTrigger asChild>
+                                                                                <Button size="lg">
+                                                                                    Take a Selfie for Verification
+                                                                                </Button>
+                                                                            </DialogTrigger>
+                                                                            <DialogContent className="sm:max-w-[425px]">
+                                                                                <DialogHeader>
+                                                                                    <DialogTitle>Take a Selfie</DialogTitle>
+                                                                                    <DialogDescription>
+                                                                                        <p className="text-sm text-foreground/60">
+                                                                                            Your selfie will be used only for identity verification and will not be shared.
+                                                                                            Please position your face in the center of the frame and ensure good lighting.
+                                                                                        </p>
+                                                                                    </DialogDescription>
+                                                                                </DialogHeader>
+
+                                                                                <div className="grid gap-4">
+                                                                                    <div>
+                                                                                        { !shotTaken && !data.selfie && <Webcam ref={webcamRef} className="rounded-xl" /> }
+                                                                                        { data.selfie &&
+                                                                                            <div className="w-full h-full text-xl flex items-center justify-center relative rounded overflow-hidden bg-red-400">
+                                                                                                <img src={"base64" in data.selfie ? data.selfie.base64 : ""} className="w-full h-full object-cover" />
+                                                                                                <div className="absolute top-2 right-2">
+                                                                                                    <Button 
+                                                                                                        size="sm" 
+                                                                                                        variant="destructive" 
+                                                                                                        onClick={() => setData('selfie', null)}
+                                                                                                    >
+                                                                                                        Retake
+                                                                                                    </Button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+                                                                                        { shotTaken && 
+                                                                                            <div className="w-full h-full text-xl flex items-center justify-center relative rounded overflow-hidden bg-red-400">
+                                                                                                <img src={shotTaken} className="w-full h-full object-cover" />
+                                                                                                <div className="absolute top-2 right-2">
+                                                                                                    <Button 
+                                                                                                        size="sm" 
+                                                                                                        variant="destructive" 
+                                                                                                        onClick={() => setShotTaken(null)}
+                                                                                                    >
+                                                                                                        Retake
+                                                                                                    </Button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+                                                                                    </div>
+
+                                                                                    <div className="flex justify-center">
+                                                                                        <Button size="lg" className="rounded-full aspect-square w-12 h-12" onClick={takeAShot}>
+                                                                                            <Camera />
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                    
+                                                                                </div>
+
+                                                                                <DialogFooter>
+                                                                                    <DialogClose asChild>
+                                                                                        <Button variant="outline">Cancel</Button>
+                                                                                    </DialogClose>
+                                                                                    <DialogClose asChild>
+                                                                                        <Button
+                                                                                            variant="outline"
+                                                                                            onClick={confirmShot}
+                                                                                        >
+                                                                                            Confirm
+                                                                                        </Button>
+                                                                                    </DialogClose>
+                                                                                </DialogFooter>
+                                                                            </DialogContent>
+                                                                        </Dialog>
+
+                                                                        <InputError message={errors.selfie} className="mt-2 text-red-500" />
+                                                                    </div>
                                                                 </>
                                                             )}
                     
@@ -445,6 +579,9 @@ export default function create() {
                                                     <Button 
                                                         variant="default"
                                                         size="lg"
+                                                        onClick={() => {
+                                                            setData('document_request_type', currentTab as 'other' | 'user');
+                                                        }}
                                                     >
                                                         Submit Request
                                                     </Button>

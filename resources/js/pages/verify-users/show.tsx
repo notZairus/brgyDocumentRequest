@@ -70,10 +70,16 @@ export default function VerifyAccounts() {
 
                     <div className="flex-1 flex flex-col gap-4 w-full">
                         <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15">
+                            <p>Brgy. ID Front</p>
                             <img src={`/getId/${user.id}/front`} alt="front id" className="rounded border" />
                         </div>
                         <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15">
+                            <p>Brgy. ID Back</p>
                             <img src={`/getId/${user.id}/back`} alt="back id" className="rounded border" />
+                        </div>
+                        <div className="w-full aspect-video flex-1 p-2 bg-primary/5 border border-primary/15">
+                            <p>Selfie of a user:</p>
+                            <img src={`/getId/${user.id}/selfie`} alt="selfie" className="rounded border" />
                         </div>
                     </div>
 

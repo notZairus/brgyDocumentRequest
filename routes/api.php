@@ -24,8 +24,10 @@ use App\Models\Document;
 Route::middleware(['auth'])->group(function () {
     Route::get('/getId/{user}/front', [IdController::class, 'serveFrontId']);
     Route::get('/getId/{user}/back', [IdController::class, 'serveBackId']);
+    Route::get('/getId/{user}/selfie', [IdController::class, 'serveSelfie']);
     Route::get('/getOtherId/{document_request}/front', [IdController::class, 'serveOtherFrontId']);
     Route::get('/getOtherId/{document_request}/back', [IdController::class, 'serveOtherBackId']);
+    Route::get('/getOtherId/{document_request}/selfie', [IdController::class, 'serveOtherSelfie']);
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
