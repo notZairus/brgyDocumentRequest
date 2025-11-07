@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'sitio' => 'Padling',
             'verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'number' => '0917' . fake()->unique()->numerify('###' . '####'),
             'is_admin' => false,
             'status' => "inactive",
             'remember_token' => Str::random(10),

@@ -71,8 +71,10 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             <Input
                                 id="email"
                                 type="email"
+                                readOnly
                                 className="mt-1 block w-full"
                                 value={data.email}
+                                disabled
                                 onChange={(e) => setData('email', e.target.value)}
                                 required
                                 autoComplete="username"
@@ -120,7 +122,11 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     </form>
                 </div>
 
-                <DeleteUser />
+                { !auth.user.is_admin && (
+                    <DeleteUser />
+                )}
+                
+                
             </SettingsLayout>
         </AppLayout>
     );

@@ -172,6 +172,7 @@ export default function show() {
                         <div className="space-y-2">
                             <p>Requested By: <span className="text-lg font-medium">{documentRequest.user?.name} ( {documentRequest.user?.email} )</span></p>
                             <p>Requested On: <span className="text-lg font-medium">{format(documentRequest.created_at, "MMMM d, yyyy")}</span></p>
+                            <p>Contact Number: <span className="text-lg font-medium">{documentRequest.user?.number}</span></p>
 
                             <div className="w-full flex-1 p-2 mt-8 bg-primary/5 border border-primary/15 max-w-2/3">
                                 <div className="flex justify-between items-center">

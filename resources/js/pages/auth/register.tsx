@@ -49,6 +49,7 @@ type RegisterForm = {
     password_confirmation: string;
     brgyIdFront: IdType | File | null;
     brgyIdBack: IdType | File | null;
+    number:  string;
     accept_terms?: boolean;
 };
 
@@ -64,6 +65,7 @@ export default function Register() {
         password_confirmation: '',
         brgyIdFront: null,
         brgyIdBack: null,
+        number: '09',
         accept_terms: false,
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -92,6 +94,16 @@ export default function Register() {
 
         if (!data.email) {
             setError('email', 'This field is required.');
+            return;
+        }
+
+        if (!data.number) {
+            setError('number', 'This field is required.');
+            return;
+        }
+
+        if (data.number.length < 11) {
+            setError('number', 'Invalid Cellphone Number.');
             return;
         }
 
@@ -283,9 +295,49 @@ export default function Register() {
                         <InputError message={errors.password_confirmation} />
                     </div>
 
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="number">Cellphone Number (09XXXXXXXX): </Label>
+                        <Input
+                            id="number"
+                            type="text"
+                            required
+                            tabIndex={2}
+                            
+                            pattern="^09\d{2}\s\d{3}\s\d{4}$"
+                            value={data.number}
+                            onChange={(e) => {
+                                if (!/^[0-9\s]*$/.test(e.target.value)) {
+                                    return; // Prevent input if it contains non-numeric characters
+                                }
+
+                                if(data.number.length === 1) {
+                                    setData('number', '09');
+                                    return;
+                                }
+
+
+                                if (data.number.length === 12) {
+                                    return;
+                                }
+
+                                setData('number', e.target.value)
+                            }}
+                            disabled={processing}
+                            placeholder="09171234567"
+                        />
+                        <InputError message={errors.number} />
+                    </div>
+
+
+                    
+
                     <Separator className="mt-8"/>
 
-                    <p className="text-red-500">We only accept. Government IDs</p>
+                    <p className="text-sm text-primary font-semibold flex items-center gap-2">
+                        <span className="text-red-500">*</span>
+                        Important: Only Barangay Matictic ID of the current year will be accepted. Other type of IDs will be automatically declined.
+                    </p>
 
                     <div className="grid gap-2">
                         <Label htmlFor="brgy_id">Brgy ID Front:</Label>
@@ -386,9 +438,13 @@ export default function Register() {
                     </div>
 
 
-                        <div>
-                            <Button className="w-full" onClick={validateRegisterForm}>Create Account</Button>
-                        </div>
+
+
+
+
+                    <div>
+                        <Button className="w-full" onClick={validateRegisterForm}>Create Account</Button>
+                    </div>
 
                     <Dialog open={showTerms}>
                         <DialogContent className="">

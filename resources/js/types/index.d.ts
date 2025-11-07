@@ -56,6 +56,7 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    number: string;
     sitio: string;
     avatar?: string;
     email_verified_at: string | null;

@@ -35,6 +35,7 @@ class RegisteredUserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'sitio' => 'required|string|max:255',
+            'number' => 'required|string|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'brgyIdFront' => ['required'],
             'brgyIdBack' => ['required'],
@@ -58,6 +59,7 @@ class RegisteredUserController extends Controller
                 : $request->first_name . ' ' . $request->last_name,
                 
             'email' => $request->email,
+            'number' => $request->number,
             'sitio' => $request->sitio,
             'password' => Hash::make($request->password),
             'isAdmin' => false

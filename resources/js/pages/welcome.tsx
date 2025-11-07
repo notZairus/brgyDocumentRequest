@@ -64,7 +64,7 @@ export default function Welcome() {
                                 </div>
                             </div>
                             <div className="flex-1 items-center justify-center flex">
-                                <div className="aspect-square w-4/5 rounded-full overflow-hidden bg-transparent">
+                                <div className="aspect-square w-4/5 rounded-full overflow-hidden bg-transparent shadow hover:scale-105 transition hover:shadow-xl">
                                     <img src="/logo_matictic.jpg" alt="matictic-logo" className="blur-[1px]"/>
                                 </div>
 

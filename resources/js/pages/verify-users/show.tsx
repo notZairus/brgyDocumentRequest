@@ -54,6 +54,7 @@ export default function VerifyAccounts() {
                                 <p className="text-foreground/50">Name: <br /> <span className="text-lg text-foreground">{user.name}</span></p>
                                 <p className="text-foreground/50">Sitio: <br /> <span className="text-lg text-foreground">{user.sitio}</span></p>
                                 <p className="text-foreground/50">Email: <br /> <span className="text-lg text-foreground">{user.email}</span></p>
+                                <p className="text-foreground/50">Contact Number: <br /> <span className="text-lg text-foreground">{user.number}</span></p>
                                 <p className="text-foreground/50">Requested at: <br /> <span className="text-lg text-foreground">{format(user.updated_at, 'EEEE, MMMM d • h:mm a')  }</span></p>
                             </div>
                         </div>

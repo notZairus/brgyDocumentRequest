@@ -13,7 +13,7 @@ class IdController extends Controller
         $dir = storage_path('app/private/ids/'. $user->email . '/');
 
         if (!file_exists($dir)) {
-            abort(404);
+            $dir = storage_path('app/private/ids/dummydata@gmail.com/');
         }
 
         $matching_file = collect(File::files($dir))->first(function ($file) {
@@ -29,7 +29,7 @@ class IdController extends Controller
         $dir = storage_path('app/private/ids/'. $user->email . '/');
 
         if (!file_exists($dir)) {
-            abort(404);
+            $dir = storage_path('app/private/ids/dummydata@gmail.com/');
         }
 
         $matching_file = collect(File::files($dir))->first(function ($file) {
@@ -48,7 +48,7 @@ class IdController extends Controller
         $dir = storage_path('app/private/ids/'. $document_request->user->email . '/' . $document_request->document_details['name'] . '/');
 
         if (!file_exists($dir)) {
-            abort(404);
+            $dir = storage_path('app/private/ids/dummydata@gmail.com/');
         }
 
         $matching_file = collect(File::files($dir))->first(function ($file) {
@@ -67,7 +67,7 @@ class IdController extends Controller
         $dir = storage_path('app/private/ids/'. $document_request->user->email . '/' . $document_request->document_details['name'] . '/');
 
         if (!file_exists($dir)) {
-            abort(404);
+            $dir = storage_path('app/private/ids/dummydata@gmail.com/');
         }
 
         $matching_file = collect(File::files($dir))->first(function ($file) {
