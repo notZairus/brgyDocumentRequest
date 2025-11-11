@@ -445,7 +445,6 @@ export default function create() {
                                                                                     </DialogClose>
                                                                                     <DialogClose asChild>
                                                                                         <Button
-                                                                                            variant="outline"
                                                                                             onClick={confirmShot}
                                                                                         >
                                                                                             Confirm

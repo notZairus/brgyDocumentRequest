@@ -337,8 +337,8 @@ export default function Dashboard() {
 
                     { (!user.is_admin && user.verified_at === null) ? (
                         <>
-                            <div className="mx-auto p-4 mt-8 space-y-4 bg-primary/5 border border-primary/10 rounded">
-                                <h1 className='md:text-3xl text-2xl'>
+                            <div className="mx-auto p-4 mt-8 space-y-4 border border-primary/10 rounded bg-red-400/10">
+                                <h1 className='md:text-2xl text-1xl'>
                                     Wait for Admin to Verify Your Account
                                 </h1>
                                 <p className='md:text-xl text-md'>

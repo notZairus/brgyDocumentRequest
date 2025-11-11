@@ -21,12 +21,12 @@ class DatabaseSeeder extends Seeder
             'password' => 'QZr8408o'
         ]);
 
-        User::factory()->create([
-            'name' => 'Zairus Bermillo',
-            'email' => 'notzairus@gmail.com',
-            'sitio' => 'Matictic Proper',
-            'password' => 'QZr8408o'
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Zairus Bermillo',
+        //     'email' => 'notzairus@gmail.com',
+        //     'sitio' => 'Matictic Proper',
+        //     'password' => 'QZr8408o'
+        // ]);
 
         $this->call(
             DocumentSeeder::class

@@ -547,7 +547,6 @@ export default function Register() {
                                     </DialogClose>
                                     <DialogClose asChild>
                                         <Button
-                                            variant="outline"
                                             onClick={confirmShot}
                                         >
                                             Confirm
